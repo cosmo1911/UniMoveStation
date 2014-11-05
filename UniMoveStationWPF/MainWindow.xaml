@@ -1,0 +1,195 @@
+﻿<controls:MetroWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
+                      xmlns:local="clr-namespace:UniMoveStation"
+                      xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam" 
+                      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                      x:Class="UniMoveStation.MainWindow"
+                      Title="UniMoveStation"
+                      Style="{DynamicResource CleanWindowStyleKey}"
+                      BorderThickness="0"
+                      Width="853"
+                      Height="480"
+                      Loaded="MetroWindow_Loaded"
+                      Closing="MetroWindow_Closing">
+    <i:Interaction.Behaviors>
+        <behaviours:BorderlessWindowBehavior AllowsTransparency="False"
+                                             EnableDWMDropShadow="True" />
+        <behaviours:WindowsSettingBehaviour />
+        <behaviours:GlowWindowBehavior />
+    </i:Interaction.Behaviors>
+    <Grid>
+        <!-- Main Window -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <controls:MetroTabControl>
+            <TabItem Header="Home" 
+                     controls:ControlsHelper.HeaderFontSize="21">
+                <Grid>
+                    <!-- Home Tab -->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Moves" 
+                     controls:ControlsHelper.HeaderFontSize="21">
+                <Grid>
+                    <!-- Moves Tab -->
+                    <controls:MetroTabControl Margin="10 10 10 10">
+                        <TabItem Header="All" 
+                                 controls:ControlsHelper.HeaderFontSize="18">
+                            <Grid>
+                                <!-- All Moves Tab -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto" MinHeight="5"/>
+                                    <RowDefinition Height="Auto" MinHeight="80"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                                    <Grid x:Name="grid_allMoves">
+                                        <!-- All Moves -->
+                                    </Grid>
+                                </ScrollViewer>
+
+
+                                <GridSplitter Grid.Row="1" 
+                                              HorizontalAlignment="Center" 
+                                              VerticalAlignment="Stretch" 
+                                              MinHeight="5" 
+                                              Width="100"
+                                              ShowsPreview="True" 
+                                              ResizeDirection="Rows"
+                                              />
+
+                                <Grid Grid.Row="2">
+                                    <!-- All Moves Console -->
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" 
+                                               Text="Console" 
+                                               HorizontalAlignment="Left" 
+                                               VerticalAlignment="Bottom" 
+                                               Margin="5,0,0,0"
+                                               />
+                                    <TextBox Grid.Row="1"
+                                             BorderThickness="1" 
+                                             BorderBrush="{StaticResource AccentColorBrush}"
+                                             x:Name="textBox_allMoves" 
+                                             VerticalScrollBarVisibility="Auto"
+                                        />
+                                    <!-- All Moves Console -->
+                                </Grid>
+                                <!-- All Moves Tab -->
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="#1" 
+                                 controls:ControlsHelper.HeaderFontSize="18">
+                            <Grid/>
+                        </TabItem>
+                    </controls:MetroTabControl>
+                    <!-- Moves Tab -->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Cameras" controls:ControlsHelper.HeaderFontSize="21">
+                <Grid>
+                    <!-- Cameras Tab -->
+                    <controls:MetroTabControl Margin="10 10 10 10">
+                        <TabItem Header="All" 
+                                 controls:ControlsHelper.HeaderFontSize="18">
+                            <Grid>
+                                <!-- All Cameras Tab -->
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto" 
+                                                   MinHeight="5"
+                                                   />
+                                    <RowDefinition Height="Auto" 
+                                                   MinHeight="80"
+                                                   />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                                    <Grid x:Name="grid_allCameras">
+                                        <!-- All Cameras -->
+                                    </Grid>
+                                </ScrollViewer>
+
+
+                                <GridSplitter Grid.Row="1" 
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Stretch"
+                                              MinHeight="5"
+                                              Width="100"
+                                              ShowsPreview="True"
+                                              ResizeDirection="Rows"
+                                              />
+
+                                <Grid Grid.Row="2">
+                                    <!-- All Cameras Console -->
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0"
+                                               Text="Console"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               Margin="5,0,0,0"
+                                               />
+                                    <TextBox Grid.Row="1"
+                                             BorderThickness="1" 
+                                             BorderBrush="{StaticResource AccentColorBrush}"
+                                             x:Name="textBox_allCameras" VerticalScrollBarVisibility="Auto"
+                                        />
+                                    <!-- All Cameras Console -->
+                                </Grid>
+                                    <!-- All Cameras Tab -->
+                            </Grid>
+
+                        </TabItem>
+                        <TabItem Header="#1" 
+                                 controls:ControlsHelper.HeaderFontSize="18">
+                            <Grid/>
+                        </TabItem>
+                    </controls:MetroTabControl>
+                    <!-- Cameras Tab -->
+                </Grid>
+            </TabItem>
+            <TabItem Header="Server" 
+                     controls:ControlsHelper.HeaderFontSize="21">
+                <Grid Margin="10 10 10 10">
+                    <!-- Server Tab -->
+                    <local:ServerControl x:Name="serverControl"/>
+                </Grid>
+            </TabItem>
+        </controls:MetroTabControl>
+        <Grid Grid.Row="1" Visibility="Hidden">
+            <!-- Status Bar -->
+            <StatusBar VerticalAlignment="Bottom"
+                       x:Name="statusBar">
+                <StatusBarItem Margin="3 0 3 0" >
+                    <TextBlock x:Name="statusBarTextBlock_listeningState" 
+                               Text="Stopped"
+                               />
+                </StatusBarItem>
+                <StatusBarItem Margin="3 0 3 0" >
+                    <TextBlock x:Name="statusBarTextBlock_connectionCount" 
+                               Text="0 Connections"
+                               />
+                </StatusBarItem>
+            </StatusBar>
+            <!-- Status Bar -->
+        </Grid>
+        <!-- Main Window -->
+    </Grid>
+</controls:MetroWindow>
