@@ -50,14 +50,22 @@ namespace CLEyeMulticam
         {
             if(cameraImage.Device != null)
             {
+                
                 cameraImage.Visibility = System.Windows.Visibility.Visible;
-                cameraImage.Device.Resolution = CLEyeCameraResolution.CLEYE_QVGA;
-                //cameraImage.Device.AutoExposure = true;
-                //cameraImage.Device.AutoGain = true;
-                //cameraImage.Device.AutoWhiteBalance = true;
-                cameraImage.Device.ColorMode = CLEyeCameraColorMode.CLEYE_COLOR_PROCESSED;
-                cameraImage.Device.Framerate = 10;
+                cameraImage.Device.Resolution = CLEyeCameraResolution.CLEYE_VGA;
+                cameraImage.Device.ColorMode = CLEyeCameraColorMode.CLEYE_COLOR_RAW;
+                //CLEYE_QVGA - 15, 30, 60, 75, 100, 125
+                //CLEYE_VGA - 15, 30, 40, 50, 60, 75
+                cameraImage.Device.Framerate = 60;
                 cameraImage.Device.Create(CLEyeCameraDevice.CameraUUID(UUID));
+                cameraImage.Device.AutoExposure = true;
+                cameraImage.Device.AutoGain = true;
+                cameraImage.Device.AutoWhiteBalance = true;
+                //cameraImage.Device.Gain = 0;
+                //cameraImage.Device.Exposure = 0;
+                //cameraImage.Device.WhiteBalanceBlue = 0;
+                //cameraImage.Device.WhiteBalanceRed = 0;
+                //cameraImage.Device.WhiteBalanceGreen = 0;
                 cameraImage.Device.Start();
             }
         }

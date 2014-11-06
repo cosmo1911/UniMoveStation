@@ -3,7 +3,8 @@ PS Move API
 
 https://github.com/thp/psmoveapi
 
-Copyright (c) 2011, 2012 Thomas Perl <m@thp.io> All rights reserved.
+Copyright (c) 2011, 2012 Thomas Perl <m@thp.io>
+All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted
 provided that the following conditions are met:
@@ -33,8 +34,7 @@ UniMove API - A Unity plugin for the PlayStation Move motion controller
 Copyright (C) 2012, 2013, Copenhagen Game Collective (http://www.cphgc.org)
  					      Patrick Jarnfelt
  					      Douglas Wilson (http://www.doougle.net)
- 
- 
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted

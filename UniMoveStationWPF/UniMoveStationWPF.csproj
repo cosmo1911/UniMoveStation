@@ -251,6 +251,8 @@
     <Content Include="plugins\Nito.Async.Sockets.dll" />
     <Content Include="plugins\UnityEditor.dll" />
     <Content Include="plugins\UnityEngine.dll" />
+    <Content Include="Resources\wynCamera.svg" />
+    <Content Include="Resources\wynWand.svg" />
     <Resource Include="Resources\Entypo-license.txt" />
     <Resource Include="Resources\WindowsIcons-license.txt" />
     <Resource Include="Resources\PlayStationCircle.svg" />
