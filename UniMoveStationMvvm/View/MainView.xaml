@@ -1,0 +1,34 @@
+﻿<controls:MetroWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
+                      xmlns:local="clr-namespace:UniMoveStation"
+                      xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+                      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                      xmlns:v="clr-namespace:UniMoveStation.View"
+                      xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
+                      x:Class="UniMoveStation.View.MainView"
+                      Title="UniMoveStation"
+                      ShowTitleBar="True"
+                      Style="{DynamicResource CleanWindowStyleKey}"
+                      BorderThickness="1"
+                      BorderBrush="{StaticResource AccentColorBrush}"
+                      Width="1280"
+                      Height="720"
+                      DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
+
+    <controls:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
+            <v:NavigationView DataContext="{Binding}"/>
+        </DataTemplate>
+    </controls:MetroWindow.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ContentControl Content="{Binding Navigation, Source={StaticResource ViewModelLocator}}"/>
+    </Grid>
+</controls:MetroWindow>

@@ -1,44 +1,41 @@
-﻿<controls:MetroWindow 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-    xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
-    xmlns:local="clr-namespace:UniMoveStation"
-    xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam" 
-    xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    x:Class="UniMoveStation.MainWindow"
-    Title="UniMoveStation"
-    ShowTitleBar="True"
-    Style="{DynamicResource CleanWindowStyleKey}"
-    BorderThickness="1"
-    BorderBrush="{StaticResource AccentColorBrush}"
-    Width="1280"
-    Height="720"
-    Loaded="MetroWindow_Loaded"
-    Closing="MetroWindow_Closing">
-    
+﻿<controls:MetroWindow  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                       xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
+                       xmlns:local="clr-namespace:UniMoveStation"
+                       xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                       x:Class="UniMoveStation.MainWindow"
+                       Title="UniMoveStation"
+                       ShowTitleBar="True"
+                       Style="{DynamicResource CleanWindowStyleKey}"
+                       BorderThickness="1"
+                       BorderBrush="{StaticResource AccentColorBrush}"
+                       Width="1280"
+                       Height="720"
+                       Loaded="MetroWindow_Loaded"
+                       Closing="MetroWindow_Closing">
+
     <!--Cast Window Shadow-->
     <i:Interaction.Behaviors>
-        <behaviours:BorderlessWindowBehavior 
-            AllowsTransparency="False"
-            EnableDWMDropShadow="True"
-            />
+        <behaviours:BorderlessWindowBehavior AllowsTransparency="False"
+                                             EnableDWMDropShadow="True"
+                                             />
         <behaviours:WindowsSettingBehaviour/>
         <behaviours:GlowWindowBehavior/>
     </i:Interaction.Behaviors>
-    
+
     <!--Import Icons-->
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Icons.xaml" />
+                <ResourceDictionary Source="/Resources/Icons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
     <!-- Main Window -->
-    <Grid>
+    <Grid x:Name="grid_main">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -47,14 +44,195 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <!--Navigation Panel-->
+        <StackPanel Orientation="Vertical">
+            <!--Controllers-->
+            <Expander FlowDirection="RightToLeft" 
+                      Padding="-1" 
+                      Margin="0 0 0 0" 
+                      BorderThickness="1"
+                      BorderBrush="{StaticResource AccentColorBrush}">
+                <Expander.Header>
+
+                    <!--All Controllers-->
+                    <Button FlowDirection="LeftToRight"
+                            BorderThickness="0"
+                            Background="{StaticResource AccentColorBrush}"
+                            Foreground="{StaticResource IdealForegroundColorBrush}"
+                            Style="{DynamicResource FlatButtonStyle}"
+                            Command="{Binding controls:MetroTabItem.IsSelected, ElementName=main_tab_controllers_all}">
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--Controller Icon-->
+                            <svgc:SvgViewbox Source="Resources/PlayStationCircle.svg"
+                                             Height="19"
+                                             Width="19"
+                                             Margin="3 0 3 0"
+                                             />
+                            <!--Controllers Label-->
+                            <TextBlock Text="CONTROLLERS" 
+                                       VerticalAlignment="Center"
+                                />
+                        </StackPanel>
+                    </Button>
+                </Expander.Header>
+                <!--Controller Tabs-->
+                <controls:MetroTabControl TabStripPlacement="Left"
+                                          FlowDirection="LeftToRight">
+                    <!--Add Controller Tab-->
+                    <controls:MetroTabItem  Visibility="Collapsed">
+                        <Button Padding="0"
+                                Margin="3 3 3 3"
+                                HorizontalAlignment="Center"
+                                BorderBrush="Transparent"
+                                Background="Transparent"
+                                Style="{DynamicResource FlatButtonStyle}"
+                                x:Name="main_button_controllers">
+                            
+                            <Rectangle Height="19"
+                                       Width="19"
+                                       Fill="{StaticResource AccentColorBrush}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_add}" 
+                                                 Stretch="UniformToFill"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+
+                    </controls:MetroTabItem>
+
+
+                </controls:MetroTabControl>
+            </Expander>
+            <!--Cameras-->
+            <Expander FlowDirection="RightToLeft"
+                      Padding="-1" 
+                      Margin="0 0 0 0" 
+                      BorderThickness="1"
+                      BorderBrush="{StaticResource AccentColorBrush}">
+                <Expander.Header>
+
+                    <!--All Cameras-->
+                    <Button FlowDirection="LeftToRight"
+                            BorderThickness="0"
+                            Padding="0"
+                            BorderBrush="Transparent"
+                            Background="{StaticResource AccentColorBrush}"
+                            Foreground="{StaticResource IdealForegroundColorBrush}"
+                            Style="{DynamicResource FlatButtonStyle}">
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--Camera Icon-->
+                            <svgc:SvgViewbox Source="Resources/PlayStationX.svg"
+                                             Height="19"
+                                             Width="19"
+                                             Margin="3 0 3 0"
+                                             />
+                            <!--Cameras Label-->
+                            <TextBlock Text="CAMERAS" 
+                                       VerticalAlignment="Center"
+                                />
+                        </StackPanel>
+                    </Button>
+                </Expander.Header>
+                <!--Camera Tabs-->
+                <controls:MetroTabControl TabStripPlacement="Left"
+                                          FlowDirection="LeftToRight">
+
+                    <!--Add Camera Tab-->
+                    <controls:MetroTabItem Visibility="Collapsed">
+                        <!--Add Camera-->
+                        <Button Padding="0"
+                                Margin="3 3 3 3"
+                                HorizontalAlignment="Center"
+                                BorderBrush="Transparent"
+                                Background="Transparent"
+                                Style="{DynamicResource FlatButtonStyle}">
+
+                            <!--Add Icon-->
+                            <Rectangle Height="19"
+                                       Width="19"
+                                       Fill="{StaticResource AccentColorBrush}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_add}"
+                                                 Stretch="UniformToFill"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </controls:MetroTabItem>
+                </controls:MetroTabControl>
+            </Expander>
+            <!--Server-->
+            <Expander FlowDirection="RightToLeft"
+                      Padding="-1" 
+                      Margin="0 0 0 0" 
+                      BorderThickness="1"
+                      BorderBrush="{StaticResource AccentColorBrush}">
+                <Expander.Header>
+
+                    <!--Server-->
+                    <Button FlowDirection="LeftToRight"
+                            BorderThickness="0"
+                            Padding="0"
+                            BorderBrush="Transparent"
+                            Background="{StaticResource AccentColorBrush}"
+                            Foreground="{StaticResource IdealForegroundColorBrush}"
+                            Style="{DynamicResource FlatButtonStyle}">
+
+                        <StackPanel Orientation="Horizontal">
+                            <!--Server Icon-->
+                            <svgc:SvgViewbox Source="Resources/PlayStationTriangle.svg"
+                                             Height="19"
+                                             Width="19"
+                                             Margin="3 0 3 0"
+                                             />
+                            <!--Server Label-->
+                            <TextBlock Text="SERVER" 
+                                       VerticalAlignment="Center"
+                                />
+                        </StackPanel>
+                    </Button>
+                </Expander.Header>
+                <!--Client Tabs-->
+                <controls:MetroTabControl TabStripPlacement="Left"
+                                          FlowDirection="LeftToRight">
+
+                    <!--Add Client Tab-->
+                    <controls:MetroTabItem Visibility="Collapsed">
+                        <!--Add Camera-->
+                        <Button Padding="0"
+                                Margin="3 3 3 3"
+                                HorizontalAlignment="Center"
+                                BorderBrush="Transparent"
+                                Background="Transparent"
+                                Style="{DynamicResource FlatButtonStyle}">
+
+                            <!--Add Icon-->
+                            <Rectangle Height="19"
+                                       Width="19"
+                                       Fill="{StaticResource AccentColorBrush}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Visual="{StaticResource appbar_add}"
+                                                 Stretch="UniformToFill"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </controls:MetroTabItem>
+                </controls:MetroTabControl>
+            </Expander>
+
+        </StackPanel>
+
+        <!--Old Expandable Navigation Panel-->
+        <!--
         <StackPanel 
+            Visibility="Hidden"
             Grid.Column="0"
             Grid.Row="0"
             Orientation="Vertical">
-            
-            <!--Controller-->
+
+            --><!--Controller--><!--
             <DockPanel 
                 Width="Auto">
 
@@ -66,16 +244,16 @@
                     Focusable="False"
                     HorizontalAlignment="Left"
                     Style="{DynamicResource FlatButtonStyle}">
-                    
+
                     <DockPanel>
-                        <!--Icon-->
+                        --><!--Icon--><!--
                         <svgc:SvgViewbox
                             Source="Resources/PlayStationCircle.svg"
                             Height="30"
                             Width="30"
                             Margin="5 5 5 5"
                         />
-                        <!--Label-->
+                        --><!--Label--><!--
                         <TextBlock 
                             Text="Controller" 
                             VerticalAlignment="Center" 
@@ -83,7 +261,7 @@
                             Margin="5,5,10,5"/>
                     </DockPanel>
                 </Button>
-                <!--Epand/Collapse-->
+                --><!--Epand/Collapse--><!--
                 <Button
                     HorizontalAlignment="Right"
                     Focusable="False"
@@ -92,36 +270,40 @@
                     BorderThickness="0"
                     Padding="15"
                     Style="{DynamicResource FlatButtonStyle}">
-                    
+
                     <Rectangle
                         MinHeight="10"
                         MinWidth="10">
-                        
+
                         <Rectangle.Fill>
                             <VisualBrush Visual="{StaticResource appbar_chevron_down}" Stretch="UniformToFill"/>
                         </Rectangle.Fill>
                     </Rectangle>
-
                 </Button>
             </DockPanel>
         </StackPanel>
+        -->
 
-        
+        <!--Main Tabs Control-->
         <controls:MetroTabControl
+            Visibility="Visible"
             Grid.Column="1"
             Grid.Row="0">
             <!--<controls:MetroTabItem>
                 <Grid>
-                    --><!--Home Tab--><!-- 
+                    -->
+            <!--Home Tab-->
+            <!-- 
                 </Grid>
             </controls:MetroTabItem>-->
-            <controls:MetroTabItem Visibility="Hidden">
+            
+            <!--Main Controllers Tab-->
+            <controls:MetroTabItem Visibility="Visible">
                 <Grid>
-                    <!--Moves Tab--> 
-                    <controls:MetroTabControl Margin="10 10 10 10">
-                        <TabItem>
+                    <controls:MetroTabControl>
+                        <!--All Moves Tab-->
+                        <controls:MetroTabItem x:Name="main_tab_controllers_all">
                             <Grid>
-                                <!--All Moves Tab--> 
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto" MinHeight="5"/>
@@ -133,23 +315,21 @@
 
                                 <ScrollViewer VerticalScrollBarVisibility="Visible">
                                     <Grid x:Name="grid_allMoves">
-                                        <!--All Moves--> 
+                                        <!--All Moves-->
                                     </Grid>
                                 </ScrollViewer>
 
-
-                                <GridSplitter 
-                                    Grid.Row="1" 
-                                    HorizontalAlignment="Center" 
-                                    VerticalAlignment="Stretch" 
-                                    MinHeight="5" 
-                                    Width="100"
-                                    ShowsPreview="True" 
-                                    ResizeDirection="Rows"
+                                <GridSplitter Grid.Row="1" 
+                                              HorizontalAlignment="Center" 
+                                              VerticalAlignment="Stretch" 
+                                              MinHeight="5" 
+                                              Width="100"
+                                              ShowsPreview="True" 
+                                              ResizeDirection="Rows"
                                     />
 
                                 <Grid Grid.Row="2">
-                                     <!--All Moves Console--> 
+                                    <!--All Moves Console-->
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
@@ -168,18 +348,16 @@
                                         x:Name="textBox_allMoves" 
                                         VerticalScrollBarVisibility="Auto"
                                         />
-                                     <!--All Moves Console--> 
                                 </Grid>
-                                 <!--All Moves Tab--> 
                             </Grid>
-                        </TabItem>
+                        </controls:MetroTabItem>
                         <TabItem 
                             Header="#1" 
                             controls:ControlsHelper.HeaderFontSize="18">
                             <Grid/>
                         </TabItem>
                     </controls:MetroTabControl>
-                     <!--Moves Tab--> 
+                    <!--Moves Tab-->
                 </Grid>
             </controls:MetroTabItem>
             <!--Cameras Tab-->
@@ -208,7 +386,7 @@
 
                                 <ScrollViewer VerticalScrollBarVisibility="Visible">
                                     <Grid x:Name="grid_allCameras">
-                                         <!--All Cameras--> 
+                                        <!--All Cameras-->
                                     </Grid>
                                 </ScrollViewer>
 
@@ -228,7 +406,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
-                                    
+
                                     <!--Console Label-->
                                     <TextBlock Grid.Row="0"
                                                Text="Console"
@@ -236,7 +414,7 @@
                                                VerticalAlignment="Bottom"
                                                Margin="5,0,0,0"
                                                />
-                                    
+
                                     <!--Console-->
                                     <TextBox Grid.Row="1"
                                              BorderThickness="1" 
@@ -247,17 +425,17 @@
                             </Grid>
 
                         </TabItem>
-                        
+
                         <TabItem 
                             Header="#1" 
                             controls:ControlsHelper.HeaderFontSize="18">
                             <Grid/>
                         </TabItem>
-                        
+
                     </controls:MetroTabControl>
-                    
+
                 </Grid>
-                
+
             </controls:MetroTabItem>
             <!--Server Tab-->
             <controls:MetroTabItem Visibility="Hidden">

@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="UniMoveStation.View.SingleCameraView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam;assembly=MyControls" 
+             xmlns:local="clr-namespace:UniMoveStation"
+             xmlns:ignore="http://www.ignore.com"
+             mc:Ignorable="d ignore">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" 
+                           MinHeight="5"
+                           />
+            <RowDefinition Height="Auto" 
+                           MinHeight="80"
+                           />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Visible">
+            <Grid x:Name="grid">
+                <!-- Main -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MinWidth="180"/>
+                    <ColumnDefinition MaxWidth="125"/>
+                    <ColumnDefinition MaxWidth="125"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="180"/>
+                </Grid.RowDefinitions>
+                <Grid Margin="3 3 3 3">
+                    <!-- Left Main Column -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition MaxHeight="30"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition MaxHeight="30"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" 
+                           Grid.Row="0"
+                           HorizontalContentAlignment="Center" 
+                           VerticalContentAlignment="Center" 
+                           Height="30"
+                           Background="{StaticResource AccentColorBrush2}" 
+                           Content="{Binding Name}"
+                           />
+                    <local:AspectRatioLayoutDecorator Grid.Column="0" 
+                                                      Grid.Row="1" 
+                                                      AspectRatio="1.3333">
+                        <Grid MinWidth="180">
+                            <Label VerticalContentAlignment="Center" 
+                                   HorizontalContentAlignment="Center"
+                                   Background="{StaticResource AccentColorBrush}"
+                                   Content="No Image" 
+                                   x:Name="label_cameraBackground"
+                                   Visibility="{Binding LabelCameraBackgroundVisibility}"
+                                   />
+                            <CLEyeMulticam:CLEyeImageControl Visibility="{Binding CLEyeImageControlVisibility}"/>
+                            <Image HorizontalAlignment="Stretch" 
+                                   VerticalAlignment="Stretch"
+                                   Visibility="{Binding TrackerImageVisibility}"
+                                   Source="{Binding TrackerService.ImageSource}"
+                                   />
+                        </Grid>
+                    </local:AspectRatioLayoutDecorator>
+                    <Grid Grid.Column="0" 
+                          Grid.Row="2"
+                          Background="{StaticResource AccentColorBrush2}">
+                        <Label Height="30" 
+                               Content="x" 
+                               HorizontalAlignment="Left" 
+                               Margin="10 0 0 0"
+                               />
+                        <Label Height="30" 
+                               Content="y" 
+                               HorizontalAlignment="Center"
+                               />
+                        <Label Height="30" 
+                               Content="z" 
+                               HorizontalAlignment="Right"
+                               Margin="0 0 10 0"
+                               />
+                    </Grid>
+                </Grid>
+                <StackPanel Grid.Row="0" 
+                            Grid.Column="2" 
+                            Orientation="Vertical">
+                    <controls:ToggleSwitchButton Content="Init Camera" 
+                                                 Margin="3,3,3,3"
+                                                 x:Name="button_initCamera"
+                                                 Command="{Binding ToggleCameraCommand}"
+                                                 CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                                                 />
+                    <CheckBox Content="Enable Tracking" 
+                              Margin="3,3,3,3"
+                              Command="{Binding EnableTrackingCommand}"
+                              CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                              />
+                    <CheckBox Content="Annotate" 
+                              Margin="3,3,3,3"
+                              Command="{Binding AnnotateCommand}"
+                              CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                              />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" 
+                            Grid.Column="1" 
+                            Orientation="Vertical">
+                </StackPanel>
+            </Grid>
+
+        </ScrollViewer>
+
+        <GridSplitter Grid.Row="1" 
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      MinHeight="5"
+                      Width="100"
+                      ShowsPreview="True"
+                      ResizeDirection="Rows"
+                      />
+
+        <!--All Cameras Console-->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Console Label-->
+            <TextBlock Grid.Row="0"
+                       Text="Console"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Margin="5,0,0,0"
+                       />
+
+            <!--Console-->
+            <TextBox Grid.Row="1"
+                     BorderThickness="1" 
+                     BorderBrush="{StaticResource AccentColorBrush}"
+                     x:Name="textBox_allCameras" VerticalScrollBarVisibility="Auto"
+                     />
+        </Grid>
+    </Grid>
+    
+</UserControl>

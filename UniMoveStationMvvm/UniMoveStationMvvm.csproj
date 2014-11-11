@@ -1,22 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EE76645A-E304-4E1E-BDAC-A54BA4085950}</ProjectGuid>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{73B999A5-065D-4305-9521-55BB0E2FD2D8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UniMoveStation</RootNamespace>
-    <AssemblyName>UniMoveStationWPF</AssemblyName>
+    <AssemblyName>UniMoveStationMvvm</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,52 +40,24 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
-    <Reference Include="ColorWheel.Controls">
-      <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Controls.dll</HintPath>
+    <Reference Include="Emgu.CV">
+      <HintPath>plugins\Emgu.CV.dll</HintPath>
     </Reference>
-    <Reference Include="ColorWheel.Core">
-      <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV, Version=2.9.0.1922, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\Emgu.CV.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.Util, Version=2.9.0.1922, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\Emgu.Util.dll</HintPath>
+    <Reference Include="Emgu.Util">
+      <HintPath>plugins\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -87,13 +75,11 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Nito.Async, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\Nito.Async.dll</HintPath>
+    <Reference Include="Nito.Async">
+      <HintPath>plugins\Nito.Async.dll</HintPath>
     </Reference>
-    <Reference Include="Nito.Async.Sockets, Version=1.4.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\Nito.Async.Sockets.dll</HintPath>
+    <Reference Include="Nito.Async.Sockets">
+      <HintPath>plugins\Nito.Async.Sockets.dll</HintPath>
     </Reference>
     <Reference Include="SharpVectors.Converters, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b532964b8548be77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -130,7 +116,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -142,13 +127,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLEyeServer\plugins\UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>plugins\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -159,21 +139,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\MoveControl.xaml.cs">
-      <DependentUpon>MoveControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SharpMove\SharpMoveController.cs" />
-    <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
-    <Compile Include="Utilities\ObservableBool.cs" />
-    <Compile Include="Utilities\Converter.cs" />
-    <Compile Include="Utilities\Observable.cs" />
-    <Compile Include="Controls\CameraControl.xaml.cs">
-      <DependentUpon>CameraControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="IO\TCPClientNito.cs" />
-    <Compile Include="IO\TCPClientNitoMove.cs" />
-    <Compile Include="IO\TCPServerNito.cs" />
-    <Compile Include="IO\TCPServerNitoMove.cs" />
+    <Compile Include="Design\DesignDataService.cs" />
+    <Compile Include="Helper\MyDataTemplateSelector.cs" />
+    <Compile Include="Model\AllCamerasModel.cs" />
+    <Compile Include="Model\SingleCameraModel.cs" />
+    <Compile Include="Model\DataItem.cs" />
+    <Compile Include="Service\DataService.cs" />
+    <Compile Include="Service\IDataService.cs" />
+    <Compile Include="Service\INavigationService.cs" />
+    <Compile Include="Service\ITrackerService.cs" />
+    <Compile Include="Model\MainModel.cs" />
+    <Compile Include="Model\MotionControllerModel.cs" />
+    <Compile Include="Service\NavigationService.cs" />
+    <Compile Include="Model\ServerModel.cs" />
+    <Compile Include="Service\TrackerService.cs" />
     <Compile Include="PSMoveAPI\PSMove.cs" />
     <Compile Include="PSMoveAPI\psmoveapi.cs" />
     <Compile Include="PSMoveAPI\psmoveapi_csharpPINVOKE.cs" />
@@ -183,45 +162,55 @@
     <Compile Include="PSMoveAPI\PSMoveTrackerRGBImage.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_float.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_void.cs" />
-    <Compile Include="Controls\ServerControl.xaml.cs">
-      <DependentUpon>ServerControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="SharpMove\SharpMoveController.cs" />
     <Compile Include="UniMove\UniMoveController.cs" />
     <Compile Include="UniMove\UniMoveHelper.cs" />
     <Compile Include="UniMove\UniMoveTracker.cs" />
-    <Compile Include="Controls\CheckBoxListControl.xaml.cs">
-      <DependentUpon>CheckBoxListControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
+    <Compile Include="Utilities\Converter.cs" />
+    <Compile Include="Utilities\Observable.cs" />
+    <Compile Include="Utilities\ObservableBool.cs" />
     <Compile Include="Utilities\Utils.cs" />
-    <Page Include="Controls\CameraControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\MoveControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="ViewModel\AllCamerasViewModel.cs" />
+    <Compile Include="ViewModel\SingleCameraViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MotionControllerViewModel.cs" />
+    <Compile Include="ViewModel\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\ServerViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\AllCamerasView.xaml.cs">
+      <DependentUpon>AllCamerasView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SingleCameraView.xaml.cs">
+      <DependentUpon>SingleCameraView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NavigationView.xaml.cs">
+      <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Controls\ServerControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\CheckBoxListControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\AllCamerasView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SingleCameraView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\NavigationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -244,40 +233,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
     <Resource Include="Resources\Entypo.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="plugins\Emgu.CV.dll" />
-    <Content Include="plugins\Emgu.Util.dll" />
-    <Content Include="plugins\libpsmoveapi_csharp.dll" />
-    <Content Include="plugins\Nito.Async.dll" />
-    <Content Include="plugins\Nito.Async.Sockets.dll" />
-    <Content Include="plugins\UnityEditor.dll" />
-    <Content Include="plugins\UnityEngine.dll" />
-    <Resource Include="Resources\WindowsIcons-license.txt" />
-    <Resource Include="Resources\Entypo-license.txt" />
-    <Content Include="Resources\wynCamera.svg" />
-    <Content Include="Resources\wynWand.svg" />
-    <Resource Include="Resources\PlayStationCircle.svg" />
-    <Resource Include="Resources\PlayStationSquare.svg" />
-    <Resource Include="Resources\PlayStationTriangle.svg" />
-    <Resource Include="Resources\PlayStationX.svg" />
-    <Resource Include="Resources\PlayStationCircle.svg.png" />
-    <Resource Include="Resources\PlayStationSquare.svg.png" />
-    <Resource Include="Resources\PlayStationTriangle.svg.png" />
-    <Resource Include="Resources\PlayStationX.svg.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLEyeImage\CLEyeImage.csproj">
@@ -288,6 +250,39 @@
       <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
       <Name>Messages</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayStationCircle.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayStationSquare.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayStationTriangle.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayStationX.svg" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
