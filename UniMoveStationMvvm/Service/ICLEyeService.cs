@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace UniMoveStation.Service
 {
-    public class NavigationService
+    public interface ICLEyeService
     {
+        bool Start(int id);
+
+        bool Stop();
+
+        bool Enabled
+        {
+            get;
+            set;
+        }
     }
 }

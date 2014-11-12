@@ -140,11 +140,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Design\DesignDataService.cs" />
+    <Compile Include="Helper\MyItemTemplateSelector .cs" />
     <Compile Include="Helper\MyDataTemplateSelector.cs" />
     <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
     <Compile Include="Model\DataItem.cs" />
+    <Compile Include="Service\CLEyeService.cs" />
     <Compile Include="Service\DataService.cs" />
+    <Compile Include="Service\ICLEyeService.cs" />
     <Compile Include="Service\IDataService.cs" />
     <Compile Include="Service\INavigationService.cs" />
     <Compile Include="Service\ITrackerService.cs" />
@@ -152,6 +155,7 @@
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Service\NavigationService.cs" />
     <Compile Include="Model\ServerModel.cs" />
+    <Compile Include="Service\ObservableObject.cs" />
     <Compile Include="Service\TrackerService.cs" />
     <Compile Include="PSMoveAPI\PSMove.cs" />
     <Compile Include="PSMoveAPI\psmoveapi.cs" />

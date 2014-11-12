@@ -37,7 +37,7 @@ namespace CLEyeMulticam
             cameraImage.Dispose();
         }
 
-        public void stop()
+        public void Stop()
         {
             if (cameraImage.Device != null)
             {
@@ -46,7 +46,7 @@ namespace CLEyeMulticam
             }
         }
 
-        public void start(int UUID)
+        public void Start(int UUID)
         {
             if(cameraImage.Device != null)
             {

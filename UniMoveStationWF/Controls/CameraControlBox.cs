@@ -172,7 +172,7 @@ namespace UniMoveStation
             if (!initializedCLEye)
             {
                 image = new CLEyeImageControl(trackerId);
-                image.start(trackerId);
+                image.Start(trackerId);
                 setImage(image);
 
                 initializedCLEye = true;
@@ -180,7 +180,7 @@ namespace UniMoveStation
             }
             else
             {
-                image.stop();
+                image.Stop();
                 setImage(null);
                 button_initCamera.Text = "Init Camera";
                 initializedCLEye = false;

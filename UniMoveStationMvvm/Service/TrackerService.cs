@@ -9,55 +9,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using UniMove;
+using UniMoveStation.Model;
 using UniMoveStation.Utilities;
 
-namespace UniMoveStation.Model
+namespace UniMoveStation.Service
 {
     public class TrackerService : ITrackerService
     {
-
-        public TrackerService(int id)
-        {
-            tracker = new UniMoveTracker(id);
-        }
-
+        #region Member
         /// <summary>
         /// BackgroundWorker updating the image while tracking
         /// </summary>
-        public BackgroundWorker bw;
+        private BackgroundWorker _bw;
 
         /// <summary>
         /// indicates that the BackgroudWorker was cancelled successfully
         /// </summary>
-        private AutoResetEvent bwResetEvent;
+        private AutoResetEvent _bwResetEvent;
 
-        public UniMoveTracker tracker;
-
-        public List<UniMoveController> moves;
-
-        public bool Annotate
-        {
-            get;
-            set;
-        }
-
-        public ImageSource ImageSource
-        {
-            get;
-            set;
-        }
-
-
-
-        public void StartTracking()
-        {
-            initBackgroundWorker();
-        }
-
-        public void StopTracking()
-        {
-            cancelBackgroundWorker();
-        }
+        private SingleCameraModel _camera;
 
         /// <summary>
         /// Color pool for controllers being tracked
@@ -70,20 +40,46 @@ namespace UniMoveStation.Model
             UnityEngine.Color.yellow,
             UnityEngine.Color.white
         };
+        #endregion
+
+        #region Constructor
+        public TrackerService(SingleCameraModel camera)
+        {
+            _camera = camera;
+        }
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="moves"></param>
+        private void InitTracker(List<UniMoveController> moves)
+        {
+            //enable all UniMoveControllers for tracking
+            _camera.Tracker = new UniMoveTracker(0);
+            for (int i = 0; i < moves.Count; i++)
+            {
+                _camera.Tracker.EnableTracking(moves[i], colors[i]);
+            }
+
+            //start BackgroundWorker updating the image
+            InitBackgroundWorker();
+        }
+
 
         #region [ BackgroundWorker ]
-        private void initBackgroundWorker()
+        private void InitBackgroundWorker()
         {
             //init worker
-            bw = new BackgroundWorker();
-            bw.WorkerSupportsCancellation = true;
-            bw.WorkerReportsProgress = true;
+            _bw = new BackgroundWorker();
+            _bw.WorkerSupportsCancellation = true;
+            _bw.WorkerReportsProgress = true;
 
             //add event handlers
-            bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
-            bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
-            bwResetEvent = new AutoResetEvent(false);
+            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+            _bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
+            _bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+            _bwResetEvent = new AutoResetEvent(false);
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e)
@@ -92,8 +88,8 @@ namespace UniMoveStation.Model
             //update image 
             while (!worker.CancellationPending)
             {
-                tracker.UpdateTracker();
-                bw.ReportProgress(0);
+                _camera.Tracker.UpdateTracker();
+                _bw.ReportProgress(0);
             }
 
             e.Cancel = true;
@@ -102,12 +98,12 @@ namespace UniMoveStation.Model
             worker.ProgressChanged -= new ProgressChangedEventHandler(bw_ProgressChanged);
 
             //signal completion
-            bwResetEvent.Set();
+            _bwResetEvent.Set();
         }
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //updateImage();
+            UpdateImage();
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -117,62 +113,84 @@ namespace UniMoveStation.Model
             worker.DoWork -= new DoWorkEventHandler(bw_DoWork);
             worker.ProgressChanged -= new ProgressChangedEventHandler(bw_ProgressChanged);
             //signal completion
-            bwResetEvent.Set();
+            _bwResetEvent.Set();
         }
 
-        public void cancelBackgroundWorker()
+        private void CancelBackgroundWorker()
         {
-            bw.CancelAsync();
+            _bw.CancelAsync();
             //wait until worker is finished
-            bwResetEvent.WaitOne(-1);
-            bwResetEvent = new AutoResetEvent(false);
+            _bwResetEvent.WaitOne(-1);
+            _bwResetEvent = new AutoResetEvent(false);
 
             //console.AppendText(string.Format("Camera {0} stopped tracking.\n", trackerId));
         }
         #endregion
 
+        #region Interface Implementation
+        public bool Enabled
+        {
+            get;
+            set;
+        }
+
+        public bool Start()
+        {
+            _camera.Controllers = new List<UniMoveController>();
+            UniMoveController controller = new UniMoveController();
+            controller.Init(0);
+            _camera.Controllers.Add(controller);
+            InitTracker(_camera.Controllers);
+            _bw.RunWorkerAsync();
+
+            return Enabled = true;
+        }
+
+        public bool Stop()
+        {
+            CancelBackgroundWorker();
+            _camera.Tracker.DisableTracking();
+
+            return Enabled = false;
+        }
+
         public void AddMotionController(UniMoveController motionController)
         {
-            moves.Add(motionController);
-            tracker.EnableTracking(motionController, UnityEngine.Color.blue);
+            _camera.Controllers.Add(motionController);
+            _camera.Tracker.EnableTracking(motionController, UnityEngine.Color.blue);
         }
 
         public void RemoveMotionController(UniMoveController motionController)
         {
-            foreach(UniMove.UniMoveTracker.TrackedController controller in tracker.controllers)
+            foreach(UniMove.UniMoveTracker.TrackedController controller in _camera.Tracker.controllers)
             {
                 if (controller.move == motionController)
                 {
-                    tracker.controllers.Remove(controller);
+                    _camera.Tracker.controllers.Remove(controller);
                     break;
                 }
             }
-            moves.Remove(motionController);
+            _camera.Controllers.Remove(motionController);
         }
 
         public void UpdateImage()
         {
-            if (tracker.getCPtr().Handle != IntPtr.Zero)
+            if (_camera.ShowImage && _camera.Tracker.getCPtr().Handle != IntPtr.Zero)
             {
                 //display useful information
-                if (Annotate)
+                if (_camera.Annotate)
                 {
-                    tracker.annotate();
+                    _camera.Tracker.annotate();
                 }
                 //retrieve and convert image frame
-                IntPtr frame = tracker.get_frame();
+                IntPtr frame = _camera.Tracker.get_frame();
                 MIplImage rgb32Image = new MIplImage();
                 rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
                 //display image
                 System.Drawing.Bitmap bitmap = Utils.MIplImagePointerToBitmap(rgb32Image);
-                ImageSource = Utils.loadBitmap(bitmap);
+                _camera.ImageSource = Utils.loadBitmap(bitmap);
             }
         }
-
-
-        public void ToggleCamera(SingleCameraModel.CameraState state)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}
+        #endregion
+    } // TrackerService
+} // Namespace

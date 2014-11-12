@@ -1,25 +1,22 @@
 ﻿using UniMove;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight;
+using System.Windows.Media;
+using UniMoveStation.Helper;
 
 namespace UniMoveStation.Model
 {
     
     public class SingleCameraModel : ObservableObject
     {
+        private bool _annotate;
+        private int _id;
+        private string _name;
+        private bool _showImage;
+        private bool _tracking;
+        private ImageSource _imageSource;
         private UniMoveTracker _tracker;
         private List<UniMoveController> _moves;
-        private CameraState _state;
-        private bool _annotate;
-
-        public enum CameraState
-        {
-            CLEye_Tracking,
-            PSMove_Tracking,
-            none
-        }
-
-
 
         public bool Annotate
         {
@@ -33,6 +30,65 @@ namespace UniMoveStation.Model
             }
         }
 
+        public int Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                Set(() => Id, ref _id, value);
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                Set(() => Name, ref _name, value);
+            }
+        }
+
+        public bool ShowImage
+        {
+            get
+            {
+                return _showImage;
+            }
+            set
+            {
+                Set(() => ShowImage, ref _showImage, value);
+            }
+        }
+
+        public bool Tracking
+        {
+            get
+            {
+                return _tracking;
+            }
+            set
+            {
+                Set(() => Tracking, ref _tracking, value);
+            }
+        }
+
+        public ImageSource ImageSource
+        {
+            get
+            {
+                return _imageSource;
+            }
+            set
+            {
+                Set(() => ImageSource, ref _imageSource, value);
+            }
+        }
         
         public UniMoveTracker Tracker
         {
@@ -46,7 +102,7 @@ namespace UniMoveStation.Model
             }
         }
 
-        public List<UniMoveController> Moves
+        public List<UniMoveController> Controllers
         {
             get
             {
@@ -54,19 +110,7 @@ namespace UniMoveStation.Model
             }
             set
             {
-                Set(() => Moves, ref _moves, value);
-            }
-        }
-
-        public CameraState State
-        {
-            get
-            {
-                return _state;
-            }
-            set
-            {
-                Set(() => State, ref _state, value);
+                Set(() => Controllers, ref _moves, value);
             }
         }
     }

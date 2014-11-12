@@ -5,7 +5,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam;assembly=MyControls" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:UniMoveStation"
+             xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
+             xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore">
 
@@ -47,7 +51,7 @@
                            VerticalContentAlignment="Center" 
                            Height="30"
                            Background="{StaticResource AccentColorBrush2}" 
-                           Content="{Binding Name}"
+                           Content="{Binding Camera.Name}"
                            />
                     <local:AspectRatioLayoutDecorator Grid.Column="0" 
                                                       Grid.Row="1" 
@@ -56,16 +60,16 @@
                             <Label VerticalContentAlignment="Center" 
                                    HorizontalContentAlignment="Center"
                                    Background="{StaticResource AccentColorBrush}"
-                                   Content="No Image" 
-                                   x:Name="label_cameraBackground"
-                                   Visibility="{Binding LabelCameraBackgroundVisibility}"
+                                   Content="No Image"
                                    />
                             <CLEyeMulticam:CLEyeImageControl Visibility="{Binding CLEyeImageControlVisibility}"/>
+                                
                             <Image HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Stretch"
                                    Visibility="{Binding TrackerImageVisibility}"
-                                   Source="{Binding TrackerService.ImageSource}"
+                                   Source="{Binding Camera.ImageSource}"
                                    />
+
                         </Grid>
                     </local:AspectRatioLayoutDecorator>
                     <Grid Grid.Column="0" 
@@ -90,22 +94,48 @@
                 <StackPanel Grid.Row="0" 
                             Grid.Column="2" 
                             Orientation="Vertical">
-                    <controls:ToggleSwitchButton Content="Init Camera" 
-                                                 Margin="3,3,3,3"
-                                                 x:Name="button_initCamera"
-                                                 Command="{Binding ToggleCameraCommand}"
-                                                 CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
-                                                 />
-                    <CheckBox Content="Enable Tracking" 
-                              Margin="3,3,3,3"
-                              Command="{Binding EnableTrackingCommand}"
-                              CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
-                              />
-                    <CheckBox Content="Annotate" 
-                              Margin="3,3,3,3"
-                              Command="{Binding AnnotateCommand}"
-                              CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
-                              />
+                    <controls:ToggleSwitch Header="Camera"
+                                           Margin="3,3,3,3"
+                                           x:Name="switch_camera"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.ShowImage}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_camera}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Tracking"
+                                           Margin="3,3,3,3"
+                                           x:Name="switch_tracking"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Tracking}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Annotate"
+                                           Margin="3,3,3,3"
+                                           x:Name="switch_annotate"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Annotate}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" 

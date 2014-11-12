@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.View
 {
@@ -14,6 +16,15 @@ namespace UniMoveStation.View
         public SingleCameraView()
         {
             InitializeComponent();
+            DataContextChanged += SingleCameraView_DataContextChanged;
+        }
+
+        void SingleCameraView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue != null && e.OldValue is SingleCameraViewModel) 
+                Console.WriteLine("old " + ((SingleCameraViewModel)e.OldValue).Camera.Name);
+            if(e.NewValue != null && e.NewValue is SingleCameraViewModel) 
+                Console.WriteLine("new " + ((SingleCameraViewModel) e.NewValue).Camera.Name);
         }
     }
 }

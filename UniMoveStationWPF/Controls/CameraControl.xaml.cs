@@ -185,14 +185,14 @@ namespace UniMoveStation
             {
                 label_cameraBackground.Visibility = System.Windows.Visibility.Hidden;
 
-                clEyeImageControl.start(trackerId);
+                clEyeImageControl.Start(trackerId);
 
                 initializedCLEye = true;
                 button_initCamera.Content = "Stop Camera";
             }
             else
             {
-                clEyeImageControl.stop();
+                clEyeImageControl.Stop();
 
                 label_cameraBackground.Visibility = System.Windows.Visibility.Visible;
 

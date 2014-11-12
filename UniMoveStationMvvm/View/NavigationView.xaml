@@ -17,15 +17,26 @@
 
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
-                      x:Key="SingleCameraTemplate">
-            <v:SingleCameraView DataContext="{Binding}"/>
+                      x:Key="SingleCameraDataTemplate">
+            <v:SingleCameraView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
-                      x:Key="AllCamerasTemplate">
-            <v:AllCamerasView DataContext="{Binding}"/>
+                      x:Key="AllCamerasDataTemplate">
+            <v:AllCamerasView/>
+        </DataTemplate>
+
+
+        <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
+                      x:Key="SingleCameraItemTemplate">
+            <TextBlock Text="{Binding Camera.Name}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
+                      x:Key="AllCamerasItemTemplate">
+            <TextBlock Text="{Binding Name}"/>
         </DataTemplate>
 
         <helper:MyDataTemplateSelector x:Key="MyDataTemplateSelector"/>
+        <helper:MyItemTemplateSelector x:Key="MyItemTemplateSelector"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -45,7 +56,7 @@
                     <!--All Controllers-->
                     <Button FlowDirection="LeftToRight"
                             BorderThickness="0"
-                            Background="{StaticResource AccentColorBrush}"
+                            Background="Transparent"
                             Foreground="{StaticResource IdealForegroundColorBrush}"
                             Style="{DynamicResource FlatButtonStyle}"
                             Command="{Binding SelectTabCommand}"
@@ -80,12 +91,11 @@
                       BorderBrush="{StaticResource AccentColorBrush}">
                 <Expander.Header>
 
-                    <!--All Cameras-->
                     <Button FlowDirection="LeftToRight"
                             BorderThickness="0"
                             Padding="0"
                             BorderBrush="Transparent"
-                            Background="{StaticResource AccentColorBrush}"
+                            Background="Transparent"
                             Foreground="{StaticResource IdealForegroundColorBrush}"
                             Style="{DynamicResource FlatButtonStyle}">
 
@@ -102,6 +112,8 @@
                                 />
                         </StackPanel>
                     </Button>
+                    <!--All Cameras-->
+                    
                 </Expander.Header>
                 <!--Camera Tabs-->
                 <controls:MetroTabControl TabStripPlacement="Left"
@@ -110,7 +122,7 @@
 
                     <controls:MetroTabControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
+                            <TextBlock Text="{Binding Camera.Name}"/>
                         </DataTemplate>
                     </controls:MetroTabControl.ItemTemplate>
                     <controls:MetroTabControl.ContentTemplate>
@@ -134,7 +146,7 @@
                             BorderThickness="0"
                             Padding="0"
                             BorderBrush="Transparent"
-                            Background="{StaticResource AccentColorBrush}"
+                            Background="Transparent"
                             Foreground="{StaticResource IdealForegroundColorBrush}"
                             Style="{DynamicResource FlatButtonStyle}">
 
@@ -238,13 +250,8 @@
                                    Header="Cameras">
                 <controls:MetroTabControl Margin="10 10 10 10"
                                           ItemsSource="{Binding Cameras}"
+                                          ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
                                           ContentTemplateSelector="{StaticResource MyDataTemplateSelector}">
-                    <controls:MetroTabControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </controls:MetroTabControl.ItemTemplate>
-
                 </controls:MetroTabControl>
 
             </controls:MetroTabItem>

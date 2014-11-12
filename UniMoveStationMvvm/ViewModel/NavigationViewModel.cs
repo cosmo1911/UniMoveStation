@@ -72,9 +72,9 @@ namespace UniMoveStation.ViewModel
             SelectTabCommand = new RelayCommand<MetroTabItem>(DoSelectTab);
             AddCameraCommand = new RelayCommand(DoAddCamera);
 
-            new SingleCameraViewModel(0);
-            new SingleCameraViewModel(1337);
-            new SingleCameraViewModel(1);
+            SingleCameras.Add(new SingleCameraViewModel(0));
+            SingleCameras.Add(new SingleCameraViewModel(1337));
+            SingleCameras.Add(new SingleCameraViewModel(1));
         }
 
         /// <summary>

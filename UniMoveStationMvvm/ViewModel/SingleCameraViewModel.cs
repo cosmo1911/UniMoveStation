@@ -18,54 +18,131 @@ using UniMoveStation.Model;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using UniMoveStation.Service;
+using UniMoveStation.View;
+
 namespace UniMoveStation.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class SingleCameraViewModel : ViewModelBase
     {
-        private TrackerService _trackerService;
-
-        public string Name
+        #region Member
+        public SingleCameraModel Camera
         {
             get;
             set;
         }
 
-        public SingleCameraModel SingleCamera
-        {
-            get;
-            set;
-        }
-
-        public TrackerService TrackerService
+        public ITrackerService TrackerService
         {
             get;
             private set;
         }
 
-        public Visibility LabelCameraBackgroundVisibility
+        public ICLEyeService CLEyeService
         {
             get;
-            set;
+            private set;
         }
+        #endregion
 
+        #region Constructor
+        /// <summary>
+        /// Initializes a new instance of the MotionControllerViewModel class.
+        /// </summary>
+        [PreferredConstructor]
+        public SingleCameraViewModel(int trackerId)
+        {
+            Camera = new SingleCameraModel();
+
+            //Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
+            TrackerService = new TrackerService(Camera);
+            CLEyeService = new CLEyeService();
+
+            Camera.Id = trackerId;
+            Camera.Name = "Camera " + trackerId;
+
+            Camera.Controllers = new List<UniMoveController>();
+
+            ToggleCameraCommand = new RelayCommand<bool>(DoToggleCamera);
+            ToggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate);
+            ToggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking);
+            SimpleIoc ioc = (SimpleIoc)ServiceLocator.Current;
+            ioc.Register(() => this, Camera.Name, true);
+
+        }
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// The <see cref="CLEyeImageControlVisibility" /> property's name.
+        /// </summary>
+        public const string CLEyeImageControlVisibilityPropertyName = "CLEyeImageControlVisibility";
+
+        private Visibility _clEyeImageControlVisibility = Visibility.Hidden;
+
+        /// <summary>
+        /// Sets and gets the CLEyeImageControlVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
         public Visibility CLEyeImageControlVisibility
         {
-            get;
-            set;
+            get
+            {
+                return _clEyeImageControlVisibility;
+            }
+
+            set
+            {
+                if (_clEyeImageControlVisibility == value)
+                {
+                    return;
+                }
+
+                _clEyeImageControlVisibility = value;
+                RaisePropertyChanged(() => CLEyeImageControlVisibility);
+            }
         }
 
+        /// <summary>
+        /// The <see cref="TrackerImageVisibility" /> property's name.
+        /// </summary>
+        public const string TrackerImageVisibilityPropertyName = "TrackerImageVisibility";
+
+        private Visibility _trackerImageVisibility = Visibility.Hidden;
+
+        /// <summary>
+        /// Sets and gets the TrackerImageVisibility property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
         public Visibility TrackerImageVisibility
         {
-            get;
-            set;
-        }
+            get
+            {
+                return _trackerImageVisibility;
+            }
 
+            set
+            {
+                if (_trackerImageVisibility == value)
+                {
+                    return;
+                }
+
+                _trackerImageVisibility = value;
+                RaisePropertyChanged(() => TrackerImageVisibility);
+            }
+        }
+        #endregion
+
+        #region Relay Commands
+        /// <summary>
+        /// Gets the AnnotateCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleAnnotateCommand
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Gets the MyCommand.
@@ -76,168 +153,74 @@ namespace UniMoveStation.ViewModel
             private set;
         }
 
-        /// <summary>
-        /// Gets the AnnotateCommand.
-        /// </summary>
-        public RelayCommand<bool> AnnotateCommand
-        {
-            get;
-            private set;
-        }
-
-        public void DoAnnotate(bool annotate)
-        {
-            TrackerService.Annotate = annotate;
-        }
-
-
-        #region [ Contructor ]
-        /// <summary>
-        /// Initializes a new instance of the MotionControllerViewModel class.
-        /// </summary>
-        [PreferredConstructor]
-        public SingleCameraViewModel(int trackerId)
-        {
-            //Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
-            TrackerService = new TrackerService(trackerId);
-            SingleCamera = new SingleCameraModel();
-
-            SingleCamera.Tracker = TrackerService.tracker;
-            Name = "Camera " + trackerId;
-
-            SingleCamera.Moves = new List<UniMoveController>();
-
-            ToggleCameraCommand = new RelayCommand<bool>(DoToggleCamera);
-            AnnotateCommand = new RelayCommand<bool>(DoAnnotate);
-            EnableTrackingCommand = new RelayCommand<bool>(DoEnableTracking);
-            SimpleIoc ioc = (SimpleIoc)ServiceLocator.Current;
-            ioc.Register(() => this, Name, true);
-        }
-
-        #endregion
-
-        public void toggleTracker(bool enable)
-        {
-            if (enable)
-            {
-
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moves"></param>
-        public void initTracker(List<UniMoveController> moves)
-        {
-            //stop CLEye Camera if enabled
-            DoToggleCamera(false);
-            //enable all UniMoveControllers for tracking
-            //_trackerService.SetTracker(camera.Tracker);
-            TrackerService.tracker.StartTracker(SingleCamera.Tracker.id);
-            for (int i = 0; i < moves.Count; i++)
-            {
-                //if (checkBoxList_moves.checkBoxListBoxItems[i].IsChecked)
-                //{
-                //    camera.Tracker.EnableTracking(moves[i], camera.Tracker.id, colors[i]);
-                //}
-                //else
-                //{
-                //    camera.Tracker.controllers.Add(new UniMoveTracker.TrackedController(moves[i]));
-                //}
-            }
-
-            //start BackgroundWorker updating the image
-            //initBackgroundWorker();
-        }
-
-        #region [ Private Methods ]
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vector"></param>
-        private void setCoordinates(Vector3 vector)
-        {
-            //textBox_X.Text = vector.x.ToString();
-            //textBox_Y.Text = vector.y.ToString();
-            //textBox_R.Text = vector.z.ToString();
-        }
-
-
-
-        /// <summary>
-        /// starts or stops displaying the camera image from the CL Eye Camera
-        /// </summary>
-        private void DoToggleCamera(bool enable)
-        {
-            if (enable)
-            {
-                LabelCameraBackgroundVisibility = Visibility.Hidden;
-
-                //clEyeImageControl.start(camera.Tracker.id);
-
-                //initializedCLEye = true;
-                //button_initCamera.Content = "Stop Camera";
-            }
-            else
-            {
-                //clEyeImageControl.stop();
-
-                LabelCameraBackgroundVisibility = System.Windows.Visibility.Visible;
-
-                //button_initCamera.Content = "Init Camera";
-                //initializedCLEye = false;
-            }
-        }
-
-
-        #endregion
-
-        #region [ Misc ]
-        private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
-        {
-            DoToggleCamera(false);
-            if (TrackerService.bw != null)
-            {
-                TrackerService.cancelBackgroundWorker();
-            }
-
-            if (SingleCamera.Tracker != null)
-            {
-                SingleCamera.Tracker.DisableTracking();
-            }
-        }
-        #endregion
 
         /// <summary>
         /// Gets the EnableTracking.
         /// </summary>
-        public RelayCommand<bool> EnableTrackingCommand
+        public RelayCommand<bool> ToggleTrackingCommand
         {
             get;
             private set;
         }
+        #endregion
 
-        public void DoEnableTracking(bool enabled)
+        #region Command Executions
+        public void DoToggleAnnotate(bool annotate)
+        {
+            Camera.Annotate = annotate;
+        }
+
+        /// <summary>
+        /// starts or stops displaying the camera image from the CL Eye Camera
+        /// </summary>
+        private void DoToggleCamera(bool enabled)
+        {
+            if (enabled == true)
+            {
+                if(TrackerService.Enabled)
+                {
+                    CLEyeImageControlVisibility = Visibility.Hidden;
+                    TrackerImageVisibility = Visibility.Visible;
+                }
+                else if(!CLEyeService.Enabled)
+                {
+                    CLEyeImageControlVisibility = Visibility.Visible;
+                    TrackerImageVisibility = Visibility.Hidden;
+
+                    CLEyeService.Start(Camera.Id);
+                }
+            }
+            else
+            {
+                if (CLEyeService.Enabled) CLEyeService.Stop();
+                else if (TrackerService.Enabled) Camera.ShowImage = false;
+
+                CLEyeImageControlVisibility = Visibility.Hidden;
+                TrackerImageVisibility = Visibility.Hidden;
+            }
+        }
+
+        public void DoToggleTracking(bool enabled)
         {
             if (enabled)
             {
-                TrackerService.StartTracking();
+                if (CLEyeService.Enabled)
+                {
+                    CLEyeService.Stop();
+                    CLEyeImageControlVisibility = Visibility.Hidden;
+                }
+                Camera.Tracking = TrackerService.Start();
+                TrackerImageVisibility = Visibility.Visible;
             }
             else
             {
-                TrackerService.StopTracking();
-            }
-            if (enabled)
-            {
-                List<UniMoveController> moves = new List<UniMoveController>();
-                //moves.AddRange(checkBoxList_moves.moves);
-                initTracker(moves);
-                //bw.RunWorkerAsync();
-            }
-            else
-            {
-
+                Camera.Tracking = TrackerService.Stop();
+                TrackerImageVisibility = Visibility.Hidden;
             }
         }
-    }
-}
+        #endregion
+
+        #region Misc
+        #endregion
+    } // SingleCameraViewModel
+} // Namespace
