@@ -6,6 +6,8 @@
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:UniMoveStation"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:model="clr-namespace:UniMoveStation.Model"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:v="clr-namespace:UniMoveStation.View"
@@ -97,7 +99,9 @@
                             BorderBrush="Transparent"
                             Background="Transparent"
                             Foreground="{StaticResource IdealForegroundColorBrush}"
-                            Style="{DynamicResource FlatButtonStyle}">
+                            Style="{DynamicResource FlatButtonStyle}"
+                            Command="{Binding SelectCameraCommand}"
+                            CommandParameter="-1">
 
                         <StackPanel Orientation="Horizontal">
                             <!--Camera Icon-->
@@ -118,11 +122,19 @@
                 <!--Camera Tabs-->
                 <controls:MetroTabControl TabStripPlacement="Left"
                                           FlowDirection="LeftToRight"
-                                          ItemsSource="{Binding SingleCameras}">
+                                          ItemsSource="{Binding SingleCameras}"
+                                          x:Name="navigation_control_cameras">
 
                     <controls:MetroTabControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Camera.Name}"/>
+                            <TextBlock Text="{Binding Camera.Name}" FontSize="12">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonUp">
+                                        <mvvm:EventToCommand Command="{Binding Navigation.SelectCameraCommand, Source={StaticResource ViewModelLocator}}"
+                                                             CommandParameter="{Binding SelectedIndex, ElementName=navigation_control_cameras}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
                         </DataTemplate>
                     </controls:MetroTabControl.ItemTemplate>
                     <controls:MetroTabControl.ContentTemplate>
@@ -176,7 +188,8 @@
         <!--Main Tabs Control-->
         <controls:MetroTabControl Visibility="Visible"
                                   Grid.Column="1"
-                                  Grid.Row="0">
+                                  Grid.Row="0"
+                                  SelectedIndex="{Binding MainSelectedIndex}">
             <!--<controls:MetroTabItem>
                 <Grid>
                     -->
@@ -188,7 +201,7 @@
             <!--Main Controllers Tab-->
             <controls:MetroTabItem Visibility="Visible"
                                    Header="Controllers">
-                <controls:MetroTabControl>
+                <controls:MetroTabControl SelectedIndex="{Binding ControllerSelectedIndex}">
                     <!--All Moves Tab-->
                     <controls:MetroTabItem Header="All"
                                                x:Name="main_tab_controllers_all">
@@ -249,6 +262,7 @@
             <controls:MetroTabItem Visibility="Visible"
                                    Header="Cameras">
                 <controls:MetroTabControl Margin="10 10 10 10"
+                                          SelectedIndex="{Binding CameraSelectedIndex}"
                                           ItemsSource="{Binding Cameras}"
                                           ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
                                           ContentTemplateSelector="{StaticResource MyDataTemplateSelector}">
