@@ -25,6 +25,7 @@ namespace CLEyeMulticam
         {
             InitializeComponent();
             Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
+            
         }
 
         private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
@@ -50,7 +51,6 @@ namespace CLEyeMulticam
         {
             if(cameraImage.Device != null)
             {
-                
                 cameraImage.Visibility = System.Windows.Visibility.Visible;
                 cameraImage.Device.Resolution = CLEyeCameraResolution.CLEYE_VGA;
                 cameraImage.Device.ColorMode = CLEyeCameraColorMode.CLEYE_COLOR_RAW;
@@ -69,5 +69,5 @@ namespace CLEyeMulticam
                 cameraImage.Device.Start();
             }
         }
-    } //CLEyeImageControl
-} //namespace
+    } // CLEyeImageControl
+} // namespace

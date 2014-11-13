@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam;assembly=MyControls" 
+             xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:UniMoveStation"
@@ -57,12 +57,14 @@
                                                       Grid.Row="1" 
                                                       AspectRatio="1.3333">
                         <Grid MinWidth="180">
-                            <Label VerticalContentAlignment="Center" 
+                            <!--<Label VerticalContentAlignment="Center" 
                                    HorizontalContentAlignment="Center"
                                    Background="{StaticResource AccentColorBrush}"
                                    Content="No Image"
-                                   />
-                            <CLEyeMulticam:CLEyeImageControl Visibility="{Binding CLEyeImageControlVisibility}"/>
+                                   />-->
+                            <CLEyeMulticam:CLEyeCameraImage Device="{Binding CLEyeService.Device}"
+                                                            Visibility="{Binding CLEyeImageControlVisibility}"
+                                                            Source="{Binding Camera.BitmapSource}"/>
                                 
                             <Image HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Stretch"

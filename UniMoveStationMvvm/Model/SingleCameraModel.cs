@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using System.Windows.Media;
 using UniMoveStation.Helper;
+using System.Windows.Media.Imaging;
 
 namespace UniMoveStation.Model
 {
@@ -14,6 +15,7 @@ namespace UniMoveStation.Model
         private string _name;
         private bool _showImage;
         private bool _tracking;
+        private BitmapSource _bitmapSource;
         private ImageSource _imageSource;
         private UniMoveTracker _tracker;
         private List<UniMoveController> _moves;
@@ -87,6 +89,18 @@ namespace UniMoveStation.Model
             set
             {
                 Set(() => ImageSource, ref _imageSource, value);
+            }
+        }
+
+        public BitmapSource BitmapSource
+        {
+            get
+            {
+                return _bitmapSource;
+            }
+            set
+            {
+                Set(() => BitmapSource, ref _bitmapSource, value);
             }
         }
         

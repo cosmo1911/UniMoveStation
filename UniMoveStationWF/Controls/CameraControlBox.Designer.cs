@@ -108,7 +108,7 @@ namespace UniMoveStation
             // 
             this.checkBox_enableTracking.Location = new System.Drawing.Point(3, 5);
             this.checkBox_enableTracking.Name = "checkBox_enableTracking";
-            this.checkBox_enableTracking.Size = new System.Drawing.Size(104, 1);
+            this.checkBox_enableTracking.Size = new System.Drawing.Size(104, 20);
             this.checkBox_enableTracking.TabIndex = 0;
             this.checkBox_enableTracking.Text = "Enable Tracking";
             this.checkBox_enableTracking.Click += new System.EventHandler(this.checkBox_enableTracking_Click);
@@ -117,7 +117,7 @@ namespace UniMoveStation
             // 
             this.checkBox_annotate.Location = new System.Drawing.Point(3, 7);
             this.checkBox_annotate.Name = "checkBox_annotate";
-            this.checkBox_annotate.Size = new System.Drawing.Size(104, 1);
+            this.checkBox_annotate.Size = new System.Drawing.Size(104, 20);
             this.checkBox_annotate.TabIndex = 1;
             this.checkBox_annotate.Text = "Annotate";
             // 
@@ -182,7 +182,6 @@ namespace UniMoveStation
         #endregion
         private TableLayoutPanel mainPanel;
         private TableLayoutPanel subPanel;
-        private ElementHost imageHost;
         private PictureBox pictureBox;
         private Button button_initCamera;
         private CheckBox checkBox_enableTracking;
@@ -190,5 +189,6 @@ namespace UniMoveStation
         private TextBoxWithLabel textBox_X;
         private TextBoxWithLabel textBox_Y;
         private TextBoxWithLabel textBox_R;
+        private ElementHost imageHost;
     }
 }

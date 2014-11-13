@@ -139,6 +139,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CLEye\CLEyeCameraDevice.cs" />
+    <Compile Include="CLEye\CLEyeCameraImage.cs" />
     <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Helper\MyItemTemplateSelector .cs" />
     <Compile Include="Helper\MyDataTemplateSelector.cs" />

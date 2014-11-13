@@ -35,13 +35,13 @@ namespace UniMoveStation.ViewModel
         public ITrackerService TrackerService
         {
             get;
-            private set;
+            set;
         }
 
         public ICLEyeService CLEyeService
         {
             get;
-            private set;
+            set;
         }
         #endregion
 
@@ -54,7 +54,6 @@ namespace UniMoveStation.ViewModel
         {
             Camera = new SingleCameraModel();
 
-            //Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
             TrackerService = new TrackerService(Camera);
             CLEyeService = new CLEyeService();
 
@@ -175,7 +174,7 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         private void DoToggleCamera(bool enabled)
         {
-            if (enabled == true)
+            if (enabled)
             {
                 if(TrackerService.Enabled)
                 {
@@ -187,12 +186,12 @@ namespace UniMoveStation.ViewModel
                     CLEyeImageControlVisibility = Visibility.Visible;
                     TrackerImageVisibility = Visibility.Hidden;
 
-                    CLEyeService.Start(Camera.Id);
+                    CLEyeService.Start(Camera);
                 }
             }
             else
             {
-                if (CLEyeService.Enabled) CLEyeService.Stop();
+                if (CLEyeService.Enabled) Camera.ShowImage = CLEyeService.Stop();
                 else if (TrackerService.Enabled) Camera.ShowImage = false;
 
                 CLEyeImageControlVisibility = Visibility.Hidden;
@@ -216,6 +215,11 @@ namespace UniMoveStation.ViewModel
             {
                 Camera.Tracking = TrackerService.Stop();
                 TrackerImageVisibility = Visibility.Hidden;
+                if (Camera.ShowImage)
+                {
+                    CLEyeImageControlVisibility = Visibility.Visible;
+                    CLEyeService.Start(Camera);
+                }
             }
         }
         #endregion
