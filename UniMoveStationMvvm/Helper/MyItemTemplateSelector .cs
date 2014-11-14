@@ -26,6 +26,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("AllCamerasItemTemplate") as DataTemplate;
                 }
+                else if(item is MotionControllerViewModel)
+                {
+                    return element.FindResource("MotionControllerItemTemplate") as DataTemplate;
+                }
             }
 
             return null;

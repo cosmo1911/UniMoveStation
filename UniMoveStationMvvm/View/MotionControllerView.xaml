@@ -1,0 +1,254 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             x:Class="UniMoveStation.View.MotionControllerView"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d">
+    <Grid>
+        <!-- Main Grid -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <!-- Top Grid -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"
+                                  MinWidth="100"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="0">
+                <!-- Left Grid-->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Button Content="Connect" 
+                            Margin="3 3 3 3" 
+                            Command="{Binding ConnectCommand}"
+                            Style="{DynamicResource FlatButtonStyle}"
+                            />
+                </Grid>
+                <Grid Grid.Row="1">
+                    <!-- Upper Left Grid -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Column="0">
+                        <!-- Left of Upper Left Grid -->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <!--Circle-->
+                        <CheckBox Grid.Column="0" 
+                                  Grid.Row="0" 
+                                  IsHitTestVisible="False" 
+                                  Margin="3 3 0 3" 
+                                  IsChecked="{Binding MotionController.Circle}">
+                            <svgc:SvgViewbox Grid.Column="1" 
+                                         Grid.Row="0" 
+                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                                         Height="15" 
+                                         Width="18"
+                                         />
+                        </CheckBox>
+                        <!--Cross-->
+                        <CheckBox  Grid.Column="0"
+                                   Grid.Row="1"
+                                   IsHitTestVisible="False"
+                                   Margin="3 3 0 3"
+                                   IsChecked="{Binding MotionController.Cross}">
+                            <svgc:SvgViewbox Grid.Column="1"
+                                         Grid.Row="1"
+                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                                         Height="15"
+                                         Width="18"
+                                         />
+                        </CheckBox>
+                        <!--Triangle-->
+                        <CheckBox Grid.Column="0"
+                                  Grid.Row="2"
+                                  IsHitTestVisible="False"
+                                  Margin="3 3 0 3"
+                                  IsChecked="{Binding MotionController.Triangle}">
+                            <svgc:SvgViewbox Grid.Column="1"
+                                         Grid.Row="2"
+                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
+                                         Height="15"
+                                         Width="18"
+                                         />
+                        </CheckBox>
+                        <!--Square-->
+                        <CheckBox Grid.Column="0"
+                                  Grid.Row="3"
+                                  IsHitTestVisible="False"
+                                  Margin="3 3 0 3"
+                                  IsChecked="{Binding MotionController.Square}">
+                            <svgc:SvgViewbox Grid.Column="1"
+                                         Grid.Row="3"
+                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationSquare.svg"
+                                         Height="15"
+                                         Width="18"
+                                         />
+                        </CheckBox>
+                        
+                        <!-- Left of Upper Left Grid -->
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <!-- Right of Upper Left Grid -->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <!--Move-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="0"
+                                  Content="Move"
+                                  Margin="3 3 3 3"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Move}"
+                                  />
+                        <!--PS-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="1"
+                                  Content="PS"
+                                  Margin="3 3 3 3"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.PS}"
+                                  />
+                        <!--Start-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="2"
+                                  Content="Start"
+                                  Margin="3 3 3 3"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Start}"
+                                  />
+                        <!--Select-->
+                        <CheckBox Grid.Column="1" 
+                                  Grid.Row="3"
+                                  Content="Select"
+                                  Margin="3 3 3 3"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Select}"
+                                  />
+                        <!-- Right of Upper Left Grid -->
+                    </Grid>
+                    <!-- Upper Left Grid -->
+                </Grid>
+                <Grid Grid.Row="2">
+                    <!-- Lower Left Grid -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--Trigger-->
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Text="Trigger"
+                               Margin="3 3 3 3"
+                               Width="45"
+                               />
+                    <ProgressBar  Grid.Column="1"
+                                  Grid.Row="0"
+                                  MinWidth="100"
+                                  Minimum="0"
+                                  Maximum="255"
+                                  Margin="3 3 3 3"
+                                  Background="{StaticResource IdealForegroundColorBrush}"
+                                  Value="{Binding MotionController.Trigger}"
+                                  />
+                    <!--Rumble-->
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Text="Rumble"
+                               Margin="3 3 3 3"
+                               Width="45"
+                               />
+                    <ProgressBar Grid.Column="1"
+                                 Grid.Row="1"
+                                 MinWidth="100"
+                                 Minimum="0"
+                                 Maximum="255"
+                                 Margin="3 3 3 3"
+                                 Background="{StaticResource IdealForegroundColorBrush}"
+                                 Value="{Binding MotionController.Rumble}"
+                                 />
+                    <!-- Lower Left Grid -->
+                </Grid>
+                <!-- Left Grid -->
+            </Grid>
+
+            <cw:ColorWheelControl Grid.Column="1"
+                                  Margin="3 3 3 3"
+                                  x:Name="color_wheel"
+                                  Palette="{Binding Palette}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ColorsUpdated">
+                        <mvvm:EventToCommand Command="{Binding SelectColorCommand}"
+                                             CommandParameter="{Binding Palette, ElementName=color_wheel}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </cw:ColorWheelControl>
+            <!-- Top Main Grid -->
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- Bottom Main Grid -->
+            <TextBlock Grid.Row="0" 
+                       Text="Status Info" 
+                       Margin="10 3 3 0"
+                       />
+            <TextBox Grid.Row="1" 
+                     MinHeight="80" 
+                     BorderThickness="1" 
+                     Margin="3 3 3 3"
+                     BorderBrush="{StaticResource AccentColorBrush}" 
+                     IsReadOnly="True"
+                     />
+        </Grid>
+        <!-- Main Grid-->
+    </Grid>
+
+</UserControl>

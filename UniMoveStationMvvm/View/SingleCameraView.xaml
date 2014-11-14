@@ -57,20 +57,22 @@
                                                       Grid.Row="1" 
                                                       AspectRatio="1.3333">
                         <Grid MinWidth="180">
-                            <!--<Label VerticalContentAlignment="Center" 
+                            <Label VerticalContentAlignment="Center" 
                                    HorizontalContentAlignment="Center"
                                    Background="{StaticResource AccentColorBrush}"
                                    Content="No Image"
-                                   />-->
-                            <CLEyeMulticam:CLEyeCameraImage Device="{Binding CLEyeService.Device}"
-                                                            Visibility="{Binding CLEyeImageControlVisibility}"
-                                                            Source="{Binding Camera.BitmapSource}"/>
+                                   />
                                 
                             <Image HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Stretch"
-                                   Visibility="{Binding TrackerImageVisibility}"
+                                   Visibility="{Binding Camera.ShowImage, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    Source="{Binding Camera.ImageSource}"
                                    />
+
+                            <CLEyeMulticam:CLEyeCameraImage Device="{Binding CLEyeService.Device}"
+                                                            Visibility="{Binding CLEyeService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                            Source="{Binding Camera.BitmapSource}"
+                                                            />
 
                         </Grid>
                     </local:AspectRatioLayoutDecorator>

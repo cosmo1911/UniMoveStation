@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
 {
-    public class CLEyeService : ICLEyeService
+    public class CLEyeService : DependencyObject, ICLEyeService
     {
         private SingleCameraModel _camera;
 
@@ -42,11 +43,35 @@ namespace UniMoveStation.Service
             return Enabled = false;
         }
 
+        /// <summary>
+        /// The <see cref="Enabled" /> dependency property's name.
+        /// </summary>
+        public const string EnabledPropertyName = "Enabled";
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="Enabled" />
+        /// property. This is a dependency property.
+        /// </summary>
         public bool Enabled
         {
-            get;
-            set;
+            get
+            {
+                return (bool)GetValue(EnabledProperty);
+            }
+            set
+            {
+                SetValue(EnabledProperty, value);
+            }
         }
+
+        /// <summary>
+        /// Identifies the <see cref="Enabled" /> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EnabledProperty = DependencyProperty.Register(
+            EnabledPropertyName,
+            typeof(bool),
+            typeof(CLEyeService),
+            new UIPropertyMetadata(default(bool)));
 
         public CLEyeCameraDevice Device
         {

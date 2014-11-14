@@ -17,6 +17,7 @@ namespace UniMoveStation.ViewModel
     public class NavigationViewModel : ViewModelBase
     {
         private CompositeCollection _cameras;
+        private CompositeCollection _motionControllers;
         private ObservableCollection<SingleCameraViewModel> _singleCameras;
         private RelayCommand<int> _selectControllerCommand;
         private RelayCommand<int> _selectCameraCommand;
@@ -31,11 +32,12 @@ namespace UniMoveStation.ViewModel
         [PreferredConstructor]
         public NavigationViewModel()
         {
-            Cameras = new CompositeCollection();
-
             SingleCameras.Add(new SingleCameraViewModel(0));
             SingleCameras.Add(new SingleCameraViewModel(1337));
             SingleCameras.Add(new SingleCameraViewModel(1));
+
+            new MotionControllerViewModel(0);
+            new MotionControllerViewModel(1);
         }
         #endregion
 
@@ -143,6 +145,24 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return SimpleIoc.Default.GetInstance<AllCamerasViewModel>();
+            }
+        }
+
+        public CompositeCollection MotionControllers
+        {
+            get
+            {
+                CompositeCollection collection = new CompositeCollection();
+                collection.Add(AllCameras);
+                foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+                {
+                    collection.Add(mcvm);
+                }
+                return collection;
+            }
+            private set
+            {
+                Set(() => MotionControllers, ref _motionControllers, value);
             }
         }
         #endregion

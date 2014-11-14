@@ -22,9 +22,13 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("SingleCameraDataTemplate") as DataTemplate;
                 }
-                else if(item is AllCamerasViewModel)
+                else if (item is AllCamerasViewModel)
                 {
                     return element.FindResource("AllCamerasDataTemplate") as DataTemplate;
+                }
+                else if (item is MotionControllerViewModel)
+                {
+                    return element.FindResource("MotionControllerDataTemplate") as DataTemplate;
                 }
             }
 

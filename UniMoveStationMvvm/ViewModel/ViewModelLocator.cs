@@ -54,7 +54,6 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NavigationViewModel>();
             SimpleIoc.Default.Register<AllCamerasViewModel>();
-            SimpleIoc.Default.Register<MotionControllerViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
         }
 
@@ -71,14 +70,6 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<AllCamerasViewModel>();
-            }
-        }
-
-        public MotionControllerViewModel MotionController
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MotionControllerViewModel>();
             }
         }
 

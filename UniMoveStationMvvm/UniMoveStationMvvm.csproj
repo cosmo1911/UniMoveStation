@@ -53,6 +53,12 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="ColorWheel.Controls">
+      <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="ColorWheel.Core">
+      <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Emgu.CV">
       <HintPath>plugins\Emgu.CV.dll</HintPath>
     </Reference>
@@ -141,21 +147,16 @@
     </ApplicationDefinition>
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
-    <Compile Include="Design\DesignDataService.cs" />
     <Compile Include="Helper\MyItemTemplateSelector .cs" />
     <Compile Include="Helper\MyDataTemplateSelector.cs" />
     <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
-    <Compile Include="Model\DataItem.cs" />
     <Compile Include="Service\CLEyeService.cs" />
-    <Compile Include="Service\DataService.cs" />
     <Compile Include="Service\ICLEyeService.cs" />
-    <Compile Include="Service\IDataService.cs" />
-    <Compile Include="Service\INavigationService.cs" />
+    <Compile Include="Service\IMotionControllerService.cs" />
     <Compile Include="Service\ITrackerService.cs" />
-    <Compile Include="Model\MainModel.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
-    <Compile Include="Service\NavigationService.cs" />
+    <Compile Include="Service\MotionControllerService.cs" />
     <Compile Include="Model\ServerModel.cs" />
     <Compile Include="Service\ObservableObject.cs" />
     <Compile Include="Service\TrackerService.cs" />
@@ -168,14 +169,10 @@
     <Compile Include="PSMoveAPI\PSMoveTrackerRGBImage.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_float.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_void.cs" />
-    <Compile Include="SharpMove\SharpMoveController.cs" />
     <Compile Include="UniMove\UniMoveController.cs" />
     <Compile Include="UniMove\UniMoveHelper.cs" />
     <Compile Include="UniMove\UniMoveTracker.cs" />
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
-    <Compile Include="Utilities\Converter.cs" />
-    <Compile Include="Utilities\Observable.cs" />
-    <Compile Include="Utilities\ObservableBool.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="ViewModel\AllCamerasViewModel.cs" />
     <Compile Include="ViewModel\SingleCameraViewModel.cs" />
@@ -186,6 +183,12 @@
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\AllCamerasView.xaml.cs">
       <DependentUpon>AllCamerasView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MotionControllerView.xaml.cs">
+      <DependentUpon>MotionControllerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NavigationPanelItemView.xaml.cs">
+      <DependentUpon>NavigationPanelItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SingleCameraView.xaml.cs">
       <DependentUpon>SingleCameraView.xaml</DependentUpon>
@@ -205,6 +208,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AllCamerasView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MotionControllerView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NavigationPanelItemView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -248,10 +259,6 @@
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLEyeImage\CLEyeImage.csproj">
-      <Project>{5a69c22f-11d5-4a20-81cd-b3c3abc380c7}</Project>
-      <Name>CLEyeImage</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Messages\Messages.csproj">
       <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
       <Name>Messages</Name>
@@ -279,18 +286,14 @@
     <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PlayStationCircle.svg" />
+    <Resource Include="Resources\PlayStationCircle.svg" />
+    <Resource Include="Resources\PlayStationSquare.svg" />
+    <Resource Include="Resources\PlayStationTriangle.svg" />
+    <Resource Include="Resources\PlayStationX.svg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\PlayStationSquare.svg" />
+    <Folder Include="Design\" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PlayStationTriangle.svg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\PlayStationX.svg" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

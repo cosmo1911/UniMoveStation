@@ -178,24 +178,18 @@ namespace UniMoveStation.ViewModel
             {
                 if(TrackerService.Enabled)
                 {
-                    CLEyeImageControlVisibility = Visibility.Hidden;
-                    TrackerImageVisibility = Visibility.Visible;
+                    Camera.ShowImage = true;
                 }
                 else if(!CLEyeService.Enabled)
                 {
-                    CLEyeImageControlVisibility = Visibility.Visible;
-                    TrackerImageVisibility = Visibility.Hidden;
 
-                    CLEyeService.Start(Camera);
+                    Camera.ShowImage = CLEyeService.Start(Camera);
                 }
             }
             else
             {
                 if (CLEyeService.Enabled) Camera.ShowImage = CLEyeService.Stop();
                 else if (TrackerService.Enabled) Camera.ShowImage = false;
-
-                CLEyeImageControlVisibility = Visibility.Hidden;
-                TrackerImageVisibility = Visibility.Hidden;
             }
         }
 

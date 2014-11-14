@@ -26,6 +26,10 @@
                       x:Key="AllCamerasDataTemplate">
             <v:AllCamerasView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
+                      x:Key="MotionControllerDataTemplate">
+            <v:MotionControllerView/>
+        </DataTemplate>
 
 
         <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
@@ -35,6 +39,10 @@
         <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
                       x:Key="AllCamerasItemTemplate">
             <TextBlock Text="{Binding Name}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
+                      x:Key="MotionControllerItemTemplate">
+            <TextBlock Text="{Binding MotionController.Name}"/>
         </DataTemplate>
 
         <helper:MyDataTemplateSelector x:Key="MyDataTemplateSelector"/>
@@ -48,49 +56,71 @@
         <!--Navigation Panel-->
         <StackPanel Orientation="Vertical">
             <!--Controllers-->
-            <Expander FlowDirection="RightToLeft" 
-                      Padding="-1" 
+            <Expander FlowDirection="RightToLeft"
                       Margin="0 0 0 0" 
                       BorderThickness="1"
-                      BorderBrush="{StaticResource AccentColorBrush}">
+                      BorderBrush="{StaticResource AccentColorBrush}" 
+                      Padding="0">
                 <Expander.Header>
 
-                    <!--All Controllers-->
                     <Button FlowDirection="LeftToRight"
                             BorderThickness="0"
+                            Padding="0"
+                            BorderBrush="Transparent"
                             Background="Transparent"
                             Foreground="{StaticResource IdealForegroundColorBrush}"
                             Style="{DynamicResource FlatButtonStyle}"
-                            Command="{Binding SelectTabCommand}"
-                            CommandParameter="{Binding }">
-
+                            Command="{Binding SelectControllerCommand}"
+                            CommandParameter="-1">
 
                         <StackPanel Orientation="Horizontal">
-                            <!--Controller Icon-->
+                            <!--Camera Icon-->
                             <svgc:SvgViewbox Source="Resources/PlayStationCircle.svg"
                                              Height="19"
                                              Width="19"
                                              Margin="3 0 3 0"
                                              />
-                            <!--Controllers Label-->
+                            <!--Cameras Label-->
                             <TextBlock Text="CONTROLLERS" 
                                        VerticalAlignment="Center"
                                 />
                         </StackPanel>
                     </Button>
+                    <!--All Cameras-->
+
                 </Expander.Header>
-                <!--Controller Tabs-->
+                <!--Camera Tabs-->
                 <controls:MetroTabControl TabStripPlacement="Left"
-                                          FlowDirection="LeftToRight">
+                                          FlowDirection="LeftToRight"
+                                          ItemsSource="{Binding MotionControllers}"
+                                          x:Name="navigation_motion_controllers">
+
+                    <controls:MetroTabControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Camera.Name}" FontSize="12">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonUp">
+                                        <mvvm:EventToCommand Command="{Binding Navigation.SelectControllerCommand, Source={StaticResource ViewModelLocator}}"
+                                                             CommandParameter="{Binding SelectedIndex, ElementName=navigation_motion_controllers}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </DataTemplate>
+                    </controls:MetroTabControl.ItemTemplate>
+                    <controls:MetroTabControl.ContentTemplate>
+                        <DataTemplate>
+
+                        </DataTemplate>
+                    </controls:MetroTabControl.ContentTemplate>
 
                 </controls:MetroTabControl>
             </Expander>
             <!--Cameras-->
             <Expander FlowDirection="RightToLeft"
-                      Padding="-1" 
                       Margin="0 0 0 0" 
                       BorderThickness="1"
-                      BorderBrush="{StaticResource AccentColorBrush}">
+                      BorderBrush="{StaticResource AccentColorBrush}" 
+                      Padding="0">
                 <Expander.Header>
 
                     <Button FlowDirection="LeftToRight"
@@ -190,73 +220,17 @@
                                   Grid.Column="1"
                                   Grid.Row="0"
                                   SelectedIndex="{Binding MainSelectedIndex}">
-            <!--<controls:MetroTabItem>
-                <Grid>
-                    -->
-            <!--Home Tab-->
-            <!-- 
-                </Grid>
-            </controls:MetroTabItem>-->
 
             <!--Main Controllers Tab-->
             <controls:MetroTabItem Visibility="Visible"
                                    Header="Controllers">
-                <controls:MetroTabControl SelectedIndex="{Binding ControllerSelectedIndex}">
-                    <!--All Moves Tab-->
-                    <controls:MetroTabItem Header="All"
-                                               x:Name="main_tab_controllers_all">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto" MinHeight="5"/>
-                                <RowDefinition Height="Auto" MinHeight="80"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <ScrollViewer VerticalScrollBarVisibility="Visible">
-                                <Grid x:Name="grid_allMoves">
-                                    <!--All Moves-->
-                                </Grid>
-                            </ScrollViewer>
-
-                            <GridSplitter Grid.Row="1" 
-                                              HorizontalAlignment="Center" 
-                                              VerticalAlignment="Stretch" 
-                                              MinHeight="5" 
-                                              Width="100"
-                                              ShowsPreview="True" 
-                                              ResizeDirection="Rows"
-                                    />
-
-                            <Grid Grid.Row="2">
-                                <!--All Moves Console-->
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" 
-                                           Text="Console" 
-                                           HorizontalAlignment="Left" 
-                                           VerticalAlignment="Bottom" 
-                                           Margin="5,0,0,0"
-                                           />
-                                <TextBox Grid.Row="1"
-                                         BorderThickness="1" 
-                                         BorderBrush="{StaticResource AccentColorBrush}"
-                                         x:Name="textBox_allMoves" 
-                                         VerticalScrollBarVisibility="Auto"
-                                         />
-                            </Grid>
-                        </Grid>
-                    </controls:MetroTabItem>
-                    <controls:MetroTabItem Header="#1" 
-                                           controls:ControlsHelper.HeaderFontSize="18">
-                        <Grid/>
-                    </controls:MetroTabItem>
+                <controls:MetroTabControl Margin="10 10 10 10"
+                                          SelectedIndex="{Binding MotionControllerSelectedIndex}"
+                                          ItemsSource="{Binding MotionControllers}"
+                                          ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
+                                          ContentTemplateSelector="{StaticResource MyDataTemplateSelector}">
                 </controls:MetroTabControl>
-                <!--Moves Tab-->
+
             </controls:MetroTabItem>
             <!--Cameras Tab-->
             <controls:MetroTabItem Visibility="Visible"
@@ -270,7 +244,8 @@
 
             </controls:MetroTabItem>
             <!--Server Tab-->
-            <controls:MetroTabItem Visibility="Visible">
+            <controls:MetroTabItem Visibility="Visible"
+                                   Header="Server">
                 <Grid Margin="10 10 10 10">
 
                 </Grid>
