@@ -9,17 +9,22 @@
                       xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
                       x:Class="UniMoveStation.View.MainView"
                       Title="UniMoveStation"
-                      ShowTitleBar="True"
-                      Style="{DynamicResource CleanWindowStyleKey}"
                       BorderThickness="1"
                       BorderBrush="{StaticResource AccentColorBrush}"
                       Width="1280"
                       Height="720"
-                      DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}">
+                      DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
+                      ShowTitleBar="True">
 
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+    
     <controls:MetroWindow.Resources>
         <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
-            <v:NavigationView DataContext="{Binding}"/>
+            <v:NavigationView/>
         </DataTemplate>
     </controls:MetroWindow.Resources>
     

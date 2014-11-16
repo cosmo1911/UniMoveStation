@@ -15,241 +15,162 @@
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              DataContext="{Binding Navigation, Source={StaticResource ViewModelLocator}}">
-    <!--Converter={StaticResource BooleanToVisibilityConverter}-->
-
+    
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
-                      x:Key="SingleCameraDataTemplate">
-            <v:SingleCameraView/>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
-                      x:Key="AllCamerasDataTemplate">
-            <v:AllCamerasView/>
-        </DataTemplate>
+        
+        <!--Motion Controller Item Template-->
         <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
-                      x:Key="MotionControllerDataTemplate">
+                      x:Key="MotionControllerTabItemTemplate">
+            
+            <StackPanel Orientation="Horizontal"
+                                MinWidth="210">
+                <!--Controller Icon-->
+                <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                                 Height="32"
+                                 Width="32"
+                                 Margin="8 4 16 4"
+                                 />
+                <!--Controller Label-->
+                <TextBlock Text="{Binding MotionController.Name}"
+                           FontSize="24"
+                           Height="32"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           />
+            </StackPanel>
+
+        </DataTemplate>
+        
+        <!--Motion Controller Data Template-->
+        <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
+                      x:Key="MotionControllerTabContentTemplate">
             <v:MotionControllerView/>
         </DataTemplate>
 
-
+        <!--Single Camera Tab Item Template-->
         <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
-                      x:Key="SingleCameraItemTemplate">
-            <TextBlock Text="{Binding Camera.Name}"/>
+                      x:Key="SingleCameraTabItemTemplate">
+            <StackPanel Orientation="Horizontal"
+                        Width="210">
+                <!--Camera Icon-->
+                <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                                 Height="32"
+                                 Width="32"
+                                 Margin="8 4 16 4"
+                                 />
+                <!--Camera Label-->
+                <TextBlock Text="{Binding Camera.Name}"
+                           FontSize="24"
+                           Height="32"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           />
+            </StackPanel>
         </DataTemplate>
+
+        <!--Single Camera Tab Data Template-->
+        <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
+                      x:Key="SingleCameraTabContentTemplate">
+            <v:SingleCameraView/>
+        </DataTemplate>
+
+        <!--All Cameras Tab Item Template-->
         <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
-                      x:Key="AllCamerasItemTemplate">
-            <TextBlock Text="{Binding Name}"/>
+                      x:Key="AllCamerasTabItemTemplate">
+            
+            <StackPanel Orientation="Horizontal">
+                <!--Cameras Icon-->
+                <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                                 Height="32"
+                                 Width="32"
+                                 Margin="8 4 16 4"/>
+                <!--Cameras Label-->
+                <TextBlock Text="{Binding Name}"
+                           FontSize="24"
+                           Height="32"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           />
+            </StackPanel>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
-                      x:Key="MotionControllerItemTemplate">
-            <TextBlock Text="{Binding MotionController.Name}"/>
+        <!--All Cameras Tab Data Template-->
+        <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
+                      x:Key="AllCamerasTabContentTemplate">
+            <v:AllCamerasView/>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="AddButtonTabItemTemplate">
+            <Button Width="50"
+                    Height="50"
+                    Style="{DynamicResource MetroCircleButtonStyle}"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Margin="80 0 0 0"
+                    Command="{Binding Navigation.AddCommand, Source={StaticResource ViewModelLocator}}"
+                    CommandParameter="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabControl}}}">
+                <Rectangle Width="20"
+                           Height="20"
+                           Fill="{StaticResource AccentColorBrush}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill"
+                                     Visual="{DynamicResource appbar_add}"
+                                     />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+
+
         </DataTemplate>
 
-        <helper:MyDataTemplateSelector x:Key="MyDataTemplateSelector"/>
-        <helper:MyItemTemplateSelector x:Key="MyItemTemplateSelector"/>
+        <helper:MyTabContentTemplateSelector x:Key="MyTabContentTemplateSelector"/>
+        <helper:MyTabItemTemplateSelector x:Key="MyTabItemTemplateSelector"/>
+        <helper:MyTabContainerStyleSelector x:Key="MyTabContainerStyleSelector"/>
+        
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <!--Navigation Panel-->
-        <StackPanel Orientation="Vertical">
-            <!--Controllers-->
-            <Expander FlowDirection="RightToLeft"
-                      Margin="0 0 0 0" 
-                      BorderThickness="1"
-                      BorderBrush="{StaticResource AccentColorBrush}" 
-                      Padding="0">
-                <Expander.Header>
+    
+    <!--Navigation Panel-->
+    <controls:MetroTabControl controls:ControlsHelper.Transition="Down"
+                              controls:ControlsHelper.IsUnderlined="True"
+                              Background="{StaticResource AccentColorBrush4}"
+                              Tag="main">
+        
+        <controls:MetroTabItem Header="CONTROLLERS" 
+                               controls:ControlsHelper.HeaderFontSize="16">
 
-                    <Button FlowDirection="LeftToRight"
-                            BorderThickness="0"
-                            Padding="0"
-                            BorderBrush="Transparent"
-                            Background="Transparent"
-                            Foreground="{StaticResource IdealForegroundColorBrush}"
-                            Style="{DynamicResource FlatButtonStyle}"
-                            Command="{Binding SelectControllerCommand}"
-                            CommandParameter="-1">
-
-                        <StackPanel Orientation="Horizontal">
-                            <!--Camera Icon-->
-                            <svgc:SvgViewbox Source="Resources/PlayStationCircle.svg"
-                                             Height="19"
-                                             Width="19"
-                                             Margin="3 0 3 0"
+            <controls:MetroTabControl TabStripPlacement="Left"
+                                      Background="{StaticResource WindowBackgroundBrush}"
+                                      ItemsSource="{Binding MotionControllerTabs}"
+                                      ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
+                                      ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
+                                      ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
+                                      x:Name="controllers"
+                                      Tag="controllers">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"
+                                             CommandParameter="{Binding ElementName=controllers}"
                                              />
-                            <!--Cameras Label-->
-                            <TextBlock Text="CONTROLLERS" 
-                                       VerticalAlignment="Center"
-                                />
-                        </StackPanel>
-                    </Button>
-                    <!--All Cameras-->
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                
+            </controls:MetroTabControl>
 
-                </Expander.Header>
-                <!--Camera Tabs-->
+        </controls:MetroTabItem>
+
+        <controls:MetroTabItem Header="CAMERAS"
+                               controls:ControlsHelper.HeaderFontSize="16">
+
                 <controls:MetroTabControl TabStripPlacement="Left"
-                                          FlowDirection="LeftToRight"
-                                          ItemsSource="{Binding MotionControllers}"
-                                          x:Name="navigation_motion_controllers">
+                                          ItemsSource="{Binding CameraTabs}"
+                                          Background="{StaticResource WindowBackgroundBrush}"
+                                          ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
+                                          ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
+                                          ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
+                                          Tag="cameras"
+                                          />
 
-                    <controls:MetroTabControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Camera.Name}" FontSize="12">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                                        <mvvm:EventToCommand Command="{Binding Navigation.SelectControllerCommand, Source={StaticResource ViewModelLocator}}"
-                                                             CommandParameter="{Binding SelectedIndex, ElementName=navigation_motion_controllers}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </TextBlock>
-                        </DataTemplate>
-                    </controls:MetroTabControl.ItemTemplate>
-                    <controls:MetroTabControl.ContentTemplate>
-                        <DataTemplate>
+        </controls:MetroTabItem>
+        
+        <controls:MetroTabItem Header="SERVER"
+                                controls:ControlsHelper.HeaderFontSize="16"
+                               />
+    </controls:MetroTabControl>
 
-                        </DataTemplate>
-                    </controls:MetroTabControl.ContentTemplate>
-
-                </controls:MetroTabControl>
-            </Expander>
-            <!--Cameras-->
-            <Expander FlowDirection="RightToLeft"
-                      Margin="0 0 0 0" 
-                      BorderThickness="1"
-                      BorderBrush="{StaticResource AccentColorBrush}" 
-                      Padding="0">
-                <Expander.Header>
-
-                    <Button FlowDirection="LeftToRight"
-                            BorderThickness="0"
-                            Padding="0"
-                            BorderBrush="Transparent"
-                            Background="Transparent"
-                            Foreground="{StaticResource IdealForegroundColorBrush}"
-                            Style="{DynamicResource FlatButtonStyle}"
-                            Command="{Binding SelectCameraCommand}"
-                            CommandParameter="-1">
-
-                        <StackPanel Orientation="Horizontal">
-                            <!--Camera Icon-->
-                            <svgc:SvgViewbox Source="Resources/PlayStationX.svg"
-                                             Height="19"
-                                             Width="19"
-                                             Margin="3 0 3 0"
-                                             />
-                            <!--Cameras Label-->
-                            <TextBlock Text="CAMERAS" 
-                                       VerticalAlignment="Center"
-                                />
-                        </StackPanel>
-                    </Button>
-                    <!--All Cameras-->
-                    
-                </Expander.Header>
-                <!--Camera Tabs-->
-                <controls:MetroTabControl TabStripPlacement="Left"
-                                          FlowDirection="LeftToRight"
-                                          ItemsSource="{Binding SingleCameras}"
-                                          x:Name="navigation_control_cameras">
-
-                    <controls:MetroTabControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Camera.Name}" FontSize="12">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                                        <mvvm:EventToCommand Command="{Binding Navigation.SelectCameraCommand, Source={StaticResource ViewModelLocator}}"
-                                                             CommandParameter="{Binding SelectedIndex, ElementName=navigation_control_cameras}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </TextBlock>
-                        </DataTemplate>
-                    </controls:MetroTabControl.ItemTemplate>
-                    <controls:MetroTabControl.ContentTemplate>
-                        <DataTemplate>
-                            
-                        </DataTemplate>
-                    </controls:MetroTabControl.ContentTemplate>
-
-                </controls:MetroTabControl>
-            </Expander>
-            <!--Server-->
-            <Expander FlowDirection="RightToLeft"
-                      Padding="-1" 
-                      Margin="0 0 0 0" 
-                      BorderThickness="1"
-                      BorderBrush="{StaticResource AccentColorBrush}">
-                <Expander.Header>
-
-                    <!--Server-->
-                    <Button FlowDirection="LeftToRight"
-                            BorderThickness="0"
-                            Padding="0"
-                            BorderBrush="Transparent"
-                            Background="Transparent"
-                            Foreground="{StaticResource IdealForegroundColorBrush}"
-                            Style="{DynamicResource FlatButtonStyle}">
-
-                        <StackPanel Orientation="Horizontal">
-                            <!--Server Icon-->
-                            <svgc:SvgViewbox Source="Resources/PlayStationTriangle.svg"
-                                             Height="19"
-                                             Width="19"
-                                             Margin="3 0 3 0"
-                                             />
-                            <!--Server Label-->
-                            <TextBlock Text="SERVER" 
-                                       VerticalAlignment="Center"
-                                />
-                        </StackPanel>
-                    </Button>
-                </Expander.Header>
-                <!--Client Tabs-->
-                <controls:MetroTabControl TabStripPlacement="Left"
-                                          FlowDirection="LeftToRight">
-
-                </controls:MetroTabControl>
-            </Expander>
-
-        </StackPanel>
-
-        <!--Main Tabs Control-->
-        <controls:MetroTabControl Visibility="Visible"
-                                  Grid.Column="1"
-                                  Grid.Row="0"
-                                  SelectedIndex="{Binding MainSelectedIndex}">
-
-            <!--Main Controllers Tab-->
-            <controls:MetroTabItem Visibility="Visible"
-                                   Header="Controllers">
-                <controls:MetroTabControl Margin="10 10 10 10"
-                                          SelectedIndex="{Binding MotionControllerSelectedIndex}"
-                                          ItemsSource="{Binding MotionControllers}"
-                                          ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
-                                          ContentTemplateSelector="{StaticResource MyDataTemplateSelector}">
-                </controls:MetroTabControl>
-
-            </controls:MetroTabItem>
-            <!--Cameras Tab-->
-            <controls:MetroTabItem Visibility="Visible"
-                                   Header="Cameras">
-                <controls:MetroTabControl Margin="10 10 10 10"
-                                          SelectedIndex="{Binding CameraSelectedIndex}"
-                                          ItemsSource="{Binding Cameras}"
-                                          ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
-                                          ContentTemplateSelector="{StaticResource MyDataTemplateSelector}">
-                </controls:MetroTabControl>
-
-            </controls:MetroTabItem>
-            <!--Server Tab-->
-            <controls:MetroTabItem Visibility="Visible"
-                                   Header="Server">
-                <Grid Margin="10 10 10 10">
-
-                </Grid>
-            </controls:MetroTabItem>
-        </controls:MetroTabControl>
-    </Grid>
 </UserControl>

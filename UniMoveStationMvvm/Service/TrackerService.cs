@@ -18,7 +18,7 @@ using UniMoveStation.Utilities;
 
 namespace UniMoveStation.Service
 {
-    public class TrackerService : DependencyObject, ITrackerService
+    public class TrackerService : ITrackerService
     {
         #region Member
         /// <summary>
@@ -132,35 +132,11 @@ namespace UniMoveStation.Service
         #endregion
 
         #region Interface Implementation
-        /// <summary>
-        /// The <see cref="Enabled" /> dependency property's name.
-        /// </summary>
-        public const string EnabledPropertyName = "Enabled";
-
-        /// <summary>
-        /// Gets or sets the value of the <see cref="Enabled" />
-        /// property. This is a dependency property.
-        /// </summary>
         public bool Enabled
         {
-            get
-            {
-                return (bool)GetValue(EnabledProperty);
-            }
-            set
-            {
-                SetValue(EnabledProperty, value);
-            }
+            get;
+            set;
         }
-
-        /// <summary>
-        /// Identifies the <see cref="Enabled" /> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty EnabledProperty = DependencyProperty.Register(
-            EnabledPropertyName,
-            typeof(bool),
-            typeof(TrackerService),
-            new UIPropertyMetadata(default(bool)));
 
         public bool Start()
         {

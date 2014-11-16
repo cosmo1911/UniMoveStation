@@ -2,7 +2,11 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using UniMoveStation.Model;
 
@@ -16,14 +20,10 @@ namespace UniMoveStation.ViewModel
     /// </summary>
     public class NavigationViewModel : ViewModelBase
     {
-        private CompositeCollection _cameras;
-        private CompositeCollection _motionControllers;
+        private ObservableCollection<object> _cameraTabs;
+        private ObservableCollection<object> _motionControllerTabs;
         private ObservableCollection<SingleCameraViewModel> _singleCameras;
-        private RelayCommand<int> _selectControllerCommand;
-        private RelayCommand<int> _selectCameraCommand;
-        private int _mainSelectedIndex = 0;
-        private int _controllerSelectedIndex = 0;
-        private int _cameraSelectedIndex = 0;
+        private int lastSelectedIndex = 0;
 
         #region Constructor
         /// <summary>
@@ -42,84 +42,25 @@ namespace UniMoveStation.ViewModel
         #endregion
 
         #region Properties
-        /// <summary>
-        /// The <see cref="MainSelectedIndex" /> property's name.
-        /// </summary>
-        public const string MainSelectedIndexPropertyName = "MainSelectedIndex";
 
-        /// <summary>
-        /// Sets and gets the MainSelectedIndex property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public int MainSelectedIndex
+
+        public ObservableCollection<object> CameraTabs
         {
             get
             {
-                return _mainSelectedIndex;
-            }
-            set
-            {
-                Set(MainSelectedIndexPropertyName, ref _mainSelectedIndex, value);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="ControllerSelectedIndex" /> property's name.
-        /// </summary>
-        public const string ControllerSelectedIndexPropertyName = "ControllerSelectedIndex";
-
-        /// <summary>
-        /// Sets and gets the ControllerSelectedIndex property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public int ControllerSelectedIndex
-        {
-            get
-            {
-                return _controllerSelectedIndex;
-            }
-            set
-            {
-                Set(ControllerSelectedIndexPropertyName, ref _controllerSelectedIndex, value);
-            }
-        }
-
-        /// <summary>
-        /// The <see cref="CameraSelectedIndex" /> property's name.
-        /// </summary>
-        public const string CameraSelectedIndexPropertyName = "CameraSelectedIndex";
-
-        /// <summary>
-        /// Sets and gets the CameraSelectedIndex property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public int CameraSelectedIndex
-        {
-            get
-            {
-                return _cameraSelectedIndex;
-            }
-            set
-            {
-                Set(CameraSelectedIndexPropertyName, ref _cameraSelectedIndex, value);
-            }
-        }
-
-        public CompositeCollection Cameras
-        {
-            get
-            {
-                CompositeCollection collection = new CompositeCollection();
+                ObservableCollection<object> collection = new ObservableCollection<object>();
                 collection.Add(AllCameras);
                 foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
                 {
                     collection.Add(scvm);
                 }
+                IEditableCollectionView itemsView = (IEditableCollectionView) CollectionViewSource.GetDefaultView(collection);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
                 return collection;
             }
             private set
             {
-                Set(() => Cameras, ref _cameras, value);
+                Set(() => CameraTabs, ref _cameraTabs, value);
             }
         }
 
@@ -148,61 +89,75 @@ namespace UniMoveStation.ViewModel
             }
         }
 
-        public CompositeCollection MotionControllers
+        public ObservableCollection<object> MotionControllerTabs
         {
             get
             {
-                CompositeCollection collection = new CompositeCollection();
+                ObservableCollection<object> collection = new ObservableCollection<object>();
                 collection.Add(AllCameras);
                 foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
                 {
                     collection.Add(mcvm);
                 }
+                IEditableCollectionView itemsView = (IEditableCollectionView) CollectionViewSource.GetDefaultView(collection);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
                 return collection;
             }
             private set
             {
-                Set(() => MotionControllers, ref _motionControllers, value);
+                Set(() => MotionControllerTabs, ref _motionControllerTabs, value);
             }
         }
         #endregion
 
         #region Relay Commands
+        private RelayCommand<MetroTabControl> _tabSelectedCommand;
+
         /// <summary>
-        /// Gets the SelectControllerCommand.
+        /// Gets the TabSelectedCommand.
         /// </summary>
-        public RelayCommand<int> SelectControllerCommand
+        public RelayCommand<MetroTabControl> TabSelectedCommand
         {
             get
             {
-                return _selectControllerCommand
-                    ?? (_selectControllerCommand = new RelayCommand<int>(DoSelectControllerCommand));
+                return _tabSelectedCommand
+                    ?? (_tabSelectedCommand = new RelayCommand<MetroTabControl>(
+                    tabControl =>
+                    {
+                        if(tabControl.SelectedIndex == tabControl.Items.Count - 1)
+                        {
+                            tabControl.SelectedIndex = lastSelectedIndex;
+                        }
+                        else
+                        {
+                            lastSelectedIndex = tabControl.SelectedIndex;
+                        }
+                        Console.WriteLine(tabControl.SelectedIndex);
+                    }));
             }
         }
 
+        private RelayCommand<Object> _addCommand;
+
         /// <summary>
-        /// Gets the SelectControllerCommand.
+        /// Gets the AddCommand.
         /// </summary>
-        public RelayCommand<int> SelectCameraCommand
+        public RelayCommand<Object> AddCommand
         {
             get
             {
-                return _selectCameraCommand
-                    ?? (_selectCameraCommand = new RelayCommand<int>(DoSelectCameraCommand));
+                return _addCommand
+                    ?? (_addCommand = new RelayCommand<Object>(
+                    tag =>
+                    {
+                        if(tag.ToString().Equals("controllers"))
+                            ViewModelLocator.Instance.Main.DoToggleFlyout(tag.ToString());
+                        
+                    }));
             }
         }
 
-        private void DoSelectControllerCommand(int index)
-        {
-            MainSelectedIndex = 0;
-            ControllerSelectedIndex = index + 1;
-        }
 
-        private void DoSelectCameraCommand(int index)
-        {
-            MainSelectedIndex = 1;
-            CameraSelectedIndex = index + 1;
-        }
         #endregion
     }
 }

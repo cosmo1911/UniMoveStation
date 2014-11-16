@@ -9,7 +9,7 @@ using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.Helper 
 {
-    public class MyDataTemplateSelector : DataTemplateSelector
+    public class MyTabContentTemplateSelector : DataTemplateSelector
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -20,15 +20,15 @@ namespace UniMoveStation.Helper
 
                 if (item is SingleCameraViewModel)
                 {
-                    return element.FindResource("SingleCameraDataTemplate") as DataTemplate;
+                    return element.FindResource("SingleCameraTabContentTemplate") as DataTemplate;
                 }
                 else if (item is AllCamerasViewModel)
                 {
-                    return element.FindResource("AllCamerasDataTemplate") as DataTemplate;
+                    return element.FindResource("AllCamerasTabContentTemplate") as DataTemplate;
                 }
                 else if (item is MotionControllerViewModel)
                 {
-                    return element.FindResource("MotionControllerDataTemplate") as DataTemplate;
+                    return element.FindResource("MotionControllerTabContentTemplate") as DataTemplate;
                 }
             }
 

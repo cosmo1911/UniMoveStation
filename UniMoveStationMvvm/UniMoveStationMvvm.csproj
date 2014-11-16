@@ -147,8 +147,9 @@
     </ApplicationDefinition>
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
-    <Compile Include="Helper\MyItemTemplateSelector .cs" />
-    <Compile Include="Helper\MyDataTemplateSelector.cs" />
+    <Compile Include="Helper\MyTabContainerStyleSelector.cs" />
+    <Compile Include="Helper\MyTabItemTemplateSelector .cs" />
+    <Compile Include="Helper\MyTabContentTemplateSelector.cs" />
     <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
     <Compile Include="Service\CLEyeService.cs" />
@@ -175,6 +176,8 @@
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="ViewModel\AllCamerasViewModel.cs" />
+    <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
+    <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
     <Compile Include="ViewModel\SingleCameraViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MotionControllerViewModel.cs" />
@@ -183,6 +186,9 @@
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\AllCamerasView.xaml.cs">
       <DependentUpon>AllCamerasView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Flyout\AddMotionControllerView.xaml.cs">
+      <DependentUpon>AddMotionControllerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MotionControllerView.xaml.cs">
       <DependentUpon>MotionControllerView.xaml</DependentUpon>
@@ -207,7 +213,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Resource Include="Style\Styles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
     <Page Include="View\AllCamerasView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Flyout\AddMotionControllerView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

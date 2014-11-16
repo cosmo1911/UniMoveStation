@@ -1,4 +1,7 @@
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using System.Collections.ObjectModel;
+using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
@@ -16,6 +19,15 @@ namespace UniMoveStation.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private ObservableCollection<FlyoutBaseViewModel> _flyouts = new ObservableCollection<FlyoutBaseViewModel>();
+        public ObservableCollection<FlyoutBaseViewModel> Flyouts
+        {
+            get
+            {
+                return _flyouts;
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -29,6 +41,57 @@ namespace UniMoveStation.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
+
+            Flyouts.Add(new AddMotionControllerViewModel());
+        }
+
+        private RelayCommand<string> _showFlyoutCommand;
+
+        /// <summary>
+        /// Gets the ShowFlyout.
+        /// </summary>
+        public RelayCommand<string> ToggleFlyout
+        {
+            get
+            {
+                return _showFlyoutCommand
+                    ?? (_showFlyoutCommand = new RelayCommand<string>(DoToggleFlyout));
+            }
+        }
+
+        public void DoToggleFlyout(string tag)
+        {
+            if (tag.Equals("controllers")) IsOpen = true;
+        }
+
+        /// <summary>
+        /// The <see cref="IsOpen" /> property's name.
+        /// </summary>
+        public const string IsOpenPropertyName = "IsOpen";
+
+        private bool _isOpen = false;
+
+        /// <summary>
+        /// Sets and gets the IsOpen property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+
+            set
+            {
+                if (_isOpen == value)
+                {
+                    return;
+                }
+
+                _isOpen = value;
+                RaisePropertyChanged(() => IsOpen);
+            }
         }
     }
 }

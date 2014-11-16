@@ -24,6 +24,32 @@ namespace UniMoveStation.Model
         private int _rumble;
         private Color _color;
         private float _updateRate;
+        private bool _remote;
+        private string _hostIp;
+
+        public string HostIp
+        {
+            get
+            {
+                return _hostIp;
+            }
+            set
+            {
+                Set(() => HostIp, ref _hostIp, value);
+            }
+        }
+
+        public bool Remote
+        {
+            get
+            {
+                return _remote;
+            }
+            set
+            {
+                Set(() => Remote, ref _remote, value);
+            }
+        }
 
         public string Serial
         {

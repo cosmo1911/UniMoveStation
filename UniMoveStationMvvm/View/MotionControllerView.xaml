@@ -40,7 +40,6 @@
                     <Button Content="Connect" 
                             Margin="3 3 3 3" 
                             Command="{Binding ConnectCommand}"
-                            Style="{DynamicResource FlatButtonStyle}"
                             />
                 </Grid>
                 <Grid Grid.Row="1">

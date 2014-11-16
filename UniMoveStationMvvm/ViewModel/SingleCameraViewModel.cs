@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using CLEyeMulticam;
 using Emgu.CV.Structure;
 using UniMoveStation.Utilities;
 using System;
@@ -29,19 +28,19 @@ namespace UniMoveStation.ViewModel
         public SingleCameraModel Camera
         {
             get;
-            set;
+            private set;
         }
 
         public ITrackerService TrackerService
         {
             get;
-            set;
+            private set;
         }
 
         public ICLEyeService CLEyeService
         {
             get;
-            set;
+            private set;
         }
         #endregion
 
@@ -200,18 +199,14 @@ namespace UniMoveStation.ViewModel
                 if (CLEyeService.Enabled)
                 {
                     CLEyeService.Stop();
-                    CLEyeImageControlVisibility = Visibility.Hidden;
                 }
                 Camera.Tracking = TrackerService.Start();
-                TrackerImageVisibility = Visibility.Visible;
             }
             else
             {
                 Camera.Tracking = TrackerService.Stop();
-                TrackerImageVisibility = Visibility.Hidden;
                 if (Camera.ShowImage)
                 {
-                    CLEyeImageControlVisibility = Visibility.Visible;
                     CLEyeService.Start(Camera);
                 }
             }

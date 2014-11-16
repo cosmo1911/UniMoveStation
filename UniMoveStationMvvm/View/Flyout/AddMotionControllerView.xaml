@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="UniMoveStation.View.Flyout.AddMotionControllerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:ignore="http://www.ignore.com"
+             mc:Ignorable="d ignore">
+
+    <controls:Flyout Margin="210 0 0 0"
+                     Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:MetroWindow}, Path=ActualWidth}"
+                     Header="{Binding Header}"
+                     Position="{Binding Position}"
+                     IsOpen="{Binding IsOpen}">
+        <Grid Margin="8 8 8 4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="No controllers detected"
+                       />
+
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical">
+                    <TextBox controls:TextboxHelper.Watermark="Name"
+                             Text="{Binding MotionController.Name, Mode=TwoWay}"
+                             Margin="0 4 0 4"
+                             />
+                    <Grid Margin="0 4 0 4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Serial"
+                                   Margin="0 0 8 0"
+                                   VerticalAlignment="Center"
+                                   />
+                        <ComboBox Grid.Column="1">
+
+                        </ComboBox>
+                    </Grid>
+                    <Grid Margin="0 4 0 4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Content="Remote"
+                                  IsChecked="{Binding MotionController.Remote, Mode=TwoWay}"
+                                  FlowDirection="RightToLeft"
+                                  Margin="0 0 8 0"
+                                  />
+                        <ComboBox Grid.Column="1" 
+                                  Text="{Binding MotionController.HostIp, Mode=TwoWay}"
+                                  IsEnabled="{Binding MotionController.Remote}"
+                                  SelectedIndex="0"
+                                  IsEditable="True">
+                            <ComboBox.Resources>
+                                <TextBox x:Key="ip"
+                                         controls:TextboxHelper.Watermark="IP Address"/>
+                                
+                            </ComboBox.Resources>
+                            <ComboBoxItem Content="{StaticResource ip}"
+                                          Selector.IsSelected="True"/>
+                        </ComboBox>
+                    </Grid>
+                    
+                </StackPanel>
+            </ScrollViewer>
+            <UniformGrid Columns="2"
+                         Grid.Row="2"
+                         Margin="8">
+                <Button Style="{DynamicResource AccentedSquareButtonStyle}"
+                        Margin="8"
+                        Content="Create"
+                        Command="{Binding CreateCommand}"
+                        />
+                <Button Style="{DynamicResource AccentedSquareButtonStyle}"
+                        Margin="8"
+                        Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        />
+            </UniformGrid>
+        </Grid>
+    </controls:Flyout>
+</UserControl>
