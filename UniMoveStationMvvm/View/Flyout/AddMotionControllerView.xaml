@@ -4,85 +4,166 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:ignore="http://www.ignore.com"
-             mc:Ignorable="d ignore">
+             mc:Ignorable="d ignore"
+             DataContext="{Binding AddMotionController, Source={StaticResource ViewModelLocator}}">
 
-    <controls:Flyout Margin="210 0 0 0"
-                     Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=controls:MetroWindow}, Path=ActualWidth}"
-                     Header="{Binding Header}"
-                     Position="{Binding Position}"
-                     IsOpen="{Binding IsOpen}">
-        <Grid Margin="8 8 8 4">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"
-                       Text="No controllers detected"
-                       />
+    <Grid Margin="8 8 8 4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Vertical">
-                    <TextBox controls:TextboxHelper.Watermark="Name"
-                             Text="{Binding MotionController.Name, Mode=TwoWay}"
-                             Margin="0 4 0 4"
-                             />
-                    <Grid Margin="0 4 0 4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Serial"
-                                   Margin="0 0 8 0"
-                                   VerticalAlignment="Center"
-                                   />
-                        <ComboBox Grid.Column="1">
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
 
-                        </ComboBox>
-                    </Grid>
-                    <Grid Margin="0 4 0 4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox Content="Remote"
-                                  IsChecked="{Binding MotionController.Remote, Mode=TwoWay}"
-                                  FlowDirection="RightToLeft"
-                                  Margin="0 0 8 0"
-                                  />
-                        <ComboBox Grid.Column="1" 
-                                  Text="{Binding MotionController.HostIp, Mode=TwoWay}"
-                                  IsEnabled="{Binding MotionController.Remote}"
-                                  SelectedIndex="0"
-                                  IsEditable="True">
-                            <ComboBox.Resources>
-                                <TextBox x:Key="ip"
-                                         controls:TextboxHelper.Watermark="IP Address"/>
-                                
-                            </ComboBox.Resources>
-                            <ComboBoxItem Content="{StaticResource ip}"
-                                          Selector.IsSelected="True"/>
-                        </ComboBox>
-                    </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Margin="0 4 0 4"
+                           Text="Name"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         controls:TextboxHelper.Watermark="Insert"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding NewMotionController.Name, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0 4 0 4"
+                         />
+                <TextBlock Grid.Row="1" 
+                           Text="Serial"
+            	           VerticalAlignment="Center"
+                           Margin="0 4 0 4"
+                           />
+                <ContentControl Grid.Column="1"
+                                Grid.Row="1" 
+                                Content="{Binding AvailableMotionControllers}">
                     
-                </StackPanel>
-            </ScrollViewer>
-            <UniformGrid Columns="2"
-                         Grid.Row="2"
-                         Margin="8">
-                <Button Style="{DynamicResource AccentedSquareButtonStyle}"
-                        Margin="8"
-                        Content="Create"
-                        Command="{Binding CreateCommand}"
-                        />
-                <Button Style="{DynamicResource AccentedSquareButtonStyle}"
-                        Margin="8"
-                        Content="Cancel"
-                        Command="{Binding CancelCommand}"
-                        />
-            </UniformGrid>
-        </Grid>
-    </controls:Flyout>
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <ComboBox Grid.Row="1"
+                                          Grid.Column="1"
+            	                          ItemsSource="{Binding}"
+            	                          SelectedIndex="-1"
+                                          Margin="0 4 0 4"
+                                          x:Name="combo_box_serial"
+                                          HorizontalContentAlignment="Center">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="SelectionChanged">
+                                            <mvvm:EventToCommand Command="{Binding AddMotionController.SelectItemCommand, Source={StaticResource ViewModelLocator}}"
+                                                                             CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
+                                                                             />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <ComboBox.ItemTemplate>
+                                        
+                                        <DataTemplate DataType="{x:Type m:MotionControllerModel}">
+                                            <TextBlock Text="{Binding Serial}"
+                                                       HorizontalAlignment="Center">
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <TextBlock x:Name="text_box_serial" 
+                                           Text="Select"
+                                           IsHitTestVisible="False" 
+                                           Visibility="Hidden"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </Grid>
+                            <DataTemplate.Triggers>
+
+                                <Trigger SourceName="combo_box_serial" 
+                                         Property="SelectedItem" 
+                                         Value="{x:Null}">
+                                    <Setter TargetName="text_box_serial" 
+                                            Property="Visibility" 
+                                            Value="Visible"
+                                            />
+                                </Trigger>
+
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+                
+
+                <CheckBox Grid.Row="2"
+                          Content="Remote"
+            	          IsChecked="{Binding NewMotionController.Remote}"
+            	          FlowDirection="RightToLeft"
+            	          VerticalAlignment="Center" 
+                          Margin="0 4 0 4"
+                          HorizontalAlignment="Left"
+                          />
+                
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+            	         Text="{Binding NewMotionController.HostIp}"
+            	         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         HorizontalContentAlignment="Center"
+                         />
+                
+                <TextBlock Grid.Row="3" 
+                           Text="Connection Type"
+                           Margin="0 4 0 4"
+                           VerticalAlignment="Center"
+                           />
+                
+                <TextBox Grid.Column="1" 
+                         Grid.Row="3"
+                         Text="{Binding NewMotionController.ConnectionType}"
+                         IsEnabled="False"
+                         HorizontalContentAlignment="Center"
+                         Margin="0 4 0 4"
+                         />
+                
+                <TextBlock Grid.Row="4" 
+                           Text="Connection Status"
+                           Margin="0 4 0 4"
+                           VerticalAlignment="Center"
+                           />
+                
+                <TextBox Grid.Row="4"
+                         Grid.Column="1" 
+                         Margin="0 4 0 4"
+                         Text="{Binding NewMotionController.ConnectStatus}"
+                         IsEnabled="False"
+                         HorizontalContentAlignment="Center"
+                         />
+            </Grid>
+        </ScrollViewer>
+        <UniformGrid Columns="2"
+                     Grid.Row="2"
+                     Margin="8">
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
+                    Content="Create"
+                    Command="{Binding CreateCommand, Mode=OneWay}"
+                    />
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand, Mode=OneWay}"
+                    />
+        </UniformGrid>
+        
+    </Grid>
 </UserControl>

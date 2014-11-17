@@ -17,10 +17,18 @@ namespace UniMoveStation.ViewModel
     /// </summary>
     public class MotionControllerViewModel : ViewModelBase
     {
+        private MotionControllerModel _motionController;
+
         public MotionControllerModel MotionController
         {
-            get;
-            set;
+            get
+            {
+                return _motionController;
+            }
+            set
+            {
+                Set(() => MotionController, ref _motionController, value);
+            }
         }
 
         public IMotionControllerService MotionControllerService;
@@ -34,32 +42,27 @@ namespace UniMoveStation.ViewModel
         /// <summary>
         /// Initializes a new instance of the MotionControllerViewModel class.
         /// </summary>
-        public MotionControllerViewModel(int id)
+        public MotionControllerViewModel(MotionControllerModel motionController)
         {
-            MotionController = new MotionControllerModel();
-            MotionController.Serial = "m #" + id;
-            MotionController.Name = "m #" + id;
+            MotionController = motionController;
 
             MotionControllerService = new MotionControllerService();
-
-            SimpleIoc ioc = (SimpleIoc) ServiceLocator.Current;
-            ioc.Register(() => this, MotionController.Serial, true);
 
             Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Blue, PaletteSchemaType.Analogous, 1);
         }
 
-        private RelayCommand _connectCommand;
+        private RelayCommand<bool> _connectCommand;
         private RelayCommand<Palette> _selectColorCommand;
 
         /// <summary>
         /// Gets the ConnectCommand.
         /// </summary>
-        public RelayCommand ConnectCommand
+        public RelayCommand<bool> ToggleConnectionCommand
         {
             get
             {
                 return _connectCommand
-                    ?? (_connectCommand = new RelayCommand(DoConnect));
+                    ?? (_connectCommand = new RelayCommand<bool>(DoToggleConnectionCommand));
             }
         }
 
@@ -75,9 +78,21 @@ namespace UniMoveStation.ViewModel
             }
         }
 
-        public void DoConnect()
+        public void DoToggleConnectionCommand(bool enabled)
         {
-            MotionControllerService.Start(MotionController);
+            if (enabled)
+            {
+                MotionControllerService.Initialize(MotionController.Id);
+                if (MotionController.ConnectStatus == UniMove.PSMoveConnectStatus.OK)
+                {
+                    MotionController = MotionControllerService.Start();
+                    DoSelectColor(Palette);
+                }
+            }
+            else
+            {
+                MotionControllerService.Stop();
+            }
         }
 
         public void DoSelectColor(Palette palette)

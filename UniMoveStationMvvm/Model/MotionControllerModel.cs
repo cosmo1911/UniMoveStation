@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniMove;
 using UnityEngine;
 
 namespace UniMoveStation.Model
@@ -12,6 +13,19 @@ namespace UniMoveStation.Model
     {
         private int _id;
         private string _name;
+
+        private Color _color;
+        private int _rumble;
+        private float _temperature;
+
+        private PSMoveBatteryLevel _batteryLevel;
+        private PSMoveConnectStatus _connectStatus;
+        private PSMoveConnectionType _connectionType;
+        private string _hostIp;
+        private bool _remote;
+        private float _updateRate;
+
+        #region Buttons
         private bool _circle;
         private bool _cross;
         private bool _triangle;
@@ -21,11 +35,193 @@ namespace UniMoveStation.Model
         private bool _start;
         private bool _select;
         private int _trigger;
-        private int _rumble;
-        private Color _color;
-        private float _updateRate;
-        private bool _remote;
-        private string _hostIp;
+        #endregion
+
+        #region Inertial Data
+        private bool _oriented;
+        private Quaternion _orientation;
+        private Vector3 _rawAcceleration;
+        private Vector3 _acceleration;
+        private Vector3 _rawGyroscope;
+        private Vector3 _gyroscope;
+        private Vector3 _magnetometer;
+        #endregion
+
+        public bool Oriented
+        {
+            get
+            {
+                return _oriented;
+            }
+            set
+            {
+                Set(() => Oriented, ref _oriented, value);
+            }
+        }
+
+        /// <summary>
+        /// The 3-axis acceleration values. 
+        /// </summary>
+        public Vector3 RawAcceleration
+        {
+            get
+            {
+                return _rawAcceleration;
+            }
+            set
+            {
+                Set(() => RawAcceleration, ref _rawAcceleration, value);
+            }
+        }
+
+        /// <summary>
+        /// The 3-axis acceleration values, roughly scaled between -3g to 3g (where 1g is Earth's gravity).
+        /// </summary>
+        public Vector3 Acceleration
+        {
+            get 
+            { 
+                return _acceleration; 
+            }
+            set
+            {
+                Set(() => Acceleration, ref _acceleration, value);
+            }
+        }
+
+        /// <summary>
+        /// The raw values of the 3-axis gyroscope. 
+        /// </summary>
+        public Vector3 RawGyroscope
+        {
+            get 
+            { 
+                return _rawGyroscope; 
+            }
+            set
+            {
+                Set(() => RawGyroscope, ref _rawGyroscope, value);
+            }
+        }
+        /// <summary>
+        /// The raw values of the 3-axis gyroscope. 
+        /// </summary>
+        public Vector3 Gyroscope
+        {
+            get 
+            { 
+                return _gyroscope; 
+            }
+            set
+            {
+                Set(() => Gyroscope, ref _gyroscope, value);
+            }
+
+        }
+
+        /// <summary>
+        /// The raw values of the 3-axis magnetometer.
+        /// To be honest, we don't fully understand what the magnetometer does.
+        /// The C API on which this code is based warns that this isn't fully tested.
+        /// </summary>
+        public Vector3 Magnetometer
+        {
+            get 
+            { 
+                return _magnetometer; 
+            }
+            set
+            {
+                Set(() => Magnetometer, ref _magnetometer, value);
+            }
+        }
+
+        /// <summary>
+        /// The temperature in Celcius
+        /// </summary>
+        public float Temperature
+        {
+            get 
+            {
+                return _temperature; 
+            }
+            set
+            {
+                Set(() => Temperature, ref _temperature, value);
+            }
+        }
+
+        public Quaternion Orientation
+        {
+            get 
+            { 
+                return _orientation; 
+            }
+            set
+            {
+                Set(() => Orientation, ref _orientation, value);
+            }
+        }
+
+        public Vector3 Up
+        {
+            get 
+            { 
+                return Orientation * Vector3.up; 
+            }
+        }
+
+        public Vector3 Forward
+        {
+            get 
+            { 
+                return Orientation * Vector3.forward; 
+            }
+        }
+
+        public Vector3 Right
+        {
+            get 
+            { 
+                return Orientation * Vector3.right; 
+            }
+        }
+
+        public PSMoveConnectStatus ConnectStatus
+        {
+            get
+            {
+                return _connectStatus;
+            }
+            set
+            {
+                Set(() => ConnectStatus, ref _connectStatus, value);
+            }
+        }
+
+        public PSMoveBatteryLevel BatteryLevel
+        {
+            get
+            {
+                return _batteryLevel;
+            }
+            set
+            {
+                Set(() => BatteryLevel, ref _batteryLevel, value);
+            }
+        }
+
+        public PSMoveConnectionType ConnectionType
+        {
+            get
+            {
+                return _connectionType;
+            }
+            set
+            {
+                Set(() => ConnectionType, ref _connectionType, value);
+            }
+        }
 
         public string HostIp
         {

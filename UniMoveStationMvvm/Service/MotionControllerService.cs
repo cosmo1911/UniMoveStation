@@ -1,4 +1,5 @@
-﻿using System;
+﻿using io.thp.psmove;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,19 +14,59 @@ namespace UniMoveStation.Service
     class MotionControllerService : UniMoveController, IMotionControllerService
     {
         private MotionControllerModel _motionController;
+        private PSMoveRemoteConfig _remoteConfig = PSMoveRemoteConfig.OnlyRemote;
 
-        public void Start(MotionControllerModel motionController)
+        public MotionControllerModel MotionController
         {
-            _motionController = motionController;
-            Init(0);
+            get
+            {
+                return _motionController;
+            }
+            set
+            {
+                _motionController = value;
+            }
+        }
 
+        public MotionControllerModel Start()
+        {
             OnControllerDisconnected += MotionControllerService_OnControllerDisconnected;
             InitBackgroundWorker();
+            return MotionController;
         }
 
         void MotionControllerService_OnControllerDisconnected(object sender, EventArgs e)
         {
             Console.WriteLine(_motionController.Name + " disconnected");
+        }
+
+        public void Initialize(int id)
+        {
+            pinvoke.set_remote_config((int) _remoteConfig);
+
+            MotionController = new MotionControllerModel();
+
+            _motionController.ConnectStatus = Init(id);
+            if(_motionController.ConnectStatus == PSMoveConnectStatus.OK)
+            {
+                _motionController.Id = id;
+                _motionController.Color = UnityEngine.Color.white;
+                _motionController.Serial = get_serial();
+                _motionController.UpdateRate = UpdateRate;
+                _motionController.Remote = is_remote() > 0;
+                _motionController.ConnectionType = ConnectionType;
+                _motionController.HostIp = get_moved_host();
+
+                UpdateController();
+
+                _motionController.Temperature = Temperature;
+                _motionController.BatteryLevel = Battery;
+                _motionController.RawAcceleration = RawAcceleration;
+                _motionController.RawGyroscope = RawGyroscope;
+                _motionController.Acceleration = Acceleration;
+                _motionController.Gyroscope = Gyro;
+
+            }
         }
 
         public void Stop()
@@ -81,15 +122,7 @@ namespace UniMoveStation.Service
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            _motionController.Circle = GetButton(PSMoveButton.Circle);
-            _motionController.Cross = GetButton(PSMoveButton.Cross);
-            _motionController.Triangle = GetButton(PSMoveButton.Triangle);
-            _motionController.Square = GetButton(PSMoveButton.Square);
-            _motionController.Move = GetButton(PSMoveButton.Move);
-            _motionController.PS = GetButton(PSMoveButton.PS);
-            _motionController.Start = GetButton(PSMoveButton.Start);
-            _motionController.Select = GetButton(PSMoveButton.Select);
-            _motionController.Trigger = (int)(Trigger * 255);
+            UpdateButtons();
             SetLED(_motionController.Color);
         }
 
@@ -105,10 +138,30 @@ namespace UniMoveStation.Service
 
         public void CancelBackgroundWorker()
         {
-            bw.CancelAsync();
-            //wait until worker is finished
-            bwResetEvent.WaitOne(-1);
+            if(bw != null)
+            {
+                bw.CancelAsync();
+                //wait until worker is finished
+                bwResetEvent.WaitOne(-1);
+            }
         }
         #endregion [ BackgroundWorker ]
+
+        private void UpdateButtons()
+        {
+            _motionController.Circle = GetButton(PSMoveButton.Circle);
+            _motionController.Cross = GetButton(PSMoveButton.Cross);
+            _motionController.Triangle = GetButton(PSMoveButton.Triangle);
+            _motionController.Square = GetButton(PSMoveButton.Square);
+            _motionController.Move = GetButton(PSMoveButton.Move);
+            _motionController.PS = GetButton(PSMoveButton.PS);
+            _motionController.Start = GetButton(PSMoveButton.Start);
+            _motionController.Select = GetButton(PSMoveButton.Select);
+            _motionController.Trigger = (int) (Trigger * 255);
+        }
+
+        #region Imports
+
+        #endregion
     }
 }

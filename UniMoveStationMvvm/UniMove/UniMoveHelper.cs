@@ -3,17 +3,6 @@
  * Copyright (c) 2012 Benjamin Venditti <benjamin.venditti@gmail.com>
  * Copyright (c) 2012 Thomas Perl <m@thp.io>
  * 
- * UniMove API - A Unity plugin for the PlayStation Move motion controller
- * Copyright (C) 2012, 2013, Copenhagen Game Collective (http://www.cphgc.org)
- * 					         Patrick Jarnfelt
- * 					         Douglas Wilson (http://www.doougle.net)
- * 					         
- * UniMoveExtended
- * Copyright (c) 2013 Eric Itomura (http://eric.itomura.org/unimovex)
- * 
- * Additional Fixes
- * Copyright (c) 2014 Johannes Hoffmann
- * 
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -38,6 +27,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  **/
+
+/**
+ * UniMove API - A Unity plugin for the PlayStation Move motion controller
+ * Copyright (C) 2012, 2013, Copenhagen Game Collective (http://www.cphgc.org)
+ * 					         Patrick Jarnfelt
+ * 					         Douglas Wilson (http://www.doougle.net				         
+ */
+
+/**		         
+ * UniMoveExtended
+ * Copyright (c) 2013 Eric Itomura (http://eric.itomura.org/unimovex)
+ */
+
+/*
+ * UniMoveStation
+ * Copyright (c) 2014 Johannes Hoffmann
+ */
 
 using System;
 

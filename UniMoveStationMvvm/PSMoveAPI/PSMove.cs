@@ -11,6 +11,7 @@ namespace io.thp.psmove
 
     using System;
     using System.Runtime.InteropServices;
+    using System.Text;
     using UniMove;
 
     public class PSMove : IDisposable
@@ -228,7 +229,16 @@ namespace io.thp.psmove
 
         public string get_serial()
         {
-            return pinvoke.PSMove_get_serial(move);
+            StringBuilder serial = new StringBuilder(256);
+            pinvoke.PSMove_get_serial(move, serial);
+            return serial.ToString(); ;
+        }
+
+        public string get_moved_host()
+        {
+            StringBuilder host = new StringBuilder(256);
+            pinvoke.get_moved_host(move, host);
+            return host.ToString(); ;
         }
 
         public int is_remote()

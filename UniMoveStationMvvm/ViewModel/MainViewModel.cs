@@ -1,5 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using System.Collections.ObjectModel;
 using UniMoveStation.ViewModel.Flyout;
 
@@ -26,6 +27,10 @@ namespace UniMoveStation.ViewModel
             {
                 return _flyouts;
             }
+            set
+            {
+                Set(() => Flyouts, ref _flyouts, value);
+            }
         }
 
         /// <summary>
@@ -41,57 +46,35 @@ namespace UniMoveStation.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-
-            Flyouts.Add(new AddMotionControllerViewModel());
+            foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllInstances<FlyoutBaseViewModel>())
+            {
+                _flyouts.Add(fbvw);
+            }
+           
         }
 
-        private RelayCommand<string> _showFlyoutCommand;
+        private RelayCommand<FlyoutBaseViewModel> _toggleFlyoutCommand;
 
         /// <summary>
         /// Gets the ShowFlyout.
         /// </summary>
-        public RelayCommand<string> ToggleFlyout
+        public RelayCommand<FlyoutBaseViewModel> ToggleFlyout
         {
             get
             {
-                return _showFlyoutCommand
-                    ?? (_showFlyoutCommand = new RelayCommand<string>(DoToggleFlyout));
+                return _toggleFlyoutCommand
+                    ?? (_toggleFlyoutCommand = new RelayCommand<FlyoutBaseViewModel>(DoToggleFlyout));
             }
         }
 
-        public void DoToggleFlyout(string tag)
+        public void DoToggleFlyout(FlyoutBaseViewModel flyout)
         {
-            if (tag.Equals("controllers")) IsOpen = true;
-        }
-
-        /// <summary>
-        /// The <see cref="IsOpen" /> property's name.
-        /// </summary>
-        public const string IsOpenPropertyName = "IsOpen";
-
-        private bool _isOpen = false;
-
-        /// <summary>
-        /// Sets and gets the IsOpen property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public bool IsOpen
-        {
-            get
+            if(!Flyouts.Contains(flyout))
             {
-                return _isOpen;
+                Flyouts.Add(flyout);
             }
-
-            set
-            {
-                if (_isOpen == value)
-                {
-                    return;
-                }
-
-                _isOpen = value;
-                RaisePropertyChanged(() => IsOpen);
-            }
+            flyout.IsOpen = !flyout.IsOpen;
+                
         }
     }
 }

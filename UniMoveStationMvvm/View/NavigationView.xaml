@@ -136,7 +136,7 @@
 
             <controls:MetroTabControl TabStripPlacement="Left"
                                       Background="{StaticResource WindowBackgroundBrush}"
-                                      ItemsSource="{Binding MotionControllerTabs}"
+                                      ItemsSource="{Binding MotionControllerTabs, UpdateSourceTrigger=PropertyChanged}"
                                       ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
                                       ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
                                       ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"

@@ -2,13 +2,14 @@
              x:Class="UniMoveStation.View.MotionControllerView"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Margin="8">
     <Grid>
         <!-- Main Grid -->
         <Grid.RowDefinitions>
@@ -18,9 +19,11 @@
         <Grid Grid.Row="0">
             <!-- Top Grid -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"
-                                  MinWidth="100"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"
+                                  MinWidth="100"
+                                  />
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -28,21 +31,11 @@
 
             <Grid Grid.Column="0">
                 <!-- Left Grid-->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
-                    <Button Content="Connect" 
-                            Margin="3 3 3 3" 
-                            Command="{Binding ConnectCommand}"
-                            />
-                </Grid>
-                <Grid Grid.Row="1">
                     <!-- Upper Left Grid -->
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -216,9 +209,13 @@
             </Grid>
 
             <cw:ColorWheelControl Grid.Column="1"
-                                  Margin="3 3 3 3"
+                                  Margin="4"
                                   x:Name="color_wheel"
-                                  Palette="{Binding Palette}">
+                                  Palette="{Binding Palette}"
+                                  Height="100"
+                                  Width="100"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ColorsUpdated">
                         <mvvm:EventToCommand Command="{Binding SelectColorCommand}"
@@ -227,6 +224,25 @@
                 </i:Interaction.Triggers>
 
             </cw:ColorWheelControl>
+
+            <StackPanel Orientation="Vertical"
+                        Grid.Column="2">
+                <controls:ToggleSwitch OnLabel="Connected"
+                                       OffLabel="Disconnected"
+                                       Margin="4"
+                                       x:Name="button_toggle_connection"
+                                       HorizontalAlignment="Stretch" 
+                                       VerticalAlignment="Center"
+                                       HorizontalContentAlignment="Center">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <mvvm:EventToCommand Command="{Binding ToggleConnectionCommand}"
+                                                 CommandParameter="{Binding IsChecked, ElementName=button_toggle_connection}"
+                                                 />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </controls:ToggleSwitch>
+            </StackPanel>
             <!-- Top Main Grid -->
         </Grid>
         <Grid Grid.Row="1">

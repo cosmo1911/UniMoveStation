@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
 using System.Collections.ObjectModel;
 using UniMoveStation.Model;
+using UniMoveStation.Service;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
@@ -15,36 +16,54 @@ namespace UniMoveStation.ViewModel.Flyout
     /// </summary>
     public class AddMotionControllerViewModel : FlyoutBaseViewModel
     {
-        private MotionControllerModel _motionController;
-        private bool _controllersDetected;
+        private MotionControllerModel _newMotionController;
+        private bool _newControllersDetected;
         private RelayCommand _cancelCommand;
         private RelayCommand _createCommand;
         private RelayCommand _refreshCommand;
+        private RelayCommand<object> _selectItemCommand;
+
+        private ObservableCollection<MotionControllerModel> _availableMotionControllers;
 
         #region Properties
-        public MotionControllerModel MotionController
+        public ObservableCollection<MotionControllerModel> AvailableMotionControllers
         {
             get
             {
-                return _motionController;
-            }
-            private set
-            {
-                Set(() => MotionController, ref _motionController, value);
-            }
-        }
-
-        public bool ControllersDetected
-        {
-            get
-            {
-                ControllersDetected = io.thp.psmove.pinvoke.count_connected() > 0;
-
-                return _controllersDetected;
+                if (_availableMotionControllers == null)
+                {
+                    AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
+                }
+                return _availableMotionControllers;
             }
             set
             {
-                Set(() => ControllersDetected, ref _controllersDetected, value);
+                Set(() => AvailableMotionControllers, ref _availableMotionControllers, value);
+            }
+        }
+        public MotionControllerModel NewMotionController
+        {
+            get
+            {
+                return _newMotionController;
+            }
+            private set
+            {
+                Set(() => NewMotionController, ref _newMotionController, value);
+            }
+        }
+
+        public bool NewControllersDetected
+        {
+            get
+            {
+                NewControllersDetected = io.thp.psmove.pinvoke.count_connected() > 0;
+
+                return _newControllersDetected;
+            }
+            set
+            {
+                Set(() => NewControllersDetected, ref _newControllersDetected, value);
             }
         }
         #endregion
@@ -57,7 +76,7 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             Position = Position.Right;
             Header = "Add Motion Controller";
-            MotionController = new MotionControllerModel();
+            NewMotionController = new MotionControllerModel();
         }
         #endregion
 
@@ -85,7 +104,7 @@ namespace UniMoveStation.ViewModel.Flyout
                     ?? (_createCommand = new RelayCommand(DoCreateCommand));
             }
         }
-
+        
         /// <summary>
         /// Gets the RefreshCommand.
         /// </summary>
@@ -97,32 +116,92 @@ namespace UniMoveStation.ViewModel.Flyout
                     ?? (_refreshCommand = new RelayCommand(DoRefreshCommand));
             }
         }
+
+        /// <summary>
+        /// Gets the SelectItemCommand.
+        /// </summary>
+        public RelayCommand<object> SelectItemCommand
+        {
+            get
+            {
+                return _selectItemCommand
+                    ?? (_selectItemCommand = new RelayCommand<object>(DoSelectItemCommand));
+            }
+        }
         #endregion
+
 
         #region Command Executions
         public void DoCancelCommand()
         {
-
+            NewMotionController = new MotionControllerModel();
+            IsOpen = false;
         }
 
         public void DoCreateCommand()
         {
+            if (NewMotionController != null)
+            {
+                MotionControllerViewModel mcvw = new MotionControllerViewModel(NewMotionController);
+                SimpleIoc.Default.Register<MotionControllerViewModel>(
+                    () => mcvw,
+                    NewMotionController.Serial,
+                    true);
+                ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(mcvw);
+                IsOpen = false;
+            }
+        }
 
+        public void DoSelectItemCommand(object item)
+        {
+            if(item != null)
+            {
+                NewMotionController = (MotionControllerModel)item;
+                MotionControllerService mcs = new MotionControllerService();
+                mcs.Initialize(NewMotionController.Id);
+                NewMotionController = mcs.MotionController;
+            }
         }
 
         public void DoRefreshCommand()
         {
+            ObservableCollection<MotionControllerModel> existingControllers = new ObservableCollection<MotionControllerModel>();
+            AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
+            NewMotionController = null;
+            NewControllersDetected = false;
+
             int connectedCount = io.thp.psmove.pinvoke.count_connected();
-            ObservableCollection<MotionControllerViewModel> detectedControllers = new ObservableCollection<MotionControllerViewModel>();
-
-            foreach(MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+            if(connectedCount > 0)
             {
-                detectedControllers.Add(mcvw);
-            }
+                foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+                {
+                    existingControllers.Add(mcvw.MotionController);
+                }
 
-            foreach(MotionControllerViewModel mcvw in detectedControllers)
-            {
+                MotionControllerService motionControllerService = new MotionControllerService();
+                for (int i = 0; i < connectedCount; i++)
+                {
+                    motionControllerService.Initialize(i);
+                    foreach(MotionControllerModel mcw in existingControllers)
+                    {
+                        if(motionControllerService.MotionController.ConnectStatus == UniMove.PSMoveConnectStatus.OK)
+                        {
+                            if (!motionControllerService.MotionController.Serial.Equals(mcw.Serial))
+                            {
+                                if (existingControllers.IndexOf(mcw) == existingControllers.Count - 1)
+                                {
+                                    AvailableMotionControllers.Add(motionControllerService.MotionController);
+                                }
+                            }
+                        }
+                    }
+                }
 
+                if(AvailableMotionControllers.Count > 0)
+                {
+                    NewControllersDetected = true;
+                    NewMotionController = AvailableMotionControllers[0];
+                }
             }
         }
         #endregion

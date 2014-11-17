@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using System.Windows;
+using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
@@ -55,6 +56,7 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Register<NavigationViewModel>();
             SimpleIoc.Default.Register<AllCamerasViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
+            SimpleIoc.Default.Register<AddMotionControllerViewModel>(true);
         }
 
         public MainViewModel Main
@@ -86,6 +88,14 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<NavigationViewModel>();
+            }
+        }
+
+        public AddMotionControllerViewModel AddMotionController
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<AddMotionControllerViewModel>();
             }
         }
         

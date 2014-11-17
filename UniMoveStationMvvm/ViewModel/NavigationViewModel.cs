@@ -36,8 +36,13 @@ namespace UniMoveStation.ViewModel
             SingleCameras.Add(new SingleCameraViewModel(1337));
             SingleCameras.Add(new SingleCameraViewModel(1));
 
-            new MotionControllerViewModel(0);
-            new MotionControllerViewModel(1);
+            MotionControllerModel motionController = new MotionControllerModel();
+            motionController.Name = "name";
+            motionController.Serial = "name";
+            SimpleIoc.Default.Register<MotionControllerViewModel>(
+                () => new MotionControllerViewModel(motionController),
+                motionController.Serial,
+                true);
         }
         #endregion
 
@@ -93,21 +98,27 @@ namespace UniMoveStation.ViewModel
         {
             get
             {
+                if(_motionControllerTabs == null)
+                {
+                    MotionControllerTabs = new ObservableCollection<object>();
+                }
+                return _motionControllerTabs;
+            }
+            private set
+            {
                 ObservableCollection<object> collection = new ObservableCollection<object>();
                 collection.Add(AllCameras);
                 foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
                 {
                     collection.Add(mcvm);
                 }
-                IEditableCollectionView itemsView = (IEditableCollectionView) CollectionViewSource.GetDefaultView(collection);
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(collection);
                 itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
-                return collection;
-            }
-            private set
-            {
-                Set(() => MotionControllerTabs, ref _motionControllerTabs, value);
+
+                Set(() => MotionControllerTabs, ref _motionControllerTabs, collection);
             }
         }
+
         #endregion
 
         #region Relay Commands
@@ -150,9 +161,11 @@ namespace UniMoveStation.ViewModel
                     ?? (_addCommand = new RelayCommand<Object>(
                     tag =>
                     {
-                        if(tag.ToString().Equals("controllers"))
-                            ViewModelLocator.Instance.Main.DoToggleFlyout(tag.ToString());
-                        
+                        if (tag.ToString().Equals("controllers"))
+                        {
+                            ViewModelLocator.Instance.Main.DoToggleFlyout(ViewModelLocator.Instance.AddMotionController);
+                            ViewModelLocator.Instance.AddMotionController.DoRefreshCommand();
+                        }
                     }));
             }
         }

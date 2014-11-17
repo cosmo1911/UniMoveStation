@@ -9,8 +9,9 @@ namespace UniMoveStation.Service
 {
     public interface IMotionControllerService
     {
-        void Start(MotionControllerModel motionController);
+        MotionControllerModel Start();
         void Stop();
+        void Initialize(int id);
 
         bool Enabled
         {

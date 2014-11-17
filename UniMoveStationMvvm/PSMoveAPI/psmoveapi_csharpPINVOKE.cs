@@ -11,6 +11,7 @@ namespace io.thp.psmove
 
     using System;
     using System.Runtime.InteropServices;
+    using System.Text;
     using UniMove;
 
     class pinvoke
@@ -223,8 +224,11 @@ namespace io.thp.psmove
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_pair_custom@8")]
         public static extern int PSMove_pair_custom(HandleRef jarg1, string jarg2);
 
-        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_get_serial@4")]
-        public static extern string PSMove_get_serial(HandleRef jarg1);
+        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_get_serial@8")]
+        public static extern void PSMove_get_serial(HandleRef jarg1, StringBuilder serial);
+
+        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_get_moved_host@8")]
+        public static extern void get_moved_host(HandleRef jarg1, StringBuilder jarg2);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_is_remote@4")]
         public static extern int PSMove_is_remote(HandleRef jarg1);
