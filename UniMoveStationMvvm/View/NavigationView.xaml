@@ -32,7 +32,7 @@
                                  />
                 <!--Controller Label-->
                 <TextBlock Text="{Binding MotionController.Name}"
-                           FontSize="24"
+                           FontSize="20"
                            Height="32"
                            Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
                            />
@@ -59,7 +59,7 @@
                                  />
                 <!--Camera Label-->
                 <TextBlock Text="{Binding Camera.Name}"
-                           FontSize="24"
+                           FontSize="20"
                            Height="32"
                            Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
                            />
@@ -84,7 +84,7 @@
                                  Margin="8 4 16 4"/>
                 <!--Cameras Label-->
                 <TextBlock Text="{Binding Name}"
-                           FontSize="24"
+                           FontSize="20"
                            Height="32"
                            Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
                            />
@@ -96,13 +96,14 @@
             <v:AllCamerasView/>
         </DataTemplate>
         
+        <!--TODO replace center margin workaround-->
         <DataTemplate x:Key="AddButtonTabItemTemplate">
-            <Button Width="50"
-                    Height="50"
+            <Button Width="40"
+                    Height="40"
                     Style="{DynamicResource MetroCircleButtonStyle}"
                     HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Margin="80 0 0 0"
+                    Margin="85 0 0 0"
                     Command="{Binding Navigation.AddCommand, Source={StaticResource ViewModelLocator}}"
                     CommandParameter="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabControl}}}">
                 <Rectangle Width="20"
@@ -115,7 +116,6 @@
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
-
 
         </DataTemplate>
 

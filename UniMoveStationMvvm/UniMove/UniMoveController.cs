@@ -81,6 +81,8 @@ namespace UniMove
         private Vector3 rawGyro = Vector3.zero;
         private Vector3 gyro = Vector3.zero;
 
+        private float rumble = 0f;
+
         private Quaternion m_orientation = Quaternion.identity;
         private Quaternion m_orientationFix = Quaternion.identity;
 
@@ -266,7 +268,7 @@ namespace UniMove
             if (move.Handle != IntPtr.Zero)
             {
                 SetLED(0, 0, 0);
-                SetRumble(0);
+                Rumble = 0;
                 disconnect();
                 move = new HandleRef(this, IntPtr.Zero);
                 disconnected = true;
@@ -286,14 +288,19 @@ namespace UniMove
         /// Sets the amount of rumble
         /// </summary>
         /// <param name="rumble">the rumble amount (0-1)</param>
-        public void SetRumble(float rumble)
+        public float Rumble
         {
-            if (disconnected) return;
-
-            // Clamp to [0,255], rounded to nearest whole number
-            rumble = Mathf.Clamp01(rumble) * 255.0f;
-
-            set_rumble((int)(rumble + 0.5f));
+            get
+            {
+                return rumble;
+            }
+            set
+            {
+                if (disconnected) rumble = 0;
+                // Clamp to [0,255], rounded to nearest whole number
+                rumble = Mathf.Clamp01(value) * 255.0f;
+                set_rumble((int)(rumble + 0.5f));
+            }
         }
 
         /// <summary>
@@ -528,7 +535,7 @@ namespace UniMove
 
             battery = get_battery();
 
-            temperature = get_temperature();
+            temperature = get_temperature_in_celsius();
 
         }
         #endregion

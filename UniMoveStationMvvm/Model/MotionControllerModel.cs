@@ -47,6 +47,13 @@ namespace UniMoveStation.Model
         private Vector3 _magnetometer;
         #endregion
 
+        public MotionControllerModel()
+        {
+            ConnectStatus = PSMoveConnectStatus.Unknown;
+            ConnectionType = PSMoveConnectionType.Unknown;
+            HostIp = "Unknown";
+        }
+
         public bool Oriented
         {
             get

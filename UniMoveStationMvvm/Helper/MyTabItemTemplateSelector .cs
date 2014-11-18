@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using UniMoveStation.ViewModel;
+using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.Helper 
 {
@@ -34,6 +35,14 @@ namespace UniMoveStation.Helper
                 else if (item == CollectionView.NewItemPlaceholder)
                 {
                     return element.FindResource("AddButtonTabItemTemplate") as DataTemplate;
+                }
+                else if (item is AddMotionControllerViewModel)
+                {
+                    return element.FindResource("AddMotionControllerItemTemplate") as DataTemplate;
+                }
+                else if (item is AddCameraViewModel)
+                {
+                    return element.FindResource("AddCameraItemTemplate") as DataTemplate;
                 }
             }
 

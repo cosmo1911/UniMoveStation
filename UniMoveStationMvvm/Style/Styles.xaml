@@ -1,6 +1,32 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro">
+                    xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+                    xmlns:actions="clr-namespace:MahApps.Metro.Actions;assembly=MahApps.Metro"
+                    xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
+                    xmlns:m="clr-namespace:UniMoveStation.Model;assembly=UniMoveStationMvvm"
+                    xmlns:v="clr-namespace:UniMoveStation.View;assembly=UniMoveStationMvvm"
+                    xmlns:vm="clr-namespace:UniMoveStation.ViewModel;assembly=UniMoveStationMvvm"
+                    xmlns:fv="clr-namespace:UniMoveStation.View.Flyout;assembly=UniMoveStationMvvm"
+                    xmlns:fvm="clr-namespace:UniMoveStation.ViewModel.Flyout;assembly=UniMoveStationMvvm"
+                    mc:Ignorable="d i">
+
+    <DataTemplate x:Key="AddMotionControllerItemTemplate" 
+                      DataType="{x:Type fvm:AddMotionControllerViewModel}">
+        <fv:AddMotionControllerView />
+    </DataTemplate>
+
+    <DataTemplate x:Key="AddCameraItemTemplate" 
+                      DataType="{x:Type fvm:AddCameraViewModel}">
+        <fv:AddCameraView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
+        <v:NavigationView/>
+    </DataTemplate>
+
     <Style x:Key="MyTabItemStyle"
            TargetType="controls:MetroTabItem" 
            BasedOn="{StaticResource {x:Type controls:MetroTabItem}}">
@@ -73,5 +99,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
 </ResourceDictionary>

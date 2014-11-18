@@ -4,28 +4,36 @@
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             StartupUri="/View/MainView.xaml"
-             mc:Ignorable="d">
+             StartupUri="View/MainView.xaml"
+             mc:Ignorable="d"
+             xmlns:helper="clr-namespace:UniMoveStation.Helper">
     
     <Application.Resources>
         <ResourceDictionary>
+            <!--Global View Model Locator-->
+            <vm:ViewModelLocator x:Key="ViewModelLocator"
+                                 d:IsDataSource="True" 
+                                 />
+            <helper:MyFlyoutStyleSelector x:Key="MyFlyoutStyleSelector"/>
+            <helper:MyTabItemTemplateSelector x:Key="MyItemTemplateSelector"/>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Clean/CleanWindow.xaml" />
                 <ResourceDictionary x:Name="accents" 
-                                Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.TabControl.xaml" />
                 <ResourceDictionary Source="/Resources/Icons.xaml" />
                 <ResourceDictionary Source="/Style/Styles.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
-            <!--Global View Model Locator-->
-            <vm:ViewModelLocator x:Key="ViewModelLocator"
-                                 d:IsDataSource="True" />
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

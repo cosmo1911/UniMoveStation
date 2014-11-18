@@ -229,16 +229,16 @@ namespace io.thp.psmove
 
         public string get_serial()
         {
-            StringBuilder serial = new StringBuilder(256);
-            pinvoke.PSMove_get_serial(move, serial);
-            return serial.ToString(); ;
+            StringBuilder builder = new StringBuilder(32);
+            pinvoke.get_serial(move, builder);
+            return builder.ToString();
         }
 
         public string get_moved_host()
         {
-            StringBuilder host = new StringBuilder(256);
-            pinvoke.get_moved_host(move, host);
-            return host.ToString(); ;
+            StringBuilder builder = new StringBuilder(32);
+            pinvoke.get_moved_host(move, builder);
+            return builder.ToString(); ;
         }
 
         public int is_remote()

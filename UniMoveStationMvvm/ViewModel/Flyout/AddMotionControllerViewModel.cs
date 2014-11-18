@@ -135,6 +135,7 @@ namespace UniMoveStation.ViewModel.Flyout
         public void DoCancelCommand()
         {
             NewMotionController = new MotionControllerModel();
+            NewMotionController.Name = "Placeholder";
             IsOpen = false;
         }
 
@@ -156,10 +157,12 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             if(item != null)
             {
-                NewMotionController = (MotionControllerModel)item;
+                string tmp = NewMotionController.Name;
+                NewMotionController = (MotionControllerModel) item;
                 MotionControllerService mcs = new MotionControllerService();
                 mcs.Initialize(NewMotionController.Id);
                 NewMotionController = mcs.MotionController;
+                NewMotionController.Name = tmp;
             }
         }
 
@@ -167,7 +170,7 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             ObservableCollection<MotionControllerModel> existingControllers = new ObservableCollection<MotionControllerModel>();
             AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
-            NewMotionController = null;
+            NewMotionController = new MotionControllerModel();
             NewControllersDetected = false;
 
             int connectedCount = io.thp.psmove.pinvoke.count_connected();
@@ -200,7 +203,6 @@ namespace UniMoveStation.ViewModel.Flyout
                 if(AvailableMotionControllers.Count > 0)
                 {
                     NewControllersDetected = true;
-                    NewMotionController = AvailableMotionControllers[0];
                 }
             }
         }

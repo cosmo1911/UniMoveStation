@@ -39,7 +39,7 @@ namespace io.thp.psmove
         public static extern int psmove_is_remote(HandleRef jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_get_serial@4")]
-        public static extern string psmove_get_serial(HandleRef jarg1);
+        public static extern StringBuilder psmove_get_serial(HandleRef jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_pair@4")]
         public static extern int psmove_pair(HandleRef jarg1);
@@ -225,7 +225,7 @@ namespace io.thp.psmove
         public static extern int PSMove_pair_custom(HandleRef jarg1, string jarg2);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_get_serial@8")]
-        public static extern void PSMove_get_serial(HandleRef jarg1, StringBuilder serial);
+        public static extern void get_serial(HandleRef jarg1, StringBuilder jarg2);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_get_moved_host@8")]
         public static extern void get_moved_host(HandleRef jarg1, StringBuilder jarg2);

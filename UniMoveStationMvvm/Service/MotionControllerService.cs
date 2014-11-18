@@ -14,7 +14,7 @@ namespace UniMoveStation.Service
     class MotionControllerService : UniMoveController, IMotionControllerService
     {
         private MotionControllerModel _motionController;
-        private PSMoveRemoteConfig _remoteConfig = PSMoveRemoteConfig.OnlyRemote;
+        private PSMoveRemoteConfig _remoteConfig = PSMoveRemoteConfig.LocalAndRemote;
 
         public MotionControllerModel MotionController
         {
@@ -65,6 +65,9 @@ namespace UniMoveStation.Service
                 _motionController.RawGyroscope = RawGyroscope;
                 _motionController.Acceleration = Acceleration;
                 _motionController.Gyroscope = Gyro;
+            }
+            else
+            {
 
             }
         }
@@ -96,7 +99,6 @@ namespace UniMoveStation.Service
             bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
             bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
             bwResetEvent = new AutoResetEvent(false);
-
             bw.RunWorkerAsync();
         }
 

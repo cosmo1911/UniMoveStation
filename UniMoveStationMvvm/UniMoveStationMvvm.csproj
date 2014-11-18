@@ -17,6 +17,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ExpressionBlendVersion>12.0.50429.0</ExpressionBlendVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -52,6 +53,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ColorWheel.Controls">
       <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Controls.dll</HintPath>
@@ -90,34 +111,42 @@
     <Reference Include="SharpVectors.Converters, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b532964b8548be77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Converters.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Core, Version=0.3.1.1588, Culture=neutral, PublicKeyToken=7407205e337c98ef, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Core.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Css, Version=0.3.1.1590, Culture=neutral, PublicKeyToken=7a46e3f532fdb787, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Css.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Dom, Version=0.3.1.1589, Culture=neutral, PublicKeyToken=517340b6277b1a7a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Dom.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Model, Version=0.3.1.1592, Culture=neutral, PublicKeyToken=2236cfc76b505845, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Model.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Rendering.Gdi, Version=0.3.1.1595, Culture=neutral, PublicKeyToken=03902092284347e3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Rendering.Gdi.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Rendering.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d0902381100df30e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Rendering.Wpf.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="SharpVectors.Runtime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d16e717f0a981fb9, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Runtime.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -147,12 +176,12 @@
     </ApplicationDefinition>
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
+    <Compile Include="Helper\MyFlyoutStyleSelector.cs" />
     <Compile Include="Helper\MyTabContainerStyleSelector.cs" />
     <Compile Include="Helper\MyTabItemTemplateSelector .cs" />
     <Compile Include="Helper\MyTabContentTemplateSelector.cs" />
     <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
-    <Compile Include="PSMoveAPI\SWIGTYPE_p_unsigned_char.cs" />
     <Compile Include="Service\CLEyeService.cs" />
     <Compile Include="Service\ICLEyeService.cs" />
     <Compile Include="Service\IMotionControllerService.cs" />
@@ -160,7 +189,6 @@
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Service\MotionControllerService.cs" />
     <Compile Include="Model\ServerModel.cs" />
-    <Compile Include="Service\ObservableObject.cs" />
     <Compile Include="Service\TrackerService.cs" />
     <Compile Include="PSMoveAPI\PSMove.cs" />
     <Compile Include="PSMoveAPI\psmoveapi.cs" />
@@ -177,6 +205,7 @@
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="ViewModel\AllCamerasViewModel.cs" />
+    <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
     <Compile Include="ViewModel\SingleCameraViewModel.cs" />
@@ -187,6 +216,9 @@
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\AllCamerasView.xaml.cs">
       <DependentUpon>AllCamerasView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Flyout\AddCameraView.xaml.cs">
+      <DependentUpon>AddCameraView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Flyout\AddMotionControllerView.xaml.cs">
       <DependentUpon>AddMotionControllerView.xaml</DependentUpon>
@@ -221,6 +253,10 @@
     <Page Include="View\AllCamerasView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Flyout\AddCameraView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Flyout\AddMotionControllerView.xaml">
       <SubType>Form</SubType>
@@ -305,9 +341,6 @@
     <Resource Include="Resources\PlayStationSquare.svg" />
     <Resource Include="Resources\PlayStationTriangle.svg" />
     <Resource Include="Resources\PlayStationX.svg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Design\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
