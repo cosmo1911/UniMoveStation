@@ -15,5 +15,11 @@ namespace UniMoveStation.View
         {
             InitializeComponent();
         }
+
+        private void color_wheel_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue == null)
+                DataContext = e.OldValue;
+        }
     }
 }

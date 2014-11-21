@@ -10,15 +10,37 @@ namespace UniMoveStation.Model
     
     public class SingleCameraModel : ObservableObject
     {
-        private bool _annotate;
-        private int _id;
-        private string _name;
-        private bool _showImage;
-        private bool _tracking;
+        private bool _annotate = false;
+        private int _trackerId = -1;
+        private string _name = "name";
+        private string _guid = "";
+        private bool _showImage = false;
+        private bool _tracking = false;
         private BitmapSource _bitmapSource;
         private ImageSource _imageSource;
         private UniMoveTracker _tracker;
-        private List<UniMoveController> _moves;
+        private List<UniMoveController> _moves = new List<UniMoveController>();
+
+#if DEBUG
+        private static int COUNTER = -1;
+        public SingleCameraModel()
+        {
+            TrackerId = ++COUNTER;
+            Name = "Design " + TrackerId;
+            GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
+        }
+#endif
+        public string GUID
+        {
+            get
+            {
+                return _guid;
+            }
+            set
+            {
+                Set(() => GUID, ref _guid, value);
+            }
+        }
 
         public bool Annotate
         {
@@ -32,15 +54,15 @@ namespace UniMoveStation.Model
             }
         }
 
-        public int Id
+        public int TrackerId
         {
             get
             {
-                return _id;
+                return _trackerId;
             }
             set
             {
-                Set(() => Id, ref _id, value);
+                Set(() => TrackerId, ref _trackerId, value);
             }
         }
 

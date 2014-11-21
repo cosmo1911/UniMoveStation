@@ -19,12 +19,14 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using UniMoveStation.Service;
 using UniMoveStation.View;
+using UniMoveStation.Design;
 
 namespace UniMoveStation.ViewModel
 {
     public class SingleCameraViewModel : ViewModelBase
     {
         #region Member
+        private static int COUNTER = -1;
         public SingleCameraModel Camera
         {
             get;
@@ -37,7 +39,7 @@ namespace UniMoveStation.ViewModel
             private set;
         }
 
-        public ICLEyeService CLEyeService
+        public ICameraService CameraService
         {
             get;
             private set;
@@ -49,24 +51,36 @@ namespace UniMoveStation.ViewModel
         /// Initializes a new instance of the MotionControllerViewModel class.
         /// </summary>
         [PreferredConstructor]
-        public SingleCameraViewModel(int trackerId)
+        public SingleCameraViewModel(SingleCameraModel camera, ITrackerService trackerService, ICameraService cameraService)
         {
-            Camera = new SingleCameraModel();
+            TrackerService = trackerService;
+            CameraService = cameraService;
+            Camera = camera;
 
-            TrackerService = new TrackerService(Camera);
-            CLEyeService = new CLEyeService();
-
-            Camera.Id = trackerId;
-            Camera.Name = "Camera " + trackerId;
-
-            Camera.Controllers = new List<UniMoveController>();
+            CameraService.Initialize(Camera);
+            TrackerService.Initialize(Camera);
 
             ToggleCameraCommand = new RelayCommand<bool>(DoToggleCamera);
             ToggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate);
             ToggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking);
-            SimpleIoc ioc = (SimpleIoc)ServiceLocator.Current;
-            ioc.Register(() => this, Camera.Name, true);
 
+            SimpleIoc ioc = (SimpleIoc)ServiceLocator.Current;
+            ioc.Register(() => this, Camera.GUID, true);
+        }
+
+        /// <summary>
+        /// for design time purposes only
+        /// </summary>
+        public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService())
+        {
+#if DEBUG
+            if (IsInDesignMode)
+            {
+                Camera.TrackerId = ++COUNTER;
+                Camera.Name = "Design " + Camera.TrackerId;
+                CameraService.Initialize(Camera);
+            }
+#endif
         }
         #endregion
 
@@ -168,9 +182,6 @@ namespace UniMoveStation.ViewModel
             Camera.Annotate = annotate;
         }
 
-        /// <summary>
-        /// starts or stops displaying the camera image from the CL Eye Camera
-        /// </summary>
         private void DoToggleCamera(bool enabled)
         {
             if (enabled)
@@ -179,15 +190,14 @@ namespace UniMoveStation.ViewModel
                 {
                     Camera.ShowImage = true;
                 }
-                else if(!CLEyeService.Enabled)
+                else if(!CameraService.Enabled)
                 {
-
-                    Camera.ShowImage = CLEyeService.Start(Camera);
+                    Camera.ShowImage = CameraService.Start();
                 }
             }
             else
             {
-                if (CLEyeService.Enabled) Camera.ShowImage = CLEyeService.Stop();
+                if (CameraService.Enabled) Camera.ShowImage = CameraService.Stop();
                 else if (TrackerService.Enabled) Camera.ShowImage = false;
             }
         }
@@ -196,9 +206,9 @@ namespace UniMoveStation.ViewModel
         {
             if (enabled)
             {
-                if (CLEyeService.Enabled)
+                if (CameraService.Enabled)
                 {
-                    CLEyeService.Stop();
+                    CameraService.Stop();
                 }
                 Camera.Tracking = TrackerService.Start();
             }
@@ -207,7 +217,7 @@ namespace UniMoveStation.ViewModel
                 Camera.Tracking = TrackerService.Stop();
                 if (Camera.ShowImage)
                 {
-                    CLEyeService.Start(Camera);
+                    CameraService.Start();
                 }
             }
         }

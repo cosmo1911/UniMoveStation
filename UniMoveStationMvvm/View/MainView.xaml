@@ -111,7 +111,8 @@
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <Grid Margin="10 30 10 10">
+                        <Grid Margin="10 30 10 10"
+                              DataContext="{Binding Source={StaticResource ViewModelLocator}}">
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>

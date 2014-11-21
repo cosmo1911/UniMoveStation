@@ -10,11 +10,11 @@ using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
 {
-    public class CLEyeService : DependencyObject, ICLEyeService
+    public class CLEyeService : DependencyObject, ICameraService
     {
         private SingleCameraModel _camera;
 
-        public bool Start(SingleCameraModel camera)
+        public void Initialize(SingleCameraModel camera)
         {
             _camera = camera;
             Device = new CLEyeCameraDevice();
@@ -24,7 +24,17 @@ namespace UniMoveStation.Service
             //CLEYE_QVGA - 15, 30, 60, 75, 100, 125
             //CLEYE_VGA - 15, 30, 40, 50, 60, 75
             Device.Framerate = 60;
-            Device.Create(CLEyeCameraDevice.CameraUUID(camera.Id));
+            _camera.GUID = CLEyeCameraDevice.CameraUUID(_camera.TrackerId).ToString();
+        }
+
+        public int GetConnectedCount()
+        {
+            return CLEyeCameraDevice.CLEyeGetCameraCount();
+        }
+
+        public bool Start()
+        {
+            Device.Create(CLEyeCameraDevice.CameraUUID(_camera.TrackerId));
             Device.AutoExposure = true;
             Device.AutoGain = true;
             Device.AutoWhiteBalance = true;
@@ -43,6 +53,7 @@ namespace UniMoveStation.Service
             return Enabled = false;
         }
 
+        #region Depedency Properties
         /// <summary>
         /// The <see cref="Enabled" /> dependency property's name.
         /// </summary>
@@ -73,10 +84,13 @@ namespace UniMoveStation.Service
             typeof(CLEyeService),
             new UIPropertyMetadata(default(bool)));
 
+
         public CLEyeCameraDevice Device
         {
             get;
             set;
         }
+
+        #endregion
     }
 }

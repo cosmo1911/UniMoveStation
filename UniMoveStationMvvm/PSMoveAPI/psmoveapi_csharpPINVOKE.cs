@@ -38,8 +38,8 @@ namespace io.thp.psmove
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_is_remote@4")]
         public static extern int psmove_is_remote(HandleRef jarg1);
 
-        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_get_serial@4")]
-        public static extern StringBuilder psmove_get_serial(HandleRef jarg1);
+        [DllImport("libpsmoveapi", EntryPoint = "psmove_get_serial", CallingConvention=CallingConvention.Cdecl)]
+        public static extern string psmove_get_serial(HandleRef jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_pair@4")]
         public static extern int psmove_pair(HandleRef jarg1);

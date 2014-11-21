@@ -16,11 +16,9 @@ namespace UniMoveStation.Service
             set;
         }
 
-        void AddMotionController(UniMoveController motionController);
-
-        void RemoveMotionController(UniMoveController motionController);
-
         void UpdateImage();
+
+        void Initialize(SingleCameraModel camera);
 
         bool Start();
 

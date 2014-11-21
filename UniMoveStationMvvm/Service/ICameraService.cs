@@ -9,11 +9,13 @@ using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
 {
-    public interface ICLEyeService
+    public interface ICameraService
     {
-        bool Start(SingleCameraModel camera);
+        bool Start();
 
         bool Stop();
+
+        void Initialize(SingleCameraModel camera);
 
         bool Enabled
         {
@@ -26,5 +28,7 @@ namespace UniMoveStation.Service
             get;
             set;
         }
+
+        int GetConnectedCount();
     }
 }

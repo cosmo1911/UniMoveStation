@@ -8,7 +8,8 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:ignore="http://www.ignore.com"
-             mc:Ignorable="d ignore">
+             mc:Ignorable="d ignore"
+             d:DataContext="{Binding AddMotionController, Source={StaticResource ViewModelLocator}}">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>

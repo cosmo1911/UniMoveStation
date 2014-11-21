@@ -158,7 +158,7 @@
                                controls:ControlsHelper.HeaderFontSize="16">
 
                 <controls:MetroTabControl TabStripPlacement="Left"
-                                          ItemsSource="{Binding CameraTabs}"
+                                          ItemsSource="{Binding CameraTabs, UpdateSourceTrigger=PropertyChanged}"
                                           Background="{StaticResource WindowBackgroundBrush}"
                                           ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
                                           ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"

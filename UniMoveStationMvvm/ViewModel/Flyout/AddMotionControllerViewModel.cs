@@ -76,7 +76,6 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             Position = Position.Right;
             Header = "Add Motion Controller";
-            NewMotionController = new MotionControllerModel();
         }
         #endregion
 
@@ -143,11 +142,7 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             if (NewMotionController != null)
             {
-                MotionControllerViewModel mcvw = new MotionControllerViewModel(NewMotionController);
-                SimpleIoc.Default.Register<MotionControllerViewModel>(
-                    () => mcvw,
-                    NewMotionController.Serial,
-                    true);
+                MotionControllerViewModel mcvw = new MotionControllerViewModel(NewMotionController, new MotionControllerService());
                 ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(mcvw);
                 IsOpen = false;
             }
@@ -171,12 +166,13 @@ namespace UniMoveStation.ViewModel.Flyout
             ObservableCollection<MotionControllerModel> existingControllers = new ObservableCollection<MotionControllerModel>();
             AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
             NewMotionController = new MotionControllerModel();
+            NewMotionController.Name = null;
             NewControllersDetected = false;
 
             int connectedCount = io.thp.psmove.pinvoke.count_connected();
             if(connectedCount > 0)
             {
-                foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+                foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
                 {
                     existingControllers.Add(mcvw.MotionController);
                 }

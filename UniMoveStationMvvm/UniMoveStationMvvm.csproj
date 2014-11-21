@@ -176,6 +176,9 @@
     </ApplicationDefinition>
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
+    <Compile Include="Design\DesignCLEyeService.cs" />
+    <Compile Include="Design\DesignTrackerService.cs" />
+    <Compile Include="Design\DesignMotionControllerService.cs" />
     <Compile Include="Helper\MyFlyoutStyleSelector.cs" />
     <Compile Include="Helper\MyTabContainerStyleSelector.cs" />
     <Compile Include="Helper\MyTabItemTemplateSelector .cs" />
@@ -183,7 +186,7 @@
     <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
     <Compile Include="Service\CLEyeService.cs" />
-    <Compile Include="Service\ICLEyeService.cs" />
+    <Compile Include="Service\ICameraService.cs" />
     <Compile Include="Service\IMotionControllerService.cs" />
     <Compile Include="Service\ITrackerService.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
@@ -342,6 +345,7 @@
     <Resource Include="Resources\PlayStationTriangle.svg" />
     <Resource Include="Resources\PlayStationX.svg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

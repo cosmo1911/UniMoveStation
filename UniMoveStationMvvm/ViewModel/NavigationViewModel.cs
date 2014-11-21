@@ -22,7 +22,6 @@ namespace UniMoveStation.ViewModel
     {
         private ObservableCollection<object> _cameraTabs;
         private ObservableCollection<object> _motionControllerTabs;
-        private ObservableCollection<SingleCameraViewModel> _singleCameras;
         private int lastSelectedIndex = 0;
 
         #region Constructor
@@ -32,17 +31,14 @@ namespace UniMoveStation.ViewModel
         [PreferredConstructor]
         public NavigationViewModel()
         {
-            SingleCameras.Add(new SingleCameraViewModel(0));
-            SingleCameras.Add(new SingleCameraViewModel(1337));
-            SingleCameras.Add(new SingleCameraViewModel(1));
+            CameraTabs = new ObservableCollection<object>();
+            MotionControllerTabs = new ObservableCollection<object>();
 
-            MotionControllerModel motionController = new MotionControllerModel();
-            motionController.Name = "name";
-            motionController.Serial = "name";
-            SimpleIoc.Default.Register<MotionControllerViewModel>(
-                () => new MotionControllerViewModel(motionController),
-                motionController.Serial,
-                true);
+            CameraTabs.Add(new SingleCameraViewModel());
+            CameraTabs.Add(new SingleCameraViewModel());
+            CameraTabs.Add(new SingleCameraViewModel());
+
+            MotionControllerTabs.Add(new MotionControllerViewModel());
         }
         #endregion
 
@@ -53,46 +49,27 @@ namespace UniMoveStation.ViewModel
         {
             get
             {
+                if(_motionControllerTabs == null)
+                {
+                    CameraTabs = new ObservableCollection<object>();
+                }
+                return _cameraTabs;
+            }
+            private set
+            {
                 ObservableCollection<object> collection = new ObservableCollection<object>();
-                collection.Add(AllCameras);
+                collection.Add(SimpleIoc.Default.GetInstance<AllCamerasViewModel>());
                 foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
                 {
                     collection.Add(scvm);
                 }
-                IEditableCollectionView itemsView = (IEditableCollectionView) CollectionViewSource.GetDefaultView(collection);
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(collection);
                 itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
-                return collection;
-            }
-            private set
-            {
-                Set(() => CameraTabs, ref _cameraTabs, value);
+
+                Set(() => CameraTabs, ref _cameraTabs, collection);
             }
         }
 
-        public ObservableCollection<SingleCameraViewModel> SingleCameras
-        {
-            get
-            {
-                ObservableCollection<SingleCameraViewModel> collection = new ObservableCollection<SingleCameraViewModel>();
-                foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
-                {
-                    collection.Add(scvm);
-                }
-                return collection;
-            }
-            private set
-            {
-                Set(() => SingleCameras, ref _singleCameras, value);
-            }
-        }
-
-        public AllCamerasViewModel AllCameras
-        {
-            get
-            {
-                return SimpleIoc.Default.GetInstance<AllCamerasViewModel>();
-            }
-        }
 
         public ObservableCollection<object> MotionControllerTabs
         {
@@ -107,7 +84,8 @@ namespace UniMoveStation.ViewModel
             private set
             {
                 ObservableCollection<object> collection = new ObservableCollection<object>();
-                collection.Add(AllCameras);
+                //TODO replace with all motion controllers view model
+                collection.Add(SimpleIoc.Default.GetInstance<AllCamerasViewModel>());
                 foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
                 {
                     collection.Add(mcvm);
@@ -143,7 +121,6 @@ namespace UniMoveStation.ViewModel
                         {
                             lastSelectedIndex = tabControl.SelectedIndex;
                         }
-                        Console.WriteLine(tabControl.SelectedIndex);
                     }));
             }
         }
@@ -166,11 +143,14 @@ namespace UniMoveStation.ViewModel
                             ViewModelLocator.Instance.Main.DoToggleFlyout(ViewModelLocator.Instance.AddMotionController);
                             ViewModelLocator.Instance.AddMotionController.DoRefreshCommand();
                         }
+                        else if (tag.ToString().Equals("cameras"))
+                        {
+                            ViewModelLocator.Instance.Main.DoToggleFlyout(ViewModelLocator.Instance.AddCamera);
+                            ViewModelLocator.Instance.AddCamera.DoRefreshCommand();
+                        }
                     }));
             }
         }
-
-
         #endregion
     }
 }

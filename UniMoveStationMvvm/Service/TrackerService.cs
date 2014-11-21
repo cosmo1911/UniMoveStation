@@ -46,26 +46,14 @@ namespace UniMoveStation.Service
         };
         #endregion
 
-        #region Constructor
-        public TrackerService(SingleCameraModel camera)
-        {
-            _camera = camera;
-        }
-        #endregion
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="moves"></param>
         private void InitTracker(List<UniMoveController> moves)
         {
-            //enable all UniMoveControllers for tracking
-            _camera.Tracker = new UniMoveTracker(0);
-            for (int i = 0; i < moves.Count; i++)
-            {
-                _camera.Tracker.EnableTracking(moves[i], colors[i]);
-            }
-
+            _camera.Tracker = new UniMoveTracker(_camera.TrackerId);
+            _camera.Controllers = moves;
             //start BackgroundWorker updating the image
             InitBackgroundWorker();
         }
@@ -89,6 +77,14 @@ namespace UniMoveStation.Service
         private void bw_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
+
+            //enable all UniMoveControllers for tracking
+            
+            for (int i = 0; i < _camera.Controllers.Count; i++)
+            {
+                _camera.Tracker.EnableTracking(_camera.Controllers[i], colors[i]);
+            }
+
             //update image 
             while (!worker.CancellationPending)
             {
@@ -138,12 +134,17 @@ namespace UniMoveStation.Service
             set;
         }
 
-        public bool Start()
+        public void Initialize(SingleCameraModel camera)
         {
+            _camera = camera;
             _camera.Controllers = new List<UniMoveController>();
             UniMoveController controller = new UniMoveController();
+            // TODO: replace with proper id reference
             controller.Init(0);
             _camera.Controllers.Add(controller);
+        }
+        public bool Start()
+        {
             InitTracker(_camera.Controllers);
             _bw.RunWorkerAsync();
 

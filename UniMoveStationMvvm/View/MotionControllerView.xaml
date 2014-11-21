@@ -5,11 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d"
-             Margin="8">
+             Margin="8"
+             d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}">
     <Grid>
         <!-- Main Grid -->
         <Grid.RowDefinitions>
@@ -215,7 +217,8 @@
                                   Height="100"
                                   Width="100"
                                   VerticalAlignment="Center"
-                                  HorizontalAlignment="Center">
+                                  HorizontalAlignment="Center"
+                                  DataContextChanged="color_wheel_DataContextChanged">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ColorsUpdated">
                         <mvvm:EventToCommand Command="{Binding SelectColorCommand}"
@@ -230,10 +233,11 @@
                 <controls:ToggleSwitch OnLabel="Connected"
                                        OffLabel="Disconnected"
                                        Margin="4"
-                                       x:Name="button_toggle_connection"
                                        HorizontalAlignment="Stretch" 
                                        VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center">
+                                       HorizontalContentAlignment="Center"
+                                       x:Name="button_toggle_connection"
+                                       IsChecked="{Binding MotionControllerService.Enabled}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <mvvm:EventToCommand Command="{Binding ToggleConnectionCommand}"

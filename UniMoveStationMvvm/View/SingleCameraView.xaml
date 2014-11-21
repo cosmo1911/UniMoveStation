@@ -11,7 +11,9 @@
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:ignore="http://www.ignore.com"
-             mc:Ignorable="d ignore">
+             mc:Ignorable="d ignore"
+             d:DataContext="{d:DesignInstance Type=vm:SingleCameraViewModel, IsDesignTimeCreatable=True}"
+             Margin="10">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -31,30 +33,27 @@
             <Grid x:Name="grid">
                 <!-- Main -->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="180"/>
-                    <ColumnDefinition MaxWidth="125"/>
-                    <ColumnDefinition MaxWidth="125"/>
+                    <ColumnDefinition MinWidth="180" Width="*"/>
+                    <ColumnDefinition MaxWidth="200"/>
+                    <ColumnDefinition MaxWidth="200"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="180"/>
                 </Grid.RowDefinitions>
-                <Grid Margin="3 3 3 3">
+                <Grid>
                     <!-- Left Main Column -->
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="30"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition MaxHeight="30"/>
                     </Grid.RowDefinitions>
-                    <Label Grid.Column="0" 
-                           Grid.Row="0"
-                           HorizontalContentAlignment="Center" 
+                    <Label HorizontalContentAlignment="Center" 
                            VerticalContentAlignment="Center" 
                            Height="30"
                            Background="{StaticResource AccentColorBrush2}" 
                            Content="{Binding Camera.Name}"
                            />
                     <local:AspectRatioLayoutDecorator Grid.Column="0" 
-                                                      Grid.Row="1" 
+                                                      Grid.Row="1"
                                                       AspectRatio="1.3333">
                         <Grid MinWidth="180">
                             <Label VerticalContentAlignment="Center" 
@@ -69,37 +68,19 @@
                                    Source="{Binding Camera.ImageSource}"
                                    />
 
-                            <CLEyeMulticam:CLEyeCameraImage Device="{Binding CLEyeService.Device}"
-                                                            Visibility="{Binding CLEyeService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            <CLEyeMulticam:CLEyeCameraImage Device="{Binding CameraService.Device, UpdateSourceTrigger=PropertyChanged}"
+                                                            Visibility="{Binding CameraService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                             Source="{Binding Camera.BitmapSource}"
                                                             />
 
                         </Grid>
                     </local:AspectRatioLayoutDecorator>
-                    <Grid Grid.Column="0" 
-                          Grid.Row="2"
-                          Background="{StaticResource AccentColorBrush2}">
-                        <Label Height="30" 
-                               Content="x" 
-                               HorizontalAlignment="Left" 
-                               Margin="10 0 0 0"
-                               />
-                        <Label Height="30" 
-                               Content="y" 
-                               HorizontalAlignment="Center"
-                               />
-                        <Label Height="30" 
-                               Content="z" 
-                               HorizontalAlignment="Right"
-                               Margin="0 0 10 0"
-                               />
-                    </Grid>
                 </Grid>
                 <StackPanel Grid.Row="0" 
                             Grid.Column="2" 
                             Orientation="Vertical">
                     <controls:ToggleSwitch Header="Camera"
-                                           Margin="3,3,3,3"
+                                           Margin="4"
                                            x:Name="switch_camera"
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Center"
@@ -113,7 +94,7 @@
                         </i:Interaction.Triggers>
                     </controls:ToggleSwitch>
                     <controls:ToggleSwitch Header="Tracking"
-                                           Margin="3,3,3,3"
+                                           Margin="4"
                                            x:Name="switch_tracking"
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Center"
@@ -127,7 +108,7 @@
                         </i:Interaction.Triggers>
                     </controls:ToggleSwitch>
                     <controls:ToggleSwitch Header="Annotate"
-                                           Margin="3,3,3,3"
+                                           Margin="4"
                                            x:Name="switch_annotate"
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Center"
@@ -171,7 +152,7 @@
                        Text="Console"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Bottom"
-                       Margin="5,0,0,0"
+                       Margin="8,0,0,0"
                        />
 
             <!--Console-->

@@ -3,6 +3,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
+using System.ComponentModel;
+using UniMoveStation.Design;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using UnityEngine;
@@ -18,7 +20,11 @@ namespace UniMoveStation.ViewModel
     public class MotionControllerViewModel : ViewModelBase
     {
         private MotionControllerModel _motionController;
+        private IMotionControllerService _motionControllerService;
+        private RelayCommand<bool> _connectCommand;
+        private RelayCommand<Palette> _selectColorCommand;
 
+        #region Properties
         public MotionControllerModel MotionController
         {
             get
@@ -31,28 +37,56 @@ namespace UniMoveStation.ViewModel
             }
         }
 
-        public IMotionControllerService MotionControllerService;
+        public IMotionControllerService MotionControllerService
+        {
+            get
+            {
+                return _motionControllerService;
+            }
+            set
+            {
+                Set(() => MotionControllerService, ref _motionControllerService, value);
+            }
+        }
 
         public Palette Palette
         {
             get;
             private set;
         }
+        #endregion
 
+        #region Constructors 
         /// <summary>
         /// Initializes a new instance of the MotionControllerViewModel class.
         /// </summary>
-        public MotionControllerViewModel(MotionControllerModel motionController)
+        public MotionControllerViewModel(MotionControllerModel mc, IMotionControllerService mcs)
         {
-            MotionController = motionController;
-
-            MotionControllerService = new MotionControllerService();
-
+            _motionController = mc;
+            _motionControllerService = mcs;
             Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Blue, PaletteSchemaType.Analogous, 1);
+            DoSelectColor(Palette);
+
+            if (mc.Serial != null) { }
+            SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
         }
 
-        private RelayCommand<bool> _connectCommand;
-        private RelayCommand<Palette> _selectColorCommand;
+        public MotionControllerViewModel()
+            : this(new MotionControllerModel(), IsInDesignModeStatic ? 
+            (IMotionControllerService) new DesignMotionControllerService() 
+            : new MotionControllerService())
+        {
+            
+#if DEBUG
+            if(IsInDesignMode)
+            {
+                
+            }
+#endif
+        }
+        #endregion
+
+        #region Commands
 
         /// <summary>
         /// Gets the ConnectCommand.
@@ -77,7 +111,9 @@ namespace UniMoveStation.ViewModel
                     ?? (_selectColorCommand = new RelayCommand<Palette>(DoSelectColor));
             }
         }
+        #endregion
 
+        #region Command Executions
         public void DoToggleConnectionCommand(bool enabled)
         {
             if (enabled)
@@ -105,5 +141,6 @@ namespace UniMoveStation.ViewModel
 
             MotionController.Color = new Color(r, g, b);
         }
+        #endregion
     }
 }

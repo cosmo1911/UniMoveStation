@@ -11,6 +11,7 @@ namespace UniMoveStation.Model
 {
     public class MotionControllerModel : ObservableObject
     {
+
         private int _id;
         private string _name;
 
@@ -19,9 +20,9 @@ namespace UniMoveStation.Model
         private float _temperature;
 
         private PSMoveBatteryLevel _batteryLevel;
-        private PSMoveConnectStatus _connectStatus;
-        private PSMoveConnectionType _connectionType;
-        private string _hostIp;
+        private PSMoveConnectStatus _connectStatus = PSMoveConnectStatus.Unknown;
+        private PSMoveConnectionType _connectionType = PSMoveConnectionType.Unknown;
+        private string _hostIp = "Unknown";
         private bool _remote;
         private float _updateRate;
 
@@ -47,12 +48,30 @@ namespace UniMoveStation.Model
         private Vector3 _magnetometer;
         #endregion
 
+#if DEBUG
+        private static int COUNTER = -1;
+
         public MotionControllerModel()
         {
-            ConnectStatus = PSMoveConnectStatus.Unknown;
-            ConnectionType = PSMoveConnectionType.Unknown;
-            HostIp = "Unknown";
+            Name = "Design";
+            Id = ++COUNTER;
+            Serial = "00:00:00:00:00:0" + Id;
+            System.Random random = new System.Random();
+            Circle = random.Next(2) > 0;
+            Cross = random.Next(2) > 0;
+            Triangle = random.Next(2) > 0;
+            Square = random.Next(2) > 0;
+            Start = random.Next(2) > 0;
+            Select = random.Next(2) > 0;
+            Move = random.Next(2) > 0;
+            PS = random.Next(2) > 0;
+            Trigger = random.Next(256);
+            Rumble = random.Next(256);
+
+            Color = UnityEngine.Color.green;
+            Select = true;
         }
+#endif
 
         public bool Oriented
         {

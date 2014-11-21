@@ -9,7 +9,7 @@
              xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
-             DataContext="{Binding AddCameraViewModel, Source={StaticResource ViewModelLocator}}">
+             DataContext="{Binding AddCamera, Source={StaticResource ViewModelLocator}}">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -41,17 +41,17 @@
                          Grid.Column="1"
                          controls:TextboxHelper.Watermark="Insert"
                          HorizontalContentAlignment="Center"
-                         Text="{Binding NewMotionController.Name, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding NewCamera.Name, UpdateSourceTrigger=PropertyChanged}"
                          Margin="0 4 0 4"
                          />
                 <TextBlock Grid.Row="1" 
-                           Text="Serial"
+                           Text="GUID"
             	           VerticalAlignment="Center"
                            Margin="0 4 0 4"
                            />
                 <ContentControl Grid.Column="1"
                                 Grid.Row="1" 
-                                Content="{Binding AvailableMotionControllers}">
+                                Content="{Binding AvailableCameras}">
                     
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
@@ -65,15 +65,15 @@
                                           HorizontalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
-                                            <mvvm:EventToCommand Command="{Binding AddMotionController.SelectItemCommand, Source={StaticResource ViewModelLocator}}"
-                                                                             CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
-                                                                             />
+                                            <mvvm:EventToCommand Command="{Binding AddCamera.SelectItemCommand, Source={StaticResource ViewModelLocator}}"
+                                                                 CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
+                                                                 />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                     <ComboBox.ItemTemplate>
                                         
-                                        <DataTemplate DataType="{x:Type m:MotionControllerModel}">
-                                            <TextBlock Text="{Binding Serial}"
+                                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                                            <TextBlock Text="{Binding GUID}"
                                                        HorizontalAlignment="Center">
                                             </TextBlock>
                                         </DataTemplate>
@@ -103,51 +103,6 @@
                     </ContentControl.ContentTemplate>
                 </ContentControl>
                 
-
-                <CheckBox Grid.Row="2"
-                          Content="Remote"
-            	          IsChecked="{Binding NewMotionController.Remote}"
-            	          FlowDirection="RightToLeft"
-            	          VerticalAlignment="Center" 
-                          Margin="0 4 0 4"
-                          HorizontalAlignment="Left"
-                          />
-                
-                <TextBox Grid.Row="2"
-                         Grid.Column="1"
-            	         Text="{Binding NewMotionController.HostIp}"
-            	         IsEnabled="False"
-                         Margin="0 4 0 4"
-                         HorizontalContentAlignment="Center"
-                         />
-                
-                <TextBlock Grid.Row="3" 
-                           Text="Connection Type"
-                           Margin="0 4 0 4"
-                           VerticalAlignment="Center"
-                           />
-                
-                <TextBox Grid.Column="1" 
-                         Grid.Row="3"
-                         Text="{Binding NewMotionController.ConnectionType}"
-                         IsEnabled="False"
-                         HorizontalContentAlignment="Center"
-                         Margin="0 4 0 4"
-                         />
-                
-                <TextBlock Grid.Row="4" 
-                           Text="Connection Status"
-                           Margin="0 4 0 4"
-                           VerticalAlignment="Center"
-                           />
-                
-                <TextBox Grid.Row="4"
-                         Grid.Column="1" 
-                         Margin="0 4 0 4"
-                         Text="{Binding NewMotionController.ConnectStatus}"
-                         IsEnabled="False"
-                         HorizontalContentAlignment="Center"
-                         />
             </Grid>
         </ScrollViewer>
         <UniformGrid Columns="2"
