@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using UniMove;
 using UniMoveStation.Model;
+using UniMoveStation.SharpMove;
 using UniMoveStation.Utilities;
 
 namespace UniMoveStation.Service
@@ -21,110 +22,50 @@ namespace UniMoveStation.Service
     public class TrackerService : ITrackerService
     {
         #region Member
-        /// <summary>
-        /// BackgroundWorker updating the image while tracking
-        /// </summary>
-        private BackgroundWorker _bw;
-
-        /// <summary>
-        /// indicates that the BackgroudWorker was cancelled successfully
-        /// </summary>
-        private AutoResetEvent _bwResetEvent;
-
         private SingleCameraModel _camera;
+        private CancellationTokenSource _cts;
 
-        /// <summary>
-        /// Color pool for controllers being tracked
-        /// </summary>
-        private List<UnityEngine.Color> colors = new List<UnityEngine.Color>()
+        private async void StartTask()
         {
-            UnityEngine.Color.blue,
-            UnityEngine.Color.red,
-            UnityEngine.Color.green,
-            UnityEngine.Color.yellow,
-            UnityEngine.Color.white
-        };
-        #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="moves"></param>
-        private void InitTracker(List<UniMoveController> moves)
-        {
-            _camera.Tracker = new UniMoveTracker(_camera.TrackerId);
-            _camera.Controllers = moves;
-            //start BackgroundWorker updating the image
-            InitBackgroundWorker();
-        }
-
-
-        #region [ BackgroundWorker ]
-        private void InitBackgroundWorker()
-        {
-            //init worker
-            _bw = new BackgroundWorker();
-            _bw.WorkerSupportsCancellation = true;
-            _bw.WorkerReportsProgress = true;
-
-            //add event handlers
-            _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            _bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
-            _bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
-            _bwResetEvent = new AutoResetEvent(false);
-        }
-
-        private void bw_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = sender as BackgroundWorker;
-
-            //enable all UniMoveControllers for tracking
-            
-            for (int i = 0; i < _camera.Controllers.Count; i++)
+            _cts = new CancellationTokenSource();
+            CancellationToken token = _cts.Token;
+            try
             {
-                _camera.Tracker.EnableTracking(_camera.Controllers[i], colors[i]);
-            }
+                await Task.Run(() =>
+                {
+                    for (int i = 0; i < _camera.Controllers.Count; i++)
+                    {
+                        // TODO enable tracking?
+                        //_camera.Tracker.EnableTracking(_camera.Controllers[i], colors[i]);
+                    }
 
-            //update image 
-            while (!worker.CancellationPending)
+                    //update image 
+                    while (!token.IsCancellationRequested)
+                    {
+                        _camera.Tracker.UpdateTracker();
+                        UpdateImage();
+                    }
+                });
+            }
+            catch(OperationCanceledException)
             {
-                _camera.Tracker.UpdateTracker();
-                _bw.ReportProgress(0);
+
             }
-
-            e.Cancel = true;
-            //remove event handlers
-            worker.DoWork -= new DoWorkEventHandler(bw_DoWork);
-            worker.ProgressChanged -= new ProgressChangedEventHandler(bw_ProgressChanged);
-
-            //signal completion
-            _bwResetEvent.Set();
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
         }
 
-        private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void CancelTask()
         {
-            UpdateImage();
+            if(_cts != null)
+            {
+                _cts.Cancel();
+            }
         }
 
-        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            BackgroundWorker worker = sender as BackgroundWorker;
-            //remove event handlers
-            worker.DoWork -= new DoWorkEventHandler(bw_DoWork);
-            worker.ProgressChanged -= new ProgressChangedEventHandler(bw_ProgressChanged);
-            //signal completion
-            _bwResetEvent.Set();
-        }
 
-        private void CancelBackgroundWorker()
-        {
-            _bw.CancelAsync();
-            //wait until worker is finished
-            _bwResetEvent.WaitOne(-1);
-            _bwResetEvent = new AutoResetEvent(false);
-
-            //console.AppendText(string.Format("Camera {0} stopped tracking.\n", trackerId));
-        }
         #endregion
 
         #region Interface Implementation
@@ -137,45 +78,34 @@ namespace UniMoveStation.Service
         public void Initialize(SingleCameraModel camera)
         {
             _camera = camera;
-            _camera.Controllers = new List<UniMoveController>();
-            UniMoveController controller = new UniMoveController();
-            // TODO: replace with proper id reference
-            controller.Init(0);
-            _camera.Controllers.Add(controller);
+            _camera.Tracker = new UniMoveTracker(_camera.TrackerId);
+            _camera.Controllers = new Dictionary<string, SharpMotionController>();
+            SharpMotionController controller = new SharpMotionController();
         }
         public bool Start()
         {
-            InitTracker(_camera.Controllers);
-            _bw.RunWorkerAsync();
+            StartTask();
 
             return Enabled = true;
         }
 
         public bool Stop()
         {
-            CancelBackgroundWorker();
+            CancelTask();
             _camera.Tracker.DisableTracking();
 
             return Enabled = false;
         }
 
-        public void AddMotionController(UniMoveController motionController)
+        public void AddMotionController(SharpMotionController motionController)
         {
-            _camera.Controllers.Add(motionController);
-            _camera.Tracker.EnableTracking(motionController, UnityEngine.Color.blue);
+            _camera.Controllers.Add(motionController.Serial, motionController);
+            // TODO enable tracking
         }
 
-        public void RemoveMotionController(UniMoveController motionController)
-        {
-            foreach(UniMove.UniMoveTracker.TrackedController controller in _camera.Tracker.controllers)
-            {
-                if (controller.move == motionController)
-                {
-                    _camera.Tracker.controllers.Remove(controller);
-                    break;
-                }
-            }
-            _camera.Controllers.Remove(motionController);
+        public void RemoveMotionController(SharpMotionController motionController)
+        {         
+            _camera.Controllers.Remove(motionController.Serial);
         }
 
         public void UpdateImage()

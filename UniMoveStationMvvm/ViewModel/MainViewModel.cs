@@ -1,7 +1,11 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using MahApps.Metro;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Media;
 using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
@@ -23,14 +27,8 @@ namespace UniMoveStation.ViewModel
         private ObservableCollection<FlyoutBaseViewModel> _flyouts = new ObservableCollection<FlyoutBaseViewModel>();
         public ObservableCollection<FlyoutBaseViewModel> Flyouts
         {
-            get
-            {
-                return _flyouts;
-            }
-            set
-            {
-                Set(() => Flyouts, ref _flyouts, value);
-            }
+            get { return _flyouts; }
+            set { Set(() => Flyouts, ref _flyouts, value); }
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace UniMoveStation.ViewModel
         /// <summary>
         /// Gets the ShowFlyout.
         /// </summary>
-        public RelayCommand<FlyoutBaseViewModel> ToggleFlyout
+        public RelayCommand<FlyoutBaseViewModel> ToggleFlyoutCommand
         {
             get
             {
@@ -74,7 +72,6 @@ namespace UniMoveStation.ViewModel
                 Flyouts.Add(flyout);
             }
             flyout.IsOpen = !flyout.IsOpen;
-                
         }
-    }
-}
+    } // MainViewModel
+} // namespace

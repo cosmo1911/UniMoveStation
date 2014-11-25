@@ -97,7 +97,7 @@
     </Reference>
     <Reference Include="MahApps.Metro, Version=0.14.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\MahApps.Metro.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -152,7 +152,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.0.14.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -202,6 +203,9 @@
     <Compile Include="PSMoveAPI\PSMoveTrackerRGBImage.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_float.cs" />
     <Compile Include="PSMoveAPI\SWIGTYPE_p_void.cs" />
+    <Compile Include="SharpMove\PsMoveApi.cs" />
+    <Compile Include="SharpMove\SharpMotionController.cs" />
+    <Compile Include="SharpMove\SharpMoveHelper.cs" />
     <Compile Include="UniMove\UniMoveController.cs" />
     <Compile Include="UniMove\UniMoveHelper.cs" />
     <Compile Include="UniMove\UniMoveTracker.cs" />
@@ -211,6 +215,7 @@
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
+    <Compile Include="ViewModel\Flyout\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SingleCameraViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MotionControllerViewModel.cs" />
@@ -225,6 +230,9 @@
     </Compile>
     <Compile Include="View\Flyout\AddMotionControllerView.xaml.cs">
       <DependentUpon>AddMotionControllerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Flyout\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MotionControllerView.xaml.cs">
       <DependentUpon>MotionControllerView.xaml</DependentUpon>
@@ -262,6 +270,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Flyout\AddMotionControllerView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Flyout\SettingsView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

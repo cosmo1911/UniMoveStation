@@ -28,10 +28,7 @@ namespace UniMoveStation.ViewModel
     {
         public static ViewModelLocator Instance
         {
-            get
-            {
-                return Application.Current.Resources["ViewModelLocator"] as ViewModelLocator;
-            }
+            get { return Application.Current.Resources["ViewModelLocator"] as ViewModelLocator; }
         }
 
         /// <summary>
@@ -54,58 +51,46 @@ namespace UniMoveStation.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NavigationViewModel>();
-            SimpleIoc.Default.Register<AllCamerasViewModel>(true);
             SimpleIoc.Default.Register<ServerViewModel>();
+            SimpleIoc.Default.Register<AllCamerasViewModel>(true);
             SimpleIoc.Default.Register<AddMotionControllerViewModel>(true);
             SimpleIoc.Default.Register<AddCameraViewModel>(true);
+            SimpleIoc.Default.Register<SettingsViewModel>(true);
         }
 
         public MainViewModel Main
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<MainViewModel>(); }
         }
 
         public AllCamerasViewModel Cameras
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<AllCamerasViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<AllCamerasViewModel>(); }
         }
 
         public ServerViewModel Server
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<ServerViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<ServerViewModel>(); }
         }
 
         public NavigationViewModel Navigation
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<NavigationViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<NavigationViewModel>(); }
         }
 
         public AddMotionControllerViewModel AddMotionController
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<AddMotionControllerViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<AddMotionControllerViewModel>(); }
         }
 
         public AddCameraViewModel AddCamera
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<AddCameraViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<AddCameraViewModel>(); }
+        }
+
+        public SettingsViewModel Settings
+        {
+            get { return ServiceLocator.Current.GetInstance<SettingsViewModel>(); }
         }
         
         public static void Cleanup()

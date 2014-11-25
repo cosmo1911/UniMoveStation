@@ -2,11 +2,14 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Practices.ServiceLocation;
 using System.ComponentModel;
 using UniMoveStation.Design;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
+using UniMoveStation.SharpMove;
 using UnityEngine;
 
 namespace UniMoveStation.ViewModel
@@ -23,30 +26,19 @@ namespace UniMoveStation.ViewModel
         private IMotionControllerService _motionControllerService;
         private RelayCommand<bool> _connectCommand;
         private RelayCommand<Palette> _selectColorCommand;
+        private RelayCommand<MetroWindow> _calibrateMagnetometerCommand;
 
         #region Properties
         public MotionControllerModel MotionController
         {
-            get
-            {
-                return _motionController;
-            }
-            set
-            {
-                Set(() => MotionController, ref _motionController, value);
-            }
+            get { return _motionController; }
+            set { Set(() => MotionController, ref _motionController, value); }
         }
 
         public IMotionControllerService MotionControllerService
         {
-            get
-            {
-                return _motionControllerService;
-            }
-            set
-            {
-                Set(() => MotionControllerService, ref _motionControllerService, value);
-            }
+            get { return _motionControllerService; }
+            set { Set(() => MotionControllerService, ref _motionControllerService, value); }
         }
 
         public Palette Palette
@@ -65,18 +57,19 @@ namespace UniMoveStation.ViewModel
             _motionController = mc;
             _motionControllerService = mcs;
             Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Blue, PaletteSchemaType.Analogous, 1);
-            DoSelectColor(Palette);
 
-            if (mc.Serial != null) { }
-            SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
+            if (mc.Serial != null)
+            {
+                SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
+            }
+
+            MotionControllerService.Initialize(MotionController);
+            DoSelectColor(Palette);
         }
 
         public MotionControllerViewModel()
-            : this(new MotionControllerModel(), IsInDesignModeStatic ? 
-            (IMotionControllerService) new DesignMotionControllerService() 
-            : new MotionControllerService())
+            : this(new SharpMotionController(), new DesignMotionControllerService())
         {
-            
 #if DEBUG
             if(IsInDesignMode)
             {
@@ -87,7 +80,6 @@ namespace UniMoveStation.ViewModel
         #endregion
 
         #region Commands
-
         /// <summary>
         /// Gets the ConnectCommand.
         /// </summary>
@@ -96,7 +88,7 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return _connectCommand
-                    ?? (_connectCommand = new RelayCommand<bool>(DoToggleConnectionCommand));
+                    ?? (_connectCommand = new RelayCommand<bool>(DoToggleConnection));
             }
         }
 
@@ -111,17 +103,28 @@ namespace UniMoveStation.ViewModel
                     ?? (_selectColorCommand = new RelayCommand<Palette>(DoSelectColor));
             }
         }
+
+        /// <summary>
+        /// Gets the ConnectCommand.
+        /// </summary>
+        public RelayCommand<MetroWindow> CalibrateMagnetometerCommand
+        {
+            get
+            {
+                return _calibrateMagnetometerCommand
+                    ?? (_calibrateMagnetometerCommand = new RelayCommand<MetroWindow>(DoCalibrateMagnetometer));
+            }
+        }
         #endregion
 
         #region Command Executions
-        public void DoToggleConnectionCommand(bool enabled)
+        public void DoToggleConnection(bool enabled)
         {
             if (enabled)
             {
-                MotionControllerService.Initialize(MotionController.Id);
-                if (MotionController.ConnectStatus == UniMove.PSMoveConnectStatus.OK)
+                if (MotionController.ConnectStatus == PSMoveConnectStatus.OK)
                 {
-                    MotionController = MotionControllerService.Start();
+                    MotionControllerService.Start();
                     DoSelectColor(Palette);
                 }
             }
@@ -139,7 +142,18 @@ namespace UniMoveStation.ViewModel
             float g = ((byte)color.G) / 51f;
             float b = ((byte)color.B) / 51f;
 
-            MotionController.Color = new Color(r, g, b);
+            _motionControllerService.SetColor(new Color(r, g, b));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="window">
+        /// A reference to the main MetroWindow is needed in order to create dialogs
+        /// </param>
+        public void DoCalibrateMagnetometer(MetroWindow window)
+        {
+            _motionControllerService.CalibrateMagnetometer(window);
         }
         #endregion
     }

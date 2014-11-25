@@ -27,6 +27,28 @@
         <v:NavigationView/>
     </DataTemplate>
 
+    <Style x:Key="AppThemeMenuItemStyle"
+           TargetType="{x:Type MenuItem}"
+           BasedOn="{StaticResource MetroMenuItem}">
+        <Setter Property="Command"
+                Value="{Binding ChangeAccentCommand}" />
+        <!--<Setter Property="Icon"
+                Value="{StaticResource AppThemeMenuIcon}" />-->
+        <Setter Property="Header"
+                Value="{Binding Name, Mode=OneWay}" />
+    </Style>
+
+    <Style x:Key="AccentColorMenuItemStyle"
+           TargetType="{x:Type MenuItem}"
+           BasedOn="{StaticResource MetroMenuItem}">
+        <Setter Property="Command"
+                Value="{Binding ChangeAccentCommand}" />
+        <!--<Setter Property="Icon"
+                Value="{StaticResource AccentMenuIcon}" />-->
+        <Setter Property="Header"
+                Value="{Binding Name, Mode=OneWay}" />
+    </Style>
+    
     <Style x:Key="MyTabItemStyle"
            TargetType="controls:MetroTabItem" 
            BasedOn="{StaticResource {x:Type controls:MetroTabItem}}">

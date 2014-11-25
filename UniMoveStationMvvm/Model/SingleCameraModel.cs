@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight;
 using System.Windows.Media;
 using UniMoveStation.Helper;
 using System.Windows.Media.Imaging;
+using UniMoveStation.SharpMove;
 
 namespace UniMoveStation.Model
 {
@@ -19,7 +20,7 @@ namespace UniMoveStation.Model
         private BitmapSource _bitmapSource;
         private ImageSource _imageSource;
         private UniMoveTracker _tracker;
-        private List<UniMoveController> _moves = new List<UniMoveController>();
+        private Dictionary<string, SharpMotionController> _moves = new Dictionary<string, SharpMotionController>();
 
 #if DEBUG
         private static int COUNTER = -1;
@@ -32,122 +33,62 @@ namespace UniMoveStation.Model
 #endif
         public string GUID
         {
-            get
-            {
-                return _guid;
-            }
-            set
-            {
-                Set(() => GUID, ref _guid, value);
-            }
+            get { return _guid; }
+            set { Set(() => GUID, ref _guid, value); }
         }
 
         public bool Annotate
         {
-            get
-            {
-                return _annotate;
-            }
-            set
-            {
-                Set(() => Annotate, ref _annotate, value);
-            }
+            get { return _annotate; }
+            set { Set(() => Annotate, ref _annotate, value); }
         }
 
         public int TrackerId
         {
-            get
-            {
-                return _trackerId;
-            }
-            set
-            {
-                Set(() => TrackerId, ref _trackerId, value);
-            }
+            get { return _trackerId; }
+            set { Set(() => TrackerId, ref _trackerId, value); }
         }
 
         public string Name
         {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                Set(() => Name, ref _name, value);
-            }
+            get { return _name; }
+            set { Set(() => Name, ref _name, value); }
         }
 
         public bool ShowImage
         {
-            get
-            {
-                return _showImage;
-            }
-            set
-            {
-                Set(() => ShowImage, ref _showImage, value);
-            }
+            get { return _showImage; }
+            set { Set(() => ShowImage, ref _showImage, value); }
         }
 
         public bool Tracking
         {
-            get
-            {
-                return _tracking;
-            }
-            set
-            {
-                Set(() => Tracking, ref _tracking, value);
-            }
+            get { return _tracking; }
+            set { Set(() => Tracking, ref _tracking, value); }
         }
 
         public ImageSource ImageSource
         {
-            get
-            {
-                return _imageSource;
-            }
-            set
-            {
-                Set(() => ImageSource, ref _imageSource, value);
-            }
+            get { return _imageSource; }
+            set { Set(() => ImageSource, ref _imageSource, value); }
         }
 
         public BitmapSource BitmapSource
         {
-            get
-            {
-                return _bitmapSource;
-            }
-            set
-            {
-                Set(() => BitmapSource, ref _bitmapSource, value);
-            }
+            get { return _bitmapSource; }
+            set { Set(() => BitmapSource, ref _bitmapSource, value); }
         }
         
         public UniMoveTracker Tracker
         {
-            get 
-            {
-                return _tracker;
-            }
-            set
-            {
-                Set(() => Tracker, ref _tracker, value);
-            }
+            get { return _tracker; }
+            set { Set(() => Tracker, ref _tracker, value); }
         }
 
-        public List<UniMoveController> Controllers
+        public Dictionary<string, SharpMotionController> Controllers
         {
-            get
-            {
-                return _moves;
-            }
-            set
-            {
-                Set(() => Controllers, ref _moves, value);
-            }
+            get { return _moves; }
+            set { Set(() => Controllers, ref _moves, value); }
         }
     }
 }

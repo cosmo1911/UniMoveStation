@@ -141,7 +141,7 @@ namespace UniMoveStation.ViewModel
                         if (tag.ToString().Equals("controllers"))
                         {
                             ViewModelLocator.Instance.Main.DoToggleFlyout(ViewModelLocator.Instance.AddMotionController);
-                            ViewModelLocator.Instance.AddMotionController.DoRefreshCommand();
+                            ViewModelLocator.Instance.AddMotionController.DoRefresh();
                         }
                         else if (tag.ToString().Equals("cameras"))
                         {

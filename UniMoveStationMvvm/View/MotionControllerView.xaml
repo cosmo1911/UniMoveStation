@@ -180,15 +180,15 @@
                                Margin="3 3 3 3"
                                Width="45"
                                />
-                    <ProgressBar  Grid.Column="1"
-                                  Grid.Row="0"
-                                  MinWidth="100"
-                                  Minimum="0"
-                                  Maximum="255"
-                                  Margin="3 3 3 3"
-                                  Background="{StaticResource IdealForegroundColorBrush}"
-                                  Value="{Binding MotionController.Trigger}"
-                                  />
+                    <ProgressBar Grid.Column="1"
+                                 Grid.Row="0"
+                                 MinWidth="100"
+                                 Minimum="0"
+                                 Maximum="255"
+                                 Margin="3 3 3 3"
+                                 Background="{StaticResource IdealForegroundColorBrush}"
+                                 Value="{Binding MotionController.Trigger}"
+                                 />
                     <!--Rumble-->
                     <TextBlock Grid.Column="0"
                                Grid.Row="1"
@@ -246,6 +246,11 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </controls:ToggleSwitch>
+                <Button Content="Calibrate Magnetometer"
+                        Margin="4"
+                        Command="{Binding CalibrateMagnetometerCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                        />
             </StackPanel>
             <!-- Top Main Grid -->
         </Grid>

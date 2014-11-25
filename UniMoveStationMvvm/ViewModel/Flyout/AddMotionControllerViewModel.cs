@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using System.Collections.ObjectModel;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
+using UniMoveStation.SharpMove;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
@@ -36,35 +37,18 @@ namespace UniMoveStation.ViewModel.Flyout
                 }
                 return _availableMotionControllers;
             }
-            set
-            {
-                Set(() => AvailableMotionControllers, ref _availableMotionControllers, value);
-            }
+            set { Set(() => AvailableMotionControllers, ref _availableMotionControllers, value); }
         }
         public MotionControllerModel NewMotionController
         {
-            get
-            {
-                return _newMotionController;
-            }
-            private set
-            {
-                Set(() => NewMotionController, ref _newMotionController, value);
-            }
+            get { return _newMotionController; }
+            private set { Set(() => NewMotionController, ref _newMotionController, value); }
         }
 
         public bool NewControllersDetected
         {
-            get
-            {
-                NewControllersDetected = io.thp.psmove.pinvoke.count_connected() > 0;
-
-                return _newControllersDetected;
-            }
-            set
-            {
-                Set(() => NewControllersDetected, ref _newControllersDetected, value);
-            }
+            get { return _newControllersDetected; }
+            set { Set(() => NewControllersDetected, ref _newControllersDetected, value); }
         }
         #endregion
 
@@ -88,7 +72,7 @@ namespace UniMoveStation.ViewModel.Flyout
             get
             {
                 return _cancelCommand
-                    ?? (_cancelCommand = new RelayCommand(DoCancelCommand));
+                    ?? (_cancelCommand = new RelayCommand(DoCancel));
             }
         }
 
@@ -100,7 +84,7 @@ namespace UniMoveStation.ViewModel.Flyout
             get
             {
                 return _createCommand
-                    ?? (_createCommand = new RelayCommand(DoCreateCommand));
+                    ?? (_createCommand = new RelayCommand(DoCreate));
             }
         }
         
@@ -112,7 +96,7 @@ namespace UniMoveStation.ViewModel.Flyout
             get
             {
                 return _refreshCommand
-                    ?? (_refreshCommand = new RelayCommand(DoRefreshCommand));
+                    ?? (_refreshCommand = new RelayCommand(DoRefresh));
             }
         }
 
@@ -124,44 +108,42 @@ namespace UniMoveStation.ViewModel.Flyout
             get
             {
                 return _selectItemCommand
-                    ?? (_selectItemCommand = new RelayCommand<object>(DoSelectItemCommand));
+                    ?? (_selectItemCommand = new RelayCommand<object>(DoSelectItem));
             }
         }
         #endregion
 
 
         #region Command Executions
-        public void DoCancelCommand()
+        public void DoCancel()
         {
-            NewMotionController = new MotionControllerModel();
-            NewMotionController.Name = "Placeholder";
             IsOpen = false;
         }
 
-        public void DoCreateCommand()
+        public void DoCreate()
         {
             if (NewMotionController != null)
             {
                 MotionControllerViewModel mcvw = new MotionControllerViewModel(NewMotionController, new MotionControllerService());
                 ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(mcvw);
+                mcvw.MotionControllerService.Initialize(NewMotionController.Id);
                 IsOpen = false;
             }
         }
 
-        public void DoSelectItemCommand(object item)
+        public void DoSelectItem(object item)
         {
             if(item != null)
             {
                 string tmp = NewMotionController.Name;
-                NewMotionController = (MotionControllerModel) item;
-                MotionControllerService mcs = new MotionControllerService();
-                mcs.Initialize(NewMotionController.Id);
-                NewMotionController = mcs.MotionController;
+                NewMotionController = (SharpMotionController) item;
                 NewMotionController.Name = tmp;
+                MotionControllerService mcs = new MotionControllerService();
+                mcs.Initialize(NewMotionController);
             }
         }
 
-        public void DoRefreshCommand()
+        public void DoRefresh()
         {
             ObservableCollection<MotionControllerModel> existingControllers = new ObservableCollection<MotionControllerModel>();
             AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
@@ -180,28 +162,25 @@ namespace UniMoveStation.ViewModel.Flyout
                 MotionControllerService motionControllerService = new MotionControllerService();
                 for (int i = 0; i < connectedCount; i++)
                 {
-                    motionControllerService.Initialize(i);
+                    MotionControllerModel tmp = motionControllerService.Initialize(i);
+
                     foreach(MotionControllerModel mcw in existingControllers)
                     {
-                        if(motionControllerService.MotionController.ConnectStatus == UniMove.PSMoveConnectStatus.OK)
+                        if(tmp.ConnectStatus == PSMoveConnectStatus.OK)
                         {
-                            if (!motionControllerService.MotionController.Serial.Equals(mcw.Serial))
+                            if (!tmp.Serial.Equals(mcw.Serial))
                             {
                                 if (existingControllers.IndexOf(mcw) == existingControllers.Count - 1)
                                 {
-                                    AvailableMotionControllers.Add(motionControllerService.MotionController);
+                                    AvailableMotionControllers.Add(tmp);
+                                    NewControllersDetected = true;
                                 }
                             }
                         }
-                    }
-                }
-
-                if(AvailableMotionControllers.Count > 0)
-                {
-                    NewControllersDetected = true;
-                }
+                    } // foreach
+                } // for
             }
-        }
+        } // DoRefresh
         #endregion
     }
 }
