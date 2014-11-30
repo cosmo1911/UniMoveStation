@@ -48,7 +48,6 @@ namespace UniMoveStation.ViewModel
             {
                 _flyouts.Add(fbvw);
             }
-           
         }
 
         private RelayCommand<FlyoutBaseViewModel> _toggleFlyoutCommand;

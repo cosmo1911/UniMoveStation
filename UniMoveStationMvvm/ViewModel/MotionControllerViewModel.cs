@@ -2,11 +2,13 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Practices.ServiceLocation;
 using System.ComponentModel;
 using UniMoveStation.Design;
+using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using UniMoveStation.SharpMove;
@@ -58,17 +60,41 @@ namespace UniMoveStation.ViewModel
             _motionControllerService = mcs;
             Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Blue, PaletteSchemaType.Analogous, 1);
 
+            MotionControllerService.Initialize(MotionController);
+            DoSelectColor(Palette);
+
+            Messenger.Default.Register<AddCameraMessage>(this,
+                message =>
+                {
+                    if(!MotionController.Tracking.ContainsKey(message.Camera))
+                    {
+                        MotionController.TrackerStatus.GetOrAdd(message.Camera, PSMoveTrackerStatus.NotCalibrated);
+                        MotionController.Tracking.GetOrAdd(message.Camera, false);
+                        MotionController.Position.GetOrAdd(message.Camera, Vector3.zero);
+                    }
+                });
+
+            Messenger.Default.Register<RemoveCameraMessage>(this,
+                message =>
+                {
+                    PSMoveTrackerStatus trackerStatus;
+                    bool tracking;
+                    Vector3 position;
+                    MotionController.TrackerStatus.TryRemove(message.Camera, out trackerStatus);
+                    MotionController.Tracking.TryRemove(message.Camera, out tracking);
+                    MotionController.Position.TryRemove(message.Camera, out position);
+                });
+
+            Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
+
             if (mc.Serial != null)
             {
                 SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
             }
-
-            MotionControllerService.Initialize(MotionController);
-            DoSelectColor(Palette);
         }
 
         public MotionControllerViewModel()
-            : this(new SharpMotionController(), new DesignMotionControllerService())
+            : this(new MotionControllerModel(), new DesignMotionControllerService())
         {
 #if DEBUG
             if(IsInDesignMode)

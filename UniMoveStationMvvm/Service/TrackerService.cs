@@ -12,44 +12,59 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using UniMove;
 using UniMoveStation.Model;
 using UniMoveStation.SharpMove;
 using UniMoveStation.Utilities;
+using UnityEngine;
 
 namespace UniMoveStation.Service
 {
-    public class TrackerService : ITrackerService
+    public class TrackerService : DependencyObject, ITrackerService
     {
         #region Member
+        private CancellationTokenSource _ctsUpdate;
         private SingleCameraModel _camera;
-        private CancellationTokenSource _cts;
+        private Task _updateTask;
+        #endregion
 
-        private async void StartTask()
+        #region Update Task
+        private async void StartUpdateTask()
         {
-            _cts = new CancellationTokenSource();
-            CancellationToken token = _cts.Token;
+            _ctsUpdate = new CancellationTokenSource();
+            CancellationToken token = _ctsUpdate.Token;
+            StartTracker();
             try
             {
-                await Task.Run(() =>
+                _updateTask = Task.Run(() =>
                 {
-                    for (int i = 0; i < _camera.Controllers.Count; i++)
-                    {
-                        // TODO enable tracking?
-                        //_camera.Tracker.EnableTracking(_camera.Controllers[i], colors[i]);
-                    }
-
-                    //update image 
                     while (!token.IsCancellationRequested)
                     {
-                        _camera.Tracker.UpdateTracker();
+                        foreach (MotionControllerModel mc in _camera.Controllers)
+                        {
+                            if(mc.Tracking[_camera])
+                            {
+                                if(mc.TrackerStatus[_camera] == PSMoveTrackerStatus.NotCalibrated)
+                                {
+                                    EnableTracking(mc);
+                                }
+                            }
+                            else
+                            {
+                                if(mc.TrackerStatus[_camera] != PSMoveTrackerStatus.NotCalibrated)
+                                {
+                                    DisableTracking(mc);
+                                }
+                            }
+                        }
+                        UpdateTracker();
                         UpdateImage();
                     }
                 });
+                await _updateTask;
             }
-            catch(OperationCanceledException)
+            catch(OperationCanceledException ex)
             {
-
+                Console.WriteLine(ex.StackTrace);
             }
             catch(Exception ex)
             {
@@ -57,15 +72,15 @@ namespace UniMoveStation.Service
             }
         }
 
-        private void CancelTask()
+        private void CancelUpdateTask()
         {
-            if(_cts != null)
+            if(_ctsUpdate != null)
             {
-                _cts.Cancel();
+                _ctsUpdate.Cancel();
+                _updateTask.Wait();
+                DisableTracking();
             }
         }
-
-
         #endregion
 
         #region Interface Implementation
@@ -78,56 +93,203 @@ namespace UniMoveStation.Service
         public void Initialize(SingleCameraModel camera)
         {
             _camera = camera;
-            _camera.Tracker = new UniMoveTracker(_camera.TrackerId);
-            _camera.Controllers = new Dictionary<string, SharpMotionController>();
-            SharpMotionController controller = new SharpMotionController();
         }
+
         public bool Start()
         {
-            StartTask();
+            StartUpdateTask();
 
             return Enabled = true;
         }
 
         public bool Stop()
         {
-            CancelTask();
-            _camera.Tracker.DisableTracking();
-
+            CancelUpdateTask();
             return Enabled = false;
         }
 
-        public void AddMotionController(SharpMotionController motionController)
+        public void AddMotionController(MotionControllerModel motionController)
         {
-            _camera.Controllers.Add(motionController.Serial, motionController);
+            //_tracker.Controllers.Add(motionController.Serial, motionController);
             // TODO enable tracking
         }
 
-        public void RemoveMotionController(SharpMotionController motionController)
+        public void RemoveMotionController(MotionControllerModel motionController)
         {         
-            _camera.Controllers.Remove(motionController.Serial);
+            //_tracker.Controllers.Remove(motionController.Serial);
         }
 
         public void UpdateImage()
         {
-            if (_camera.ShowImage && _camera.Tracker.getCPtr().Handle != IntPtr.Zero)
+            if (_camera.ShowImage && _camera.Handle != IntPtr.Zero)
             {
                 //display useful information
                 if (_camera.Annotate)
                 {
-                    _camera.Tracker.annotate();
+                    PsMoveApi.psmove_tracker_annotate(_camera.Handle);
                 }
                 //retrieve and convert image frame
-                IntPtr frame = _camera.Tracker.get_frame();
+                IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
                 MIplImage rgb32Image = new MIplImage();
-                rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
+                rgb32Image = (MIplImage)Marshal.PtrToStructure(frame, typeof(MIplImage));
                 //display image
                 System.Drawing.Bitmap bitmap = MIplImagePointerToBitmap(rgb32Image);
-                _camera.ImageSource = loadBitmap(bitmap);
+                BitmapSource bitmapSource = loadBitmap(bitmap);
+                bitmapSource.Freeze();
+                _camera.ImageSource = bitmapSource;
             }
         }
         #endregion
 
+        #region Tracker
+        public void UpdateTracker()
+        {
+            if (_camera.Handle != IntPtr.Zero)
+            {
+                PsMoveApi.psmove_tracker_update_image(_camera.Handle);
+                foreach (MotionControllerModel mc in _camera.Controllers)
+                {
+                    if (mc.Tracking[_camera])
+                    {
+                        PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
+                        ProcessData();
+                    }
+                }
+            }
+        }
+
+        public bool StartTracker()
+        {
+            if (_camera.Handle == IntPtr.Zero)
+            {
+                _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
+                //dimming = 1f;
+                //			fusion = psmove_fusion_new(tracker,0.001f,1.0f);
+            }
+            return _camera.Handle != IntPtr.Zero;
+        }
+
+        public void EnableTracking(MotionControllerModel mc)
+        {
+            if (_camera.Handle == IntPtr.Zero)
+            {
+                Console.WriteLine("start tracker " + _camera.TrackerId + ": " + StartTracker() + "\n");
+            }
+
+            int attempts = 0;
+            while (attempts < 3)
+            {
+                Console.WriteLine("Calibrating controller " + mc.Id + " on tracker " + _camera.TrackerId + "...\n");
+                byte r = (byte)((mc.Color.r * 255) + 0.5f);
+                byte g = (byte)((mc.Color.g * 255) + 0.5f);
+                byte b = (byte)((mc.Color.b * 255) + 0.5f);
+
+                mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_enable_with_color(_camera.Handle, mc.Handle, r, g, b);
+
+                if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
+                {
+                    Console.WriteLine("calibrated");
+                    break;
+                }
+                else
+                {
+                    attempts++;
+                    Console.WriteLine("ERROR - retrying\n");
+                }
+            }
+
+            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking || mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
+            {
+                PsMoveApi.psmove_tracker_update_image(_camera.Handle);
+                PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
+                mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
+            }
+        }
+
+        public void DisableTracking(MotionControllerModel motionController)
+        {
+            PsMoveApi.psmove_tracker_disable(_camera.Handle, motionController.Handle);
+            motionController.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
+        }
+
+        public void DisableTracking()
+        {
+            if (_camera.Handle != IntPtr.Zero)
+            {
+                foreach (MotionControllerModel mc in _camera.Controllers)
+                {
+                    DisableTracking(mc);
+                }
+                DestroyTracker();
+            }
+        }
+
+        public void DestroyTracker()
+        {
+            if (_camera.Handle != IntPtr.Zero)
+            {
+                PsMoveApi.delete_PSMoveTracker(_camera.Handle);
+                _camera.Handle = IntPtr.Zero;
+                Console.WriteLine("tracker destroyed");
+            }
+            //if (fusion != IntPtr.Zero)
+            //{
+            //    psmove_fusion_free(fusion);
+            //    fusion = IntPtr.Zero;
+            //    Console.WriteLine("fusion destroyed");
+            //}
+        }
+
+        public void ProcessData()
+        {
+            if (_camera.Handle != IntPtr.Zero)
+            {
+                foreach (MotionControllerModel mc in _camera.Controllers)
+                {
+                    PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
+                    trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
+                    Vector3 position = Vector3.zero;
+                    if (trackerStatus == PSMoveTrackerStatus.Tracking)
+                    {
+                        float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
+                        PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
+
+                        //Console.WriteLine(rx + " " + ry + " " + rrad);
+
+                        float rz = PsMoveApi.psmove_tracker_distance_from_radius(_camera.Handle, rrad);
+                        position = new Vector3(rx, ry, rz);
+                        //#if YISUP
+                        //vec.x = -vec.x;
+                        //vec.y = -vec.y;
+                        //vec.z = -vec.z;
+                        //#endif
+                        //tc.m_positionScalePos = Vector3.Max(vec, tc.m_positionScalePos);
+                        //tc.m_positionScaleNeg = Vector3.Min(vec, tc.m_positionScaleNeg);
+
+                        //Vector3 extents = tc.m_positionScalePos - tc.m_positionScaleNeg;
+
+                        //vec = vec - tc.m_positionScaleNeg;
+                        //vec.x = vec.x/extents.x;
+                        //vec.y = vec.y/extents.y;
+                        //vec.z = vec.z/extents.z;
+                        //vec = vec*2.0f - Vector3.one;
+
+                        //for (int i = mc.m_positionHistory.Length - 1; i > 0; --i)
+                        //{
+                        //    mc.m_positionHistory[i] = mc.m_positionHistory[i - 1];
+                        //}
+                        //mc.m_positionHistory[0] = vec;
+
+                        //vec = m_positionHistory[0]*0.3f + m_positionHistory[1]*0.5f + m_positionHistory[2]*0.1f + m_positionHistory[3]*0.05f + m_positionHistory[4]*0.05f;
+
+                        //mc.m_position = vec;
+                    }
+                    mc.TrackerStatus[_camera] = trackerStatus;
+                    mc.Position[_camera] = position;
+                }
+            }
+        } // ProcessData
+        #endregion
         #region Tools
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr o);

@@ -9,12 +9,15 @@
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:UniMoveStation"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
+             xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              d:DataContext="{d:DesignInstance Type=vm:SingleCameraViewModel, IsDesignTimeCreatable=True}"
              Margin="10">
-
+    <UserControl.Resources>
+        <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -126,6 +129,52 @@
                 <StackPanel Grid.Row="0" 
                             Grid.Column="1" 
                             Orientation="Vertical">
+                    <TextBlock Text="Tracked Controllers"
+                               Margin="0 4 4 0"
+                               HorizontalAlignment="Center"
+                               FontFamily="Segoe UI Semibold"
+                               FontSize="16"/>
+                    <ListBox ItemsSource="{Binding Camera.Controllers, UpdateSourceTrigger=PropertyChanged}"
+                             BorderThickness="0"
+                             Margin="4"
+                             x:Name="TrackedControllers">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:MotionControllerModel}">
+                                <CheckBox Margin="4"
+                                          x:Name="CheckBox">
+                                    <CheckBox.Style>
+                                        <Style BasedOn="{StaticResource {x:Type CheckBox}}"
+                                               TargetType="CheckBox">
+                                            <Setter Property="Content"
+                                                Value="{Binding Name}"/>
+                                            <Setter Property="IsChecked">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource DictionaryTrackingToBoolConverter}" Mode="OneWay">
+                                                        <Binding Path="Tracking"/>
+                                                        <Binding Path="DataContext.Camera"
+                                                                 RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}"
+                                                                 />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <UniformGrid>
+                        <Button Content="apply"
+                                Margin="8 8 4 8"
+                                Command="{Binding EnableTrackingCommand}"
+                                CommandParameter="{Binding ElementName=TrackedControllers}"
+                                />
+                        <Button Content="cancel"
+                                Margin="4 8 8 8"
+                                Command="{Binding DisableTrackingCommand}"
+                                CommandParameter="{Binding Path=Items, ElementName=TrackedControllers}"
+                                />
+                    </UniformGrid>
                 </StackPanel>
             </Grid>
 

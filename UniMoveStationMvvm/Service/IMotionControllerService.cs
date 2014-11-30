@@ -20,7 +20,7 @@ namespace UniMoveStation.Service
 
         MotionControllerModel Initialize(int id);
 
-        void Initialize(MotionControllerModel motionController);
+        MotionControllerModel Initialize(MotionControllerModel motionController);
 
         void Start();
 

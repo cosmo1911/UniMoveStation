@@ -110,14 +110,14 @@ namespace UniMoveStation.Messages
             return new Vector3(float3.x, float3.y, float3.z);
         }
 
-        public static implicit operator string(Float3 float3)
+        public static implicit operator String(Float3 float3)
         {
             return float3.ToString();
         }
 
-        public override string ToString()
+        public override String ToString()
         {
-            return string.Format("{{ {0:F}, {1:F}, {2:F} }}", x, y, z);
+            return String.Format("{{ {0:F}, {1:F}, {2:F} }}", x, y, z);
         }
 
         public Float3(float x, float y, float z)

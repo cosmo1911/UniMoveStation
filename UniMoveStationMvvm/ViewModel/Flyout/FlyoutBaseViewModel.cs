@@ -11,7 +11,6 @@ namespace UniMoveStation.ViewModel.Flyout
     /// </summary>
     public class FlyoutBaseViewModel : ViewModelBase
     {
-
         private bool _isOpen = false;
         private string _header = "None";
         private Position _position = Position.Right;
@@ -29,14 +28,8 @@ namespace UniMoveStation.ViewModel.Flyout
         /// </summary>
         public string Header
         {
-            get
-            {
-                return _header;
-            }
-            set
-            {
-                Set(() => Header, ref _header, value, true);
-            }
+            get { return _header; }
+            set { Set(() => Header, ref _header, value, true); }
         }
 
         /// <summary>
@@ -51,14 +44,8 @@ namespace UniMoveStation.ViewModel.Flyout
         /// </summary>
         public Position Position
         {
-            get
-            {
-                return _position;
-            }
-            set
-            {
-                Set(() => Position, ref _position, value, true);
-            }
+            get { return _position; }
+            set { Set(() => Position, ref _position, value, true); }
         }
 
         /// <summary>
@@ -73,16 +60,9 @@ namespace UniMoveStation.ViewModel.Flyout
         /// </summary>
         public bool IsOpen
         {
-            get
-            {
-                return _isOpen;
-            }
-            set
-            {
-                Set(() => IsOpen, ref _isOpen, value, true);
-            }
+            get { return _isOpen; }
+            set { Set(() => IsOpen, ref _isOpen, value, true); }
         }
         #endregion
-
-    }
-}
+    } // FlyoutBaseViewModel
+} // namespace

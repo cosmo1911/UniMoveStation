@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using System.Collections.ObjectModel;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
+using UniMoveStation.SharpMove;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
@@ -44,35 +45,18 @@ namespace UniMoveStation.ViewModel.Flyout
                 }
                 return _availableCameras;
             }
-            set
-            {
-                Set(() => AvailableCameras, ref _availableCameras, value);
-            }
+            set { Set(() => AvailableCameras, ref _availableCameras, value); }
         }
         public SingleCameraModel NewCamera
         {
-            get
-            {
-                return _newCamera;
-            }
-            private set
-            {
-                Set(() => NewCamera, ref _newCamera, value);
-            }
+            get { return _newCamera; }
+            private set { Set(() => NewCamera, ref _newCamera, value); }
         }
 
         public bool NewCamerasDetected
         {
-            get
-            {
-                NewCamerasDetected = io.thp.psmove.pinvoke.count_connected() > 0;
-
-                return _newCamerasDetected;
-            }
-            set
-            {
-                Set(() => NewCamerasDetected, ref _newCamerasDetected, value);
-            }
+            get { return _newCamerasDetected; }
+            set { Set(() => NewCamerasDetected, ref _newCamerasDetected, value); }
         }
         #endregion
 
@@ -139,7 +123,16 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             if (NewCamera != null)
             {
-                SingleCameraViewModel scvw = new SingleCameraViewModel(NewCamera, new TrackerService(), new CLEyeService());
+                SingleCameraViewModel scvw;
+                if(!NewCamera.GUID.Contains("1245678"))
+                {
+                    scvw = new SingleCameraViewModel(NewCamera, new TrackerService(), new CLEyeService());
+                }
+                else 
+                {
+                    scvw = new SingleCameraViewModel();
+                }
+
                 ViewModelLocator.Instance.Navigation.CameraTabs.Add(scvw);
                 IsOpen = false;
             }

@@ -1,10 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UniMoveStation.SharpMove;
+using UniMoveStation.ViewModel;
 using UnityEngine;
 
 namespace UniMoveStation.Model
@@ -44,11 +47,17 @@ namespace UniMoveStation.Model
         #region Inertial Data
         private bool _oriented;
         private Quaternion _orientation;
-        private Vector3 _rawAcceleration;
-        private Vector3 _acceleration;
+        private Vector3 _rawAccelerometer;
+        private Vector3 _accelerometer;
         private Vector3 _rawGyroscope;
         private Vector3 _gyroscope;
         private Vector3 _magnetometer;
+        #endregion
+
+        #region Tracker
+        private ConcurrentDictionary<SingleCameraModel, bool> _tracking;
+        private ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
+        private ConcurrentDictionary<SingleCameraModel, Vector3> _position;
         #endregion
 
 #if DEBUG
@@ -74,6 +83,58 @@ namespace UniMoveStation.Model
         }
 #endif
 
+        public ConcurrentDictionary<SingleCameraModel, Vector3> Position
+        {
+            get 
+            { 
+                if(_position == null)
+                {
+                    _position = new ConcurrentDictionary<SingleCameraModel, Vector3>();
+                    foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    {
+                        _position.AddOrUpdate(scvm.Camera, Vector3.zero, (k, v) => Vector3.zero);
+                    }
+                }
+                return _position; 
+            }
+            set { Set(() => Position, ref _position, value); }
+        }
+
+        public ConcurrentDictionary<SingleCameraModel, bool> Tracking
+        {
+            get
+            {
+                if (_tracking == null)
+                {
+                    _tracking = new ConcurrentDictionary<SingleCameraModel, bool>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    {
+                        _tracking.AddOrUpdate(scvm.Camera, false, (k, v) => false);
+                    }
+                }
+                return _tracking; 
+            }
+            set { Set(() => Tracking, ref _tracking, value); }
+        }
+
+        public ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> TrackerStatus
+        {
+            get
+            {
+                if (_trackerStatus == null)
+                {
+                    _trackerStatus = new ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    {
+                        _trackerStatus.AddOrUpdate(scvm.Camera, PSMoveTrackerStatus.NotCalibrated, 
+                            (k, v) => PSMoveTrackerStatus.NotCalibrated);
+                    }
+                }
+                return _trackerStatus; 
+            }
+            set { Set(() => TrackerStatus, ref _trackerStatus, value); }
+        }
+
         public IntPtr Handle
         {
             get { return _handle; }
@@ -89,19 +150,19 @@ namespace UniMoveStation.Model
         /// <summary>
         /// The 3-axis acceleration values. 
         /// </summary>
-        public Vector3 RawAcceleration
+        public Vector3 RawAccelerometer
         {
-            get { return _rawAcceleration; }
-            set { Set(() => RawAcceleration, ref _rawAcceleration, value); }
+            get { return _rawAccelerometer; }
+            set { Set(() => RawAccelerometer, ref _rawAccelerometer, value); }
         }
 
         /// <summary>
         /// The 3-axis acceleration values, roughly scaled between -3g to 3g (where 1g is Earth's gravity).
         /// </summary>
-        public Vector3 Acceleration
+        public Vector3 Accelerometer
         {
-            get { return _acceleration; }
-            set { Set(() => Acceleration, ref _acceleration, value); }
+            get { return _accelerometer; }
+            set { Set(() => Accelerometer, ref _accelerometer, value); }
         }
 
         /// <summary>

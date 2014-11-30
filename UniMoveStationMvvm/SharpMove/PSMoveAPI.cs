@@ -13,7 +13,7 @@ namespace UniMoveStation.SharpMove
         public static extern int psmove_init(int jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_set_remote_config@4")]
-        public static extern void psmove_set_remote_config(int jarg1);
+        public static extern void psmove_set_remote_config(PSMoveRemoteConfig jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_count_connected@0")]
         public static extern int psmove_count_connected();
@@ -340,7 +340,7 @@ namespace UniMoveStation.SharpMove
         public static extern PSMoveTrackerStatus psmove_tracker_enable(IntPtr jarg1, IntPtr jarg2);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_tracker_enable_with_color@20")]
-        public static extern int psmove_tracker_enable_with_color(IntPtr jarg1, IntPtr jarg2, byte jarg3, byte jarg4, byte jarg5);
+        public static extern PSMoveTrackerStatus psmove_tracker_enable_with_color(IntPtr jarg1, IntPtr jarg2, byte jarg3, byte jarg4, byte jarg5);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_tracker_disable@8")]
         public static extern void psmove_tracker_disable(IntPtr jarg1, IntPtr jarg2);
@@ -363,7 +363,7 @@ namespace UniMoveStation.SharpMove
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_tracker_update@8")]
         public static extern int psmove_tracker_update(IntPtr jarg1, IntPtr jarg2);
 
-        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_PSMoveTracker_annotate@0")]
+        [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_PSMoveTracker_annotate@4")]
         public static extern void psmove_tracker_annotate(IntPtr jarg1);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_tracker_get_frame@4")]

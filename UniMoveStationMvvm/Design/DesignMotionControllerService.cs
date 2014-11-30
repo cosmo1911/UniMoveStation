@@ -1,5 +1,4 @@
-﻿using io.thp.psmove;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UniMove;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using MahApps.Metro.Controls.Dialogs;
@@ -32,9 +30,9 @@ namespace UniMoveStation.Design
             set;
         }
 
-        public void Initialize(MotionControllerModel motionController)
+        public MotionControllerModel Initialize(MotionControllerModel motionController)
         {
-            MotionController = motionController;
+            return MotionController = motionController;
         }
 
         public MotionControllerModel Initialize(int id)

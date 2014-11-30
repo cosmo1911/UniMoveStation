@@ -1,10 +1,13 @@
-﻿using UniMove;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using System.Windows.Media;
 using UniMoveStation.Helper;
 using System.Windows.Media.Imaging;
 using UniMoveStation.SharpMove;
+using System;
+using GalaSoft.MvvmLight.Ioc;
+using UniMoveStation.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace UniMoveStation.Model
 {
@@ -19,8 +22,8 @@ namespace UniMoveStation.Model
         private bool _tracking = false;
         private BitmapSource _bitmapSource;
         private ImageSource _imageSource;
-        private UniMoveTracker _tracker;
-        private Dictionary<string, SharpMotionController> _moves = new Dictionary<string, SharpMotionController>();
+        private IntPtr _handle;
+        private ObservableCollection<MotionControllerModel> _controllers;
 
 #if DEBUG
         private static int COUNTER = -1;
@@ -67,28 +70,45 @@ namespace UniMoveStation.Model
             set { Set(() => Tracking, ref _tracking, value); }
         }
 
+        /// <summary>
+        /// OpenCv / PsMoveApi Image
+        /// </summary>
         public ImageSource ImageSource
         {
             get { return _imageSource; }
             set { Set(() => ImageSource, ref _imageSource, value); }
         }
 
+        /// <summary>
+        /// CL Eye Image
+        /// </summary>
         public BitmapSource BitmapSource
         {
             get { return _bitmapSource; }
             set { Set(() => BitmapSource, ref _bitmapSource, value); }
         }
         
-        public UniMoveTracker Tracker
+        public IntPtr Handle
         {
-            get { return _tracker; }
-            set { Set(() => Tracker, ref _tracker, value); }
+            get { return _handle; }
+            set { Set(() => Handle, ref _handle, value); }
         }
 
-        public Dictionary<string, SharpMotionController> Controllers
+        public ObservableCollection<MotionControllerModel> Controllers
         {
-            get { return _moves; }
-            set { Set(() => Controllers, ref _moves, value); }
+            get 
+            { 
+                if(_controllers == null)
+                {
+                    _controllers = new ObservableCollection<MotionControllerModel>();
+                    foreach(MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+                    {
+                        _controllers.Add(mcvw.MotionController);
+                    }
+                }
+                return _controllers; 
+            }
+            set { Set(() => Controllers, ref _controllers, value); }
         }
     }
 }

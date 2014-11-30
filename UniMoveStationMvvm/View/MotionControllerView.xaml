@@ -6,12 +6,17 @@
              xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
+             xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d"
              Margin="8"
              d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}">
+    
+    <UserControl.Resources>
+        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+    </UserControl.Resources>
     <Grid>
         <!-- Main Grid -->
         <Grid.RowDefinitions>
@@ -192,8 +197,9 @@
                     <!--Rumble-->
                     <TextBlock Grid.Column="0"
                                Grid.Row="1"
+                               VerticalAlignment="Center"
                                Text="Rumble"
-                               Margin="3 3 3 3"
+                               Margin="0 4 0 4"
                                Width="45"
                                />
                     <ProgressBar Grid.Column="1"
@@ -201,7 +207,8 @@
                                  MinWidth="100"
                                  Minimum="0"
                                  Maximum="255"
-                                 Margin="3 3 3 3"
+                                 Margin="0 4 0 4"
+                                 HorizontalAlignment="Center"
                                  Background="{StaticResource IdealForegroundColorBrush}"
                                  Value="{Binding MotionController.Rumble}"
                                  />
@@ -257,22 +264,165 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <!-- Bottom Main Grid -->
-            <TextBlock Grid.Row="0" 
-                       Text="Status Info" 
-                       Margin="10 3 3 0"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!--Name-->
+            <TextBlock Grid.Row="0"
+                       Margin="0 4 0 4"
+                       Text="Name"
+                       VerticalAlignment="Center"
                        />
-            <TextBox Grid.Row="1" 
-                     MinHeight="80" 
-                     BorderThickness="1" 
-                     Margin="3 3 3 3"
-                     BorderBrush="{StaticResource AccentColorBrush}" 
-                     IsReadOnly="True"
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     controls:TextboxHelper.Watermark="Insert"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Name, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0 4 0 4"
+                     />
+            <!--Serial-->
+            <TextBlock Grid.Row="1"
+                       Margin="0 4 0 4"
+                       Text="Serial"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="1"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Serial}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Connect Status-->
+            <TextBlock Grid.Row="2"
+                       Margin="0 4 0 4"
+                       Text="Connect Status"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="2"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.ConnectStatus}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Connection Type-->
+            <TextBlock Grid.Row="3"
+                       Margin="0 4 0 4"
+                       Text="Connection Type"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="3"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.ConnectionType}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Host-->
+            <TextBlock Grid.Row="4"
+                       Margin="0 4 0 4"
+                       Text="Host Address"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="4"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.HostIp}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Gyroscope-->
+            <TextBlock Grid.Row="5"
+                       Margin="0 4 0 4"
+                       Text="Gyroscope"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="5"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Gyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Accelerometer-->
+            <TextBlock Grid.Row="6"
+                       Margin="0 4 0 4"
+                       Text="Accelerometer"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="6"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Accelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Magnetometer-->
+            <TextBlock Grid.Row="7"
+                       Margin="0 4 0 4"
+                       Text="Magnetometer"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="7"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Magnetometer, Converter={StaticResource Vector3ToStringConverter}}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Raw Gyroscope-->
+            <TextBlock Grid.Row="8"
+                       Margin="0 4 0 4"
+                       Text="Raw Gyroscope"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="8"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Raw Accelerometer-->
+            <TextBlock Grid.Row="9"
+                       Margin="0 4 0 4"
+                       Text="Raw Accelerometer"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="9"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.RawAccelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
+                     />
+            <!--Temperature-->
+            <TextBlock Grid.Row="10"
+                       Margin="0 4 0 4"
+                       Text="Temperature"
+                       VerticalAlignment="Center"
+                       />
+            <TextBox Grid.Row="10"
+                     Grid.Column="1"
+                     HorizontalContentAlignment="Center"
+                     Text="{Binding MotionController.Temperature}"
+                     IsEnabled="False"
+                     Margin="0 4 0 4"
                      />
         </Grid>
-        <!-- Main Grid-->
     </Grid>
 
 </UserControl>

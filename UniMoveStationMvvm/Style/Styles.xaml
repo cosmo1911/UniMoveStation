@@ -14,12 +14,12 @@
                     mc:Ignorable="d i">
 
     <DataTemplate x:Key="AddMotionControllerItemTemplate" 
-                      DataType="{x:Type fvm:AddMotionControllerViewModel}">
+                  DataType="{x:Type fvm:AddMotionControllerViewModel}">
         <fv:AddMotionControllerView />
     </DataTemplate>
 
     <DataTemplate x:Key="AddCameraItemTemplate" 
-                      DataType="{x:Type fvm:AddCameraViewModel}">
+                  DataType="{x:Type fvm:AddCameraViewModel}">
         <fv:AddCameraView/>
     </DataTemplate>
 

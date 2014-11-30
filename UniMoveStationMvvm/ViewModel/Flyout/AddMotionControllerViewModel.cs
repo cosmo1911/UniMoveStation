@@ -124,9 +124,18 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             if (NewMotionController != null)
             {
-                MotionControllerViewModel mcvw = new MotionControllerViewModel(NewMotionController, new MotionControllerService());
+                MotionControllerViewModel mcvw;
+                if (NewMotionController.ConnectStatus != PSMoveConnectStatus.Unknown)
+                {
+                    mcvw = new MotionControllerViewModel(
+                        NewMotionController, new MotionControllerService());
+                    
+                }
+                else
+                {
+                    mcvw = new MotionControllerViewModel();
+                }
                 ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(mcvw);
-                mcvw.MotionControllerService.Initialize(NewMotionController.Id);
                 IsOpen = false;
             }
         }
@@ -136,7 +145,7 @@ namespace UniMoveStation.ViewModel.Flyout
             if(item != null)
             {
                 string tmp = NewMotionController.Name;
-                NewMotionController = (SharpMotionController) item;
+                NewMotionController = (MotionControllerModel)item;
                 NewMotionController.Name = tmp;
                 MotionControllerService mcs = new MotionControllerService();
                 mcs.Initialize(NewMotionController);
@@ -151,7 +160,7 @@ namespace UniMoveStation.ViewModel.Flyout
             NewMotionController.Name = null;
             NewControllersDetected = false;
 
-            int connectedCount = io.thp.psmove.pinvoke.count_connected();
+            int connectedCount = PsMoveApi.count_connected();
             if(connectedCount > 0)
             {
                 foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())

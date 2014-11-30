@@ -157,14 +157,22 @@
         <controls:MetroTabItem Header="CAMERAS"
                                controls:ControlsHelper.HeaderFontSize="16">
 
-                <controls:MetroTabControl TabStripPlacement="Left"
-                                          ItemsSource="{Binding CameraTabs, UpdateSourceTrigger=PropertyChanged}"
-                                          Background="{StaticResource WindowBackgroundBrush}"
-                                          ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
-                                          ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
-                                          ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
-                                          Tag="cameras"
-                                          />
+            <controls:MetroTabControl TabStripPlacement="Left"
+                                      ItemsSource="{Binding CameraTabs, UpdateSourceTrigger=PropertyChanged}"
+                                      Background="{StaticResource WindowBackgroundBrush}"
+                                      ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
+                                      ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
+                                      ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
+                                      x:Name="cameras"
+                                      Tag="cameras">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"
+                                             CommandParameter="{Binding ElementName=cameras}"
+                                             />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:MetroTabControl>
 
         </controls:MetroTabItem>
         

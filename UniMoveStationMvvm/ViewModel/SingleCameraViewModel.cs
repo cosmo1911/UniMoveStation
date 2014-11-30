@@ -1,16 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using Emgu.CV.Structure;
-using UniMoveStation.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using UniMove;
 using UnityEngine;
 using GalaSoft.MvvmLight.CommandWpf;
 using UniMoveStation.Model;
@@ -20,13 +13,19 @@ using Microsoft.Practices.ServiceLocation;
 using UniMoveStation.Service;
 using UniMoveStation.View;
 using UniMoveStation.Design;
+using GalaSoft.MvvmLight.Messaging;
+using UniMoveStation.Helper;
 
 namespace UniMoveStation.ViewModel
 {
     public class SingleCameraViewModel : ViewModelBase
     {
         #region Member
-        private static int COUNTER = -1;
+        private RelayCommand<bool> _toggleCameraCommand;
+        private RelayCommand<bool> _toggleTrackingCommand;
+        private RelayCommand<bool> _toggleAnnotateCommand;
+        private RelayCommand<ListBox> _enableTrackingCommand;
+
         public SingleCameraModel Camera
         {
             get;
@@ -60,12 +59,24 @@ namespace UniMoveStation.ViewModel
             CameraService.Initialize(Camera);
             TrackerService.Initialize(Camera);
 
-            ToggleCameraCommand = new RelayCommand<bool>(DoToggleCamera);
-            ToggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate);
-            ToggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking);
+            Messenger.Default.Register<AddMotionControllerMessage>(this,
+                message =>
+                {
+                    if(!Camera.Controllers.Contains(message.MotionController))
+                    {
+                        Camera.Controllers.Add(message.MotionController);
+                    }
+                });
 
-            SimpleIoc ioc = (SimpleIoc)ServiceLocator.Current;
-            ioc.Register(() => this, Camera.GUID, true);
+            Messenger.Default.Register<RemoveMotionControllerMessage>(this,
+                message =>
+                {
+                    Camera.Controllers.Remove(message.MotionController);
+                });
+
+            Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
+
+            SimpleIoc.Default.Register(() => this, Camera.GUID, true);
         }
 
         /// <summary>
@@ -73,18 +84,18 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService())
         {
+            Camera.Name = "Design " + Camera.TrackerId;
+            CameraService.Initialize(Camera);
 #if DEBUG
             if (IsInDesignMode)
             {
-                Camera.TrackerId = ++COUNTER;
-                Camera.Name = "Design " + Camera.TrackerId;
-                CameraService.Initialize(Camera);
+                
             }
 #endif
         }
         #endregion
 
-        #region Properties
+        #region Dependency Properties
         /// <summary>
         /// The <see cref="CLEyeImageControlVisibility" /> property's name.
         /// </summary>
@@ -152,8 +163,11 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         public RelayCommand<bool> ToggleAnnotateCommand
         {
-            get;
-            private set;
+            get
+            {
+                return _toggleAnnotateCommand
+                    ?? (_toggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate));
+            }
         }
 
         /// <summary>
@@ -161,18 +175,35 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         public RelayCommand<bool> ToggleCameraCommand
         {
-            get;
-            private set;
+            get
+            {
+                return _toggleCameraCommand
+                    ?? (_toggleCameraCommand = new RelayCommand<bool>(DoToggleCamera));
+            }
         }
-
 
         /// <summary>
         /// Gets the EnableTracking.
         /// </summary>
         public RelayCommand<bool> ToggleTrackingCommand
         {
-            get;
-            private set;
+            get
+            {
+                return _toggleTrackingCommand
+                    ?? (_toggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking));
+            }
+        }
+
+        /// <summary>
+        /// Gets the EnableTrackingCommand.
+        /// </summary>
+        public RelayCommand<ListBox> EnableTrackingCommand
+        {
+            get
+            {
+                return _enableTrackingCommand
+                    ?? (_enableTrackingCommand = new RelayCommand<ListBox>(DoEnableTracking));
+            }
         }
         #endregion
 
@@ -221,9 +252,62 @@ namespace UniMoveStation.ViewModel
                 }
             }
         }
+
+        public void DoEnableTracking(ListBox listBox)
+        {
+            int index = -1;
+            foreach(MotionControllerModel mc in listBox.Items)
+            {
+                index++;
+                ListBoxItem listBoxItem = (ListBoxItem) listBox.ItemContainerGenerator.ContainerFromItem(mc);
+                ContentPresenter contentPresenter = FindVisualChild<ContentPresenter>(listBoxItem);
+                DataTemplate dataTemplate = contentPresenter.ContentTemplate;
+                CheckBox checkBox = (CheckBox) dataTemplate.FindName("CheckBox", contentPresenter);
+                bool isChecked = (bool) checkBox.IsChecked;
+                if (isChecked)
+                {
+                    mc.Tracking[Camera] = true;
+                }
+                else
+                {
+                    mc.Tracking[Camera] = false;
+                }
+            }
+        } // DoEnableTracking
         #endregion
 
         #region Misc
+        public void Unload()
+        {
+            TrackerService.Stop();
+            CameraService.Stop();
+            Messenger.Default.Unregister<AddMotionControllerMessage>(this);
+            Messenger.Default.Unregister<RemoveMotionControllerMessage>(this);
+            SimpleIoc.Default.Unregister<SingleCameraModel>(Camera.GUID);
+        }
+
+        /// <summary>
+        /// http://msdn.microsoft.com/en-us/library/bb613579.aspx
+        /// </summary>
+        /// <typeparam name="childItem"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                    return (childItem)child;
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
         #endregion
     } // SingleCameraViewModel
 } // Namespace
