@@ -4,15 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:UniMoveStation"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
-             xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam" 
+             xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam"
              xmlns:ignore="http://www.ignore.com"
              xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls" x:Class="UniMoveStation.View.CamerasView"
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
              Padding="0"
-             Margin="0" 
-             d:DesignWidth="282" 
-             d:DesignHeight="178">
+             Margin="0">
 
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden"

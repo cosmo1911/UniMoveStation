@@ -24,11 +24,10 @@ namespace UniMoveStation.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private ObservableCollection<FlyoutBaseViewModel> _flyouts = new ObservableCollection<FlyoutBaseViewModel>();
         public ObservableCollection<FlyoutBaseViewModel> Flyouts
         {
-            get { return _flyouts; }
-            set { Set(() => Flyouts, ref _flyouts, value); }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -44,10 +43,8 @@ namespace UniMoveStation.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllCreatedInstances<FlyoutBaseViewModel>())
-            {
-                _flyouts.Add(fbvw);
-            }
+
+            Flyouts = new ObservableCollection<FlyoutBaseViewModel>();
         }
 
         private RelayCommand<FlyoutBaseViewModel> _toggleFlyoutCommand;
@@ -66,11 +63,41 @@ namespace UniMoveStation.ViewModel
 
         public void DoToggleFlyout(FlyoutBaseViewModel flyout)
         {
+            if(Flyouts.Count == 0)
+            {
+                foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllCreatedInstances<FlyoutBaseViewModel>())
+                {
+                    Flyouts.Add(fbvw);
+                }
+            }
             if(!Flyouts.Contains(flyout))
             {
                 Flyouts.Add(flyout);
             }
+            foreach(FlyoutBaseViewModel fbvw in Flyouts)
+            {
+                if (fbvw.Equals(flyout)) continue;
+                fbvw.IsOpen = false;
+            }
             flyout.IsOpen = !flyout.IsOpen;
+        }
+
+        private RelayCommand _settingsCommand;
+
+        /// <summary>
+        /// Gets the SettingsCommand.
+        /// </summary>
+        public RelayCommand SettingsCommand
+        {
+            get
+            {
+                return _settingsCommand
+                    ?? (_settingsCommand = new RelayCommand(
+                    () =>
+                    {
+                        DoToggleFlyout(ViewModelLocator.Instance.Settings);
+                    }));
+            }
         }
     } // MainViewModel
 } // namespace

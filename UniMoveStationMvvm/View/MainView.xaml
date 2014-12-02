@@ -19,6 +19,20 @@
                       ShowTitleBar="True">
     
     <controls:MetroWindow.Resources>
+        <Style x:Key="DefaultFlyoutStyle"
+               BasedOn="{StaticResource {x:Type controls:Flyout}}" 
+               TargetType="{x:Type controls:Flyout}">
+
+            <Setter Property="IsOpen" 
+                    Value="{Binding IsOpen}"
+                    />
+            <Setter Property="Position" 
+                    Value="{Binding Position}"
+                    />
+            <Setter Property="Header"
+                    Value="{Binding Header}"
+                    />
+        </Style>
         <Style x:Key="AddMotionControllerFlyoutStyle" 
                BasedOn="{StaticResource {x:Type controls:Flyout}}" 
                TargetType="{x:Type controls:Flyout}">
@@ -89,12 +103,6 @@
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="IsOpen" 
-                    Value="{Binding IsOpen}"
-                    />
-            <Setter Property="Position" 
-                    Value="{Binding Position}"
-                    />
         </Style>
 
         <Style x:Key="AddCameraFlyoutStyle" 
@@ -174,15 +182,23 @@
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
-            <Setter Property="IsOpen" 
-                    Value="{Binding IsOpen}"
-                    />
-            <Setter Property="Position" 
-                    Value="{Binding Position}"
-                    />
         </Style>
     </controls:MetroWindow.Resources>
     
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <Button Command="{Binding SettingsCommand}">
+                <Rectangle Width="22"
+                           Height="22"
+                           Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Uniform"
+                                     Visual="{StaticResource appbar_settings}" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl ItemsSource="{Binding Flyouts}"
                                  ItemContainerStyleSelector="{StaticResource MyFlyoutStyleSelector}"

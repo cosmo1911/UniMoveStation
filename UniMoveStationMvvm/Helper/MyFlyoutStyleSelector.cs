@@ -27,6 +27,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("AddCameraFlyoutStyle") as Style;
                 }
+                else
+                {
+                    return element.FindResource("DefaultFlyoutStyle") as Style;
+                }
             }
 
             return null;

@@ -44,6 +44,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("AddCameraItemTemplate") as DataTemplate;
                 }
+                else if (item is SettingsViewModel)
+                {
+                    return element.FindResource("SettingsItemTemplate") as DataTemplate;
+                }
             }
 
             return null;

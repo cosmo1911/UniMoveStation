@@ -23,6 +23,11 @@
                   DataType="{x:Type fvm:AddCameraViewModel}">
         <fv:AddCameraView/>
     </DataTemplate>
+    
+    <DataTemplate x:Key="SettingsItemTemplate" 
+                  DataType="{x:Type fvm:SettingsViewModel}">
+        <fv:SettingsView/>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
         <v:NavigationView/>
