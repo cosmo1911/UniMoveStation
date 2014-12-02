@@ -44,7 +44,7 @@ namespace UniMoveStation.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllInstances<FlyoutBaseViewModel>())
+            foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllCreatedInstances<FlyoutBaseViewModel>())
             {
                 _flyouts.Add(fbvw);
             }

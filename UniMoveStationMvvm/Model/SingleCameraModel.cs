@@ -101,7 +101,7 @@ namespace UniMoveStation.Model
                 if(_controllers == null)
                 {
                     _controllers = new ObservableCollection<MotionControllerModel>();
-                    foreach(MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllInstances<MotionControllerViewModel>())
+                    foreach(MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
                     {
                         _controllers.Add(mcvw.MotionController);
                     }

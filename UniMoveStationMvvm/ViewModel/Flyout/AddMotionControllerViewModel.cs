@@ -135,7 +135,6 @@ namespace UniMoveStation.ViewModel.Flyout
                 {
                     mcvw = new MotionControllerViewModel();
                 }
-                ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(mcvw);
                 IsOpen = false;
             }
         }
@@ -173,20 +172,31 @@ namespace UniMoveStation.ViewModel.Flyout
                 {
                     MotionControllerModel tmp = motionControllerService.Initialize(i);
 
-                    foreach(MotionControllerModel mcw in existingControllers)
+                    if(existingControllers.Count > 0)
                     {
-                        if(tmp.ConnectStatus == PSMoveConnectStatus.OK)
+                        foreach (MotionControllerModel mcw in existingControllers)
                         {
-                            if (!tmp.Serial.Equals(mcw.Serial))
+                            if (tmp.ConnectStatus == PSMoveConnectStatus.OK)
                             {
-                                if (existingControllers.IndexOf(mcw) == existingControllers.Count - 1)
+                                if (!tmp.Serial.Equals(mcw.Serial))
                                 {
-                                    AvailableMotionControllers.Add(tmp);
-                                    NewControllersDetected = true;
+                                    if (existingControllers.IndexOf(mcw) == existingControllers.Count - 1)
+                                    {
+                                        AvailableMotionControllers.Add(tmp);
+                                        NewControllersDetected = true;
+                                    }
                                 }
                             }
+                        } // foreach
+                    }
+                    else
+                    {
+                        if (tmp.ConnectStatus == PSMoveConnectStatus.OK)
+                        {
+                            AvailableMotionControllers.Add(tmp);
+                            NewControllersDetected = true;
                         }
-                    } // foreach
+                    }
                 } // for
             }
         } // DoRefresh

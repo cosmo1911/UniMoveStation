@@ -176,28 +176,18 @@ namespace UniMoveStation.Service
                 Console.WriteLine("start tracker " + _camera.TrackerId + ": " + StartTracker() + "\n");
             }
 
-            int attempts = 0;
-            while (attempts < 3)
+            Console.WriteLine("Calibrating controller " + mc.Id + " on tracker " + _camera.TrackerId + "...\n");
+            byte r = (byte)((mc.Color.r * 255) + 0.5f);
+            byte g = (byte)((mc.Color.g * 255) + 0.5f);
+            byte b = (byte)((mc.Color.b * 255) + 0.5f);
+
+            mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_enable_with_color(_camera.Handle, mc.Handle, r, g, b);
+
+            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
             {
-                Console.WriteLine("Calibrating controller " + mc.Id + " on tracker " + _camera.TrackerId + "...\n");
-                byte r = (byte)((mc.Color.r * 255) + 0.5f);
-                byte g = (byte)((mc.Color.g * 255) + 0.5f);
-                byte b = (byte)((mc.Color.b * 255) + 0.5f);
-
-                mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_enable_with_color(_camera.Handle, mc.Handle, r, g, b);
-
-                if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
-                {
-                    Console.WriteLine("calibrated");
-                    break;
-                }
-                else
-                {
-                    attempts++;
-                    Console.WriteLine("ERROR - retrying\n");
-                }
+                Console.WriteLine("calibrated");
             }
-
+            
             if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking || mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
             {
                 PsMoveApi.psmove_tracker_update_image(_camera.Handle);
@@ -209,6 +199,7 @@ namespace UniMoveStation.Service
         public void DisableTracking(MotionControllerModel motionController)
         {
             PsMoveApi.psmove_tracker_disable(_camera.Handle, motionController.Handle);
+            motionController.Tracking[_camera] = false;
             motionController.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
         }
 

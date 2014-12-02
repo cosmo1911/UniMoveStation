@@ -185,12 +185,12 @@
     <Compile Include="Helper\RemoveMotionControllerMessage.cs" />
     <Compile Include="Helper\AddMotionControllerMessage.cs" />
     <Compile Include="Helper\DictionaryTrackingToBoolConverter.cs" />
+    <Compile Include="Helper\IntToStringConverter.cs" />
     <Compile Include="Helper\Vector3ToStringConverter.cs" />
     <Compile Include="Helper\MyFlyoutStyleSelector.cs" />
     <Compile Include="Helper\MyTabContainerStyleSelector.cs" />
     <Compile Include="Helper\MyTabItemTemplateSelector .cs" />
     <Compile Include="Helper\MyTabContentTemplateSelector.cs" />
-    <Compile Include="Model\AllCamerasModel.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
     <Compile Include="Service\CLEyeService.cs" />
     <Compile Include="Service\ICameraService.cs" />
@@ -204,7 +204,7 @@
     <Compile Include="SharpMove\SharpMoveHelper.cs" />
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
     <Compile Include="Utilities\Utils.cs" />
-    <Compile Include="ViewModel\AllCamerasViewModel.cs" />
+    <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
@@ -215,8 +215,8 @@
     <Compile Include="ViewModel\NavigationViewModel.cs" />
     <Compile Include="ViewModel\ServerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\AllCamerasView.xaml.cs">
-      <DependentUpon>AllCamerasView.xaml</DependentUpon>
+    <Compile Include="View\CamerasView.xaml.cs">
+      <DependentUpon>CamerasView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Flyout\AddCameraView.xaml.cs">
       <DependentUpon>AddCameraView.xaml</DependentUpon>
@@ -254,8 +254,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
-    <Page Include="View\AllCamerasView.xaml">
-      <SubType>Form</SubType>
+    <Page Include="View\CamerasView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Flyout\AddCameraView.xaml">

@@ -95,7 +95,7 @@ namespace UniMoveStation.ViewModel.Flyout
             get
             {
                 return _refreshCommand
-                    ?? (_refreshCommand = new RelayCommand(DoRefreshCommand));
+                    ?? (_refreshCommand = new RelayCommand(DoRefresh));
             }
         }
 
@@ -132,8 +132,6 @@ namespace UniMoveStation.ViewModel.Flyout
                 {
                     scvw = new SingleCameraViewModel();
                 }
-
-                ViewModelLocator.Instance.Navigation.CameraTabs.Add(scvw);
                 IsOpen = false;
             }
         }
@@ -148,7 +146,7 @@ namespace UniMoveStation.ViewModel.Flyout
             }
         }
 
-        public void DoRefreshCommand()
+        public void DoRefresh()
         {
             ObservableCollection<SingleCameraModel> existingCameras = new ObservableCollection<SingleCameraModel>();
             AvailableCameras = new ObservableCollection<SingleCameraModel>();
@@ -169,16 +167,24 @@ namespace UniMoveStation.ViewModel.Flyout
                     SingleCameraModel tmp = new SingleCameraModel();
                     tmp.TrackerId = i;
                     cameraService.Initialize(tmp);
-                    foreach (SingleCameraModel sc in existingCameras)
+                    if(existingCameras.Count > 0)
                     {
-                        if (!tmp.GUID.Equals(sc.GUID))
+                        foreach (SingleCameraModel sc in existingCameras)
                         {
-                            if (existingCameras.IndexOf(sc) == existingCameras.Count - 1)
+                            if (!tmp.GUID.Equals(sc.GUID))
                             {
-                                AvailableCameras.Add(tmp);
+                                if (existingCameras.IndexOf(sc) == existingCameras.Count - 1)
+                                {
+                                    AvailableCameras.Add(tmp);
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        AvailableCameras.Add(tmp);
+                    }
+                    
                     cameraService.Device.Dispose();
                 }
 

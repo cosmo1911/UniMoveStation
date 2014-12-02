@@ -14,7 +14,19 @@ namespace UniMoveStation.Helper
             Camera = camera;
         }
 
+        public RemoveCameraMessage(SingleCameraModel camera, Action<bool> feedback)
+        {
+            Camera = camera;
+            Feedback = feedback;
+        }
+
         public SingleCameraModel Camera
+        {
+            get;
+            private set;
+        }
+
+        public Action<bool> Feedback
         {
             get;
             private set;

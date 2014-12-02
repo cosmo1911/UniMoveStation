@@ -196,6 +196,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ContentControl Content="{Binding Navigation, Source={StaticResource ViewModelLocator}}"/>
+        <ContentControl>
+            <v:NavigationView />
+        </ContentControl>
     </Grid>
 </controls:MetroWindow>

@@ -15,6 +15,7 @@ using UniMoveStation.View;
 using UniMoveStation.Design;
 using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Helper;
+using System.ComponentModel;
 
 namespace UniMoveStation.ViewModel
 {
@@ -71,12 +72,14 @@ namespace UniMoveStation.ViewModel
             Messenger.Default.Register<RemoveMotionControllerMessage>(this,
                 message =>
                 {
+                    //TrackerService
+                    message.MotionController.Tracking[Camera] = false;
                     Camera.Controllers.Remove(message.MotionController);
                 });
 
-            Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
-
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
+            Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
+            ViewModelLocator.Instance.Navigation.CameraTabs.Add(this);
         }
 
         /// <summary>
@@ -85,7 +88,7 @@ namespace UniMoveStation.ViewModel
         public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService())
         {
             Camera.Name = "Design " + Camera.TrackerId;
-            CameraService.Initialize(Camera);
+
 #if DEBUG
             if (IsInDesignMode)
             {
@@ -277,13 +280,13 @@ namespace UniMoveStation.ViewModel
         #endregion
 
         #region Misc
-        public void Unload()
+        public override void Cleanup()
         {
             TrackerService.Stop();
             CameraService.Stop();
-            Messenger.Default.Unregister<AddMotionControllerMessage>(this);
-            Messenger.Default.Unregister<RemoveMotionControllerMessage>(this);
-            SimpleIoc.Default.Unregister<SingleCameraModel>(Camera.GUID);
+            Messenger.Default.Send<RemoveCameraMessage>(new RemoveCameraMessage(Camera));
+            SimpleIoc.Default.Unregister<SingleCameraModel>();
+            base.Cleanup();
         }
 
         /// <summary>

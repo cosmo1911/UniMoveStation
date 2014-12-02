@@ -7,6 +7,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Practices.ServiceLocation;
 using System.ComponentModel;
+using System.Windows;
 using UniMoveStation.Design;
 using UniMoveStation.Helper;
 using UniMoveStation.Model;
@@ -90,6 +91,7 @@ namespace UniMoveStation.ViewModel
             if (mc.Serial != null)
             {
                 SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
+                ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(this);
             }
         }
 
@@ -182,5 +184,13 @@ namespace UniMoveStation.ViewModel
             _motionControllerService.CalibrateMagnetometer(window);
         }
         #endregion
-    }
-}
+
+        public override void Cleanup()
+        {
+            MotionControllerService.Stop();
+            Messenger.Default.Send<RemoveMotionControllerMessage>(new RemoveMotionControllerMessage(_motionController));
+            SimpleIoc.Default.Unregister<MotionControllerViewModel>(_motionController.Serial);
+            base.Cleanup();
+        }
+    } // MotionControllerViewModel
+} // namespace

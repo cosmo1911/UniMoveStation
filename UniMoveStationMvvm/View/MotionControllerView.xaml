@@ -11,7 +11,6 @@
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d"
-             Margin="8"
              d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}">
     
     <UserControl.Resources>

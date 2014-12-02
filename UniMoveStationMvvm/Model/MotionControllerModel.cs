@@ -90,7 +90,7 @@ namespace UniMoveStation.Model
                 if(_position == null)
                 {
                     _position = new ConcurrentDictionary<SingleCameraModel, Vector3>();
-                    foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                     {
                         _position.AddOrUpdate(scvm.Camera, Vector3.zero, (k, v) => Vector3.zero);
                     }
@@ -107,7 +107,7 @@ namespace UniMoveStation.Model
                 if (_tracking == null)
                 {
                     _tracking = new ConcurrentDictionary<SingleCameraModel, bool>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                     {
                         _tracking.AddOrUpdate(scvm.Camera, false, (k, v) => false);
                     }

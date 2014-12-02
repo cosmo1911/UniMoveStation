@@ -11,6 +11,7 @@
                     xmlns:vm="clr-namespace:UniMoveStation.ViewModel;assembly=UniMoveStationMvvm"
                     xmlns:fv="clr-namespace:UniMoveStation.View.Flyout;assembly=UniMoveStationMvvm"
                     xmlns:fvm="clr-namespace:UniMoveStation.ViewModel.Flyout;assembly=UniMoveStationMvvm"
+                    xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
                     mc:Ignorable="d i">
 
     <DataTemplate x:Key="AddMotionControllerItemTemplate" 
@@ -47,79 +48,6 @@
                 Value="{StaticResource AccentMenuIcon}" />-->
         <Setter Property="Header"
                 Value="{Binding Name, Mode=OneWay}" />
-    </Style>
-    
-    <Style x:Key="MyTabItemStyle"
-           TargetType="controls:MetroTabItem" 
-           BasedOn="{StaticResource {x:Type controls:MetroTabItem}}">
-        <Setter Property="Padding"
-                Value="0"
-                />
-        <Style.Triggers>
-
-            <Trigger Property="IsSelected" 
-                     Value="False">
-                <Setter Property="Background"
-                        Value="Transparent"
-                        />
-                <Setter Property="Foreground"
-                        Value="{StaticResource BlackColorBrush}"
-                        />
-            </Trigger>
-
-            <Trigger Property="IsSelected" 
-                     Value="True">
-                <Setter Property="Background"
-                        Value="{StaticResource WindowBackgroundBrush}"
-                        />
-                <Setter Property="Foreground"
-                        Value="{StaticResource BlackColorBrush}"
-                        />
-            </Trigger>
-
-            <Trigger Property="IsMouseOver"
-                     Value="True">
-                <Setter Property="Background"
-                        Value="{StaticResource AccentColorBrush3}"
-                        />
-            </Trigger>
-
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver"
-                               Value="True"
-                               />
-                    <Condition Property="IsSelected"
-                               Value="True"
-                               />
-                </MultiTrigger.Conditions>
-                <Setter Property="Background"
-                        Value="{StaticResource WindowBackgroundBrush}"
-                        />
-                <Setter Property="Foreground"
-                        Value="{StaticResource AccentColorBrush2}"
-                        />
-
-            </MultiTrigger>
-
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="AddButtonTabItemStyle"
-           TargetType="controls:MetroTabItem" 
-           BasedOn="{StaticResource {x:Type controls:MetroTabItem}}">
-
-        <Setter Property="Background"
-                Value="Transparent"
-                />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver"
-                    Value="True">
-                <Setter Property="Background"
-                        Value="Transparent"
-                        />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

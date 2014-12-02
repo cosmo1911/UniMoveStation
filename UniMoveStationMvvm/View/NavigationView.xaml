@@ -8,6 +8,7 @@
              xmlns:local="clr-namespace:UniMoveStation"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+             xmlns:behaviours="http://metro.mahapps.com/winfx/xaml/shared"
              xmlns:model="clr-namespace:UniMoveStation.Model"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:v="clr-namespace:UniMoveStation.View"
@@ -18,12 +19,101 @@
     
     <UserControl.Resources>
         
+        <Style x:Key="MyTabItemStyle"
+           TargetType="controls:MetroTabItem" 
+           BasedOn="{StaticResource {x:Type controls:MetroTabItem}}">
+
+            <Setter Property="Padding"
+                Value="0"
+                />
+            <Setter Property="Margin"
+                Value="0"
+                />
+            <Style.Triggers>
+
+                <Trigger Property="IsSelected" 
+                     Value="False">
+                    <Setter Property="Background"
+                        Value="Transparent"
+                        />
+                    <Setter Property="Foreground"
+                        Value="{StaticResource BlackColorBrush}"
+                        />
+                </Trigger>
+
+                <Trigger Property="IsSelected" 
+                     Value="True">
+                    <Setter Property="Background"
+                        Value="{StaticResource WindowBackgroundBrush}"
+                        />
+                    <Setter Property="Foreground"
+                        Value="{StaticResource BlackColorBrush}"
+                        />
+                </Trigger>
+
+                <Trigger Property="IsMouseOver"
+                     Value="True">
+                    <Setter Property="Background"
+                        Value="{StaticResource AccentColorBrush3}"
+                        />
+                </Trigger>
+
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsMouseOver"
+                               Value="True"
+                               />
+                        <Condition Property="IsSelected"
+                               Value="True"
+                               />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background"
+                        Value="{StaticResource WindowBackgroundBrush}"
+                        />
+                    <Setter Property="Foreground"
+                        Value="{StaticResource AccentColorBrush2}"
+                        />
+
+                </MultiTrigger>
+
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MyClosableTabItemStyle"
+               TargetType="controls:MetroTabItem"
+               BasedOn="{StaticResource MyTabItemStyle}">
+            <Setter Property="CloseButtonEnabled"
+                    Value="True"/>
+            <Setter Property="CloseTabCommand"
+                    Value="{Binding Navigation.RemoveCommand, Source={StaticResource ViewModelLocator}}"
+                    />
+            <Setter Property="CloseTabCommandParameter"
+                    Value="{Binding}"/>
+        </Style>
+
+        <Style x:Key="AddButtonTabItemStyle"
+           TargetType="TabItem" 
+           BasedOn="{StaticResource {x:Type TabItem}}">
+
+            <Setter Property="Background"
+                Value="Transparent"
+                />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                     Value="True">
+                    <Setter Property="Background"
+                        Value="Transparent"
+                        />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
         <!--Motion Controller Item Template-->
         <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
                       x:Key="MotionControllerTabItemTemplate">
-            
+
             <StackPanel Orientation="Horizontal"
-                                MinWidth="210">
+                        MinWidth="210">
                 <!--Controller Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
                                  Height="32"
@@ -34,7 +124,7 @@
                 <TextBlock Text="{Binding MotionController.Name}"
                            FontSize="20"
                            Height="32"
-                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
                            />
             </StackPanel>
 
@@ -61,7 +151,7 @@
                 <TextBlock Text="{Binding Camera.Name}"
                            FontSize="20"
                            Height="32"
-                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
                            />
             </StackPanel>
         </DataTemplate>
@@ -73,10 +163,11 @@
         </DataTemplate>
 
         <!--All Cameras Tab Item Template-->
-        <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
+        <DataTemplate DataType="{x:Type vm:CamerasViewModel}"
                       x:Key="AllCamerasTabItemTemplate">
             
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        Width="210">
                 <!--Cameras Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
                                  Height="32"
@@ -86,26 +177,25 @@
                 <TextBlock Text="{Binding Name}"
                            FontSize="20"
                            Height="32"
-                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabItem}}}"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
                            />
             </StackPanel>
         </DataTemplate>
         <!--All Cameras Tab Data Template-->
-        <DataTemplate DataType="{x:Type vm:AllCamerasViewModel}"
+        <DataTemplate DataType="{x:Type vm:CamerasViewModel}"
                       x:Key="AllCamerasTabContentTemplate">
-            <v:AllCamerasView/>
+            <v:CamerasView/>
         </DataTemplate>
         
-        <!--TODO replace center margin workaround-->
         <DataTemplate x:Key="AddButtonTabItemTemplate">
             <Button Width="40"
                     Height="40"
                     Style="{DynamicResource MetroCircleButtonStyle}"
                     HorizontalAlignment="Center"
                     HorizontalContentAlignment="Center"
-                    Margin="85 0 0 0"
+                    Margin="0"
                     Command="{Binding Navigation.AddCommand, Source={StaticResource ViewModelLocator}}"
-                    CommandParameter="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroTabControl}}}">
+                    CommandParameter="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}">
                 <Rectangle Width="20"
                            Height="20"
                            Fill="{StaticResource AccentColorBrush}">
@@ -126,22 +216,35 @@
     </UserControl.Resources>
     
     <!--Navigation Panel-->
-    <controls:MetroTabControl controls:ControlsHelper.Transition="Down"
-                              controls:ControlsHelper.IsUnderlined="True"
+    <controls:MetroTabControl controls:ControlsHelper.IsUnderlined="True"
+                              TabStripMargin="0"
                               Background="{StaticResource AccentColorBrush4}"
                               Tag="main">
         
-        <controls:MetroTabItem Header="CONTROLLERS" 
-                               controls:ControlsHelper.HeaderFontSize="16">
+        <TabItem controls:ControlsHelper.HeaderFontSize="16">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="CONTROLLERS"
+                                   FontSize="16"
+                                   />
+                        <TextBlock Text="{Binding Navigation.MotionControllerCount, Source={StaticResource ViewModelLocator}}"
+                                   FontSize="16"
+                                   Margin="4 0 0 0"
+                                   />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
 
             <controls:MetroTabControl TabStripPlacement="Left"
                                       Background="{StaticResource WindowBackgroundBrush}"
-                                      ItemsSource="{Binding MotionControllerTabs, UpdateSourceTrigger=PropertyChanged}"
+                                      ItemsSource="{Binding MotionControllerTabs}"
                                       ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
                                       ItemTemplateSelector="{StaticResource MyTabItemTemplateSelector}"
                                       ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
                                       x:Name="controllers"
-                                      Tag="controllers">
+                                      Tag="controllers"
+                                      TabStripMargin="0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"
@@ -152,12 +255,13 @@
                 
             </controls:MetroTabControl>
 
-        </controls:MetroTabItem>
+        </TabItem>
 
-        <controls:MetroTabItem Header="CAMERAS"
-                               controls:ControlsHelper.HeaderFontSize="16">
+        <TabItem Header="CAMERAS"
+                 controls:ControlsHelper.HeaderFontSize="16">
 
             <controls:MetroTabControl TabStripPlacement="Left"
+                                      TabStripMargin="0"
                                       ItemsSource="{Binding CameraTabs, UpdateSourceTrigger=PropertyChanged}"
                                       Background="{StaticResource WindowBackgroundBrush}"
                                       ItemContainerStyleSelector="{StaticResource MyTabContainerStyleSelector}"
@@ -174,11 +278,11 @@
                 </i:Interaction.Triggers>
             </controls:MetroTabControl>
 
-        </controls:MetroTabItem>
+        </TabItem>
         
-        <controls:MetroTabItem Header="SERVER"
-                                controls:ControlsHelper.HeaderFontSize="16"
-                               />
+        <TabItem Header="SERVER"
+                 controls:ControlsHelper.HeaderFontSize="16"
+                 />
     </controls:MetroTabControl>
 
 </UserControl>

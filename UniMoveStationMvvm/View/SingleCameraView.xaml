@@ -15,6 +15,7 @@
              mc:Ignorable="d ignore"
              d:DataContext="{d:DesignInstance Type=vm:SingleCameraViewModel, IsDesignTimeCreatable=True}"
              Margin="10">
+    
     <UserControl.Resources>
         <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
     </UserControl.Resources>

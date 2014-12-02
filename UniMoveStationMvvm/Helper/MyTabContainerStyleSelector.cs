@@ -22,9 +22,17 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("AddButtonTabItemStyle") as Style;
                 }
-                else
+                else if (item is CamerasViewModel)
                 {
                     return element.FindResource("MyTabItemStyle") as Style;
+                }
+                else if (item is MotionControllerViewModel)
+                {
+                    return element.FindResource("MyClosableTabItemStyle") as Style;
+                }
+                else if (item is SingleCameraViewModel)
+                {
+                    return element.FindResource("MyClosableTabItemStyle") as Style;
                 }
             }
 
