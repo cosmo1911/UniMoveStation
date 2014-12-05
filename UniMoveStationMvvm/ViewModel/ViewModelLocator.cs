@@ -52,10 +52,10 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NavigationViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
-            SimpleIoc.Default.Register<CamerasViewModel>(true);
-            SimpleIoc.Default.Register<AddMotionControllerViewModel>(true);
-            SimpleIoc.Default.Register<AddCameraViewModel>(true);
-            SimpleIoc.Default.Register<SettingsViewModel>(true);
+            SimpleIoc.Default.Register<CamerasViewModel>();
+            SimpleIoc.Default.Register<AddMotionControllerViewModel>();
+            SimpleIoc.Default.Register<AddCameraViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         public MainViewModel Main

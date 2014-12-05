@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl x:Class="UniMoveStation.View.CamerasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,11 +7,11 @@
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam"
              xmlns:ignore="http://www.ignore.com"
-             xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls" x:Class="UniMoveStation.View.CamerasView"
+             xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
-             Padding="0"
-             Margin="0">
+             d:DesignWidth="856"
+             d:DesignHeight="480">
 
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden"
@@ -31,13 +32,14 @@
                                 <RowDefinition MaxHeight="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Label HorizontalContentAlignment="Center" 
-							       VerticalContentAlignment="Center" 
-							       Height="30"
-							       Background="{StaticResource AccentColorBrush2}" 
-							       Content="{Binding Camera.Name}"
-                                   x:Name="name"
-                                   />
+                            <TextBox HorizontalContentAlignment="Center" 
+                                     VerticalContentAlignment="Center" 
+                                     BorderThickness="0"
+                                     Height="30"
+                                     Background="{StaticResource AccentColorBrush2}" 
+                                     Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
+                                     x:Name="name"
+                                     />
                             <local:AspectRatioLayoutDecorator Grid.Column="0" 
 							                                  Grid.Row="1"
 							                                  AspectRatio="1.3333">
@@ -46,14 +48,14 @@
                                     <Label VerticalContentAlignment="Center" 
 									       HorizontalContentAlignment="Center"
 									       Background="{StaticResource AccentColorBrush}"
-									       Content="No Image"
+									       Content="no image"
                                            />
 
                                     <Image HorizontalAlignment="Stretch" 
 									       VerticalAlignment="Stretch"
 									       Visibility="{Binding Camera.ShowImage, Converter={StaticResource BooleanToVisibilityConverter}}"
 									       Source="{Binding Camera.ImageSource}"
-                                       />
+                                           />
 
                                     <CLEyeMulticam:CLEyeCameraImage Device="{Binding CameraService.Device, UpdateSourceTrigger=PropertyChanged}"
 									                                Visibility="{Binding CameraService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -68,5 +70,5 @@
             </ItemsControl>
         </ScrollViewer>
     </Grid>
-    
+
 </UserControl>

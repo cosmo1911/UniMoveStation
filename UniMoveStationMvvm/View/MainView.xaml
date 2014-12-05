@@ -16,7 +16,7 @@
                       Width="1280"
                       Height="720"
                       DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
-                      ShowTitleBar="True">
+                      ShowTitleBar="False">
     
     <controls:MetroWindow.Resources>
         <Style x:Key="DefaultFlyoutStyle"

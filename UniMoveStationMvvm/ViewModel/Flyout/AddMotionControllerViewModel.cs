@@ -29,14 +29,7 @@ namespace UniMoveStation.ViewModel.Flyout
         #region Properties
         public ObservableCollection<MotionControllerModel> AvailableMotionControllers
         {
-            get
-            {
-                if (_availableMotionControllers == null)
-                {
-                    AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
-                }
-                return _availableMotionControllers;
-            }
+            get { return _availableMotionControllers; }
             set { Set(() => AvailableMotionControllers, ref _availableMotionControllers, value); }
         }
         public MotionControllerModel NewMotionController
@@ -60,6 +53,7 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             Position = Position.Right;
             Header = "Add Motion Controller";
+            AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
         }
         #endregion
 
@@ -154,7 +148,7 @@ namespace UniMoveStation.ViewModel.Flyout
         public void DoRefresh()
         {
             ObservableCollection<MotionControllerModel> existingControllers = new ObservableCollection<MotionControllerModel>();
-            AvailableMotionControllers = new ObservableCollection<MotionControllerModel>();
+            AvailableMotionControllers.Clear();
             NewMotionController = new MotionControllerModel();
             NewMotionController.Name = null;
             NewControllersDetected = false;
@@ -174,31 +168,31 @@ namespace UniMoveStation.ViewModel.Flyout
 
                     if(existingControllers.Count > 0)
                     {
+                        bool duplicate = false;
                         foreach (MotionControllerModel mcw in existingControllers)
                         {
                             if (tmp.ConnectStatus == PSMoveConnectStatus.OK)
                             {
-                                if (!tmp.Serial.Equals(mcw.Serial))
+                                if (tmp.Serial.Equals(mcw.Serial))
                                 {
-                                    if (existingControllers.IndexOf(mcw) == existingControllers.Count - 1)
-                                    {
-                                        AvailableMotionControllers.Add(tmp);
-                                        NewControllersDetected = true;
-                                    }
+                                    duplicate = true;
+                                    break;
                                 }
                             }
                         } // foreach
+                        if (!duplicate) AvailableMotionControllers.Add(tmp);
                     }
                     else
                     {
                         if (tmp.ConnectStatus == PSMoveConnectStatus.OK)
                         {
                             AvailableMotionControllers.Add(tmp);
-                            NewControllersDetected = true;
                         }
                     }
                 } // for
             }
+
+            if (AvailableMotionControllers.Count > 0) NewControllersDetected = true;
         } // DoRefresh
         #endregion
     }

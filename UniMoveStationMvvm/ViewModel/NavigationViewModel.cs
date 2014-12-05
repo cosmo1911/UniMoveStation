@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using UniMoveStation.Model;
+using UniMoveStation.Nito;
 using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
@@ -23,6 +24,7 @@ namespace UniMoveStation.ViewModel
     {
         private int _lastSelectedIndex = 0;
         private int _motionControllerCount = 0;
+        private int _cameraCount = 0;
         private RelayCommand<TabControl> _tabSelectedCommand;
         private RelayCommand<Object> _addCommand;
 
@@ -36,7 +38,7 @@ namespace UniMoveStation.ViewModel
             CameraTabs = new ObservableCollection<object>();
             CameraTabs.CollectionChanged += (obj, args) =>
             {
-                
+                CameraCount = Math.Max(CameraTabs.Count - 1, 0);
             };
             MotionControllerTabs = new ObservableCollection<object>();
             MotionControllerTabs.CollectionChanged += (obj, args) =>
@@ -44,16 +46,23 @@ namespace UniMoveStation.ViewModel
                 MotionControllerCount = Math.Max(MotionControllerTabs.Count - 1, 0);
             };
 
+            ServerTabs = new ObservableCollection<object>();
+
             Refresh();
         }
         #endregion
 
         #region Properties
-
         public int MotionControllerCount
         {
             get { return _motionControllerCount; }
             set { Set(() => MotionControllerCount, ref _motionControllerCount, value); }
+        }
+
+        public int CameraCount
+        {
+            get { return _cameraCount; }
+            set { Set(() => CameraCount, ref _cameraCount, value); }
         }
 
         public ObservableCollection<object> CameraTabs
@@ -62,13 +71,17 @@ namespace UniMoveStation.ViewModel
             private set;
         }
 
-
         public ObservableCollection<object> MotionControllerTabs
         {
             get;
             private set;
         }
 
+        public ObservableCollection<object> ServerTabs
+        {
+            get;
+            private set;
+        }
         #endregion
 
         #region Relay Commands
@@ -118,6 +131,14 @@ namespace UniMoveStation.ViewModel
                             SimpleIoc.Default.GetInstance<MainViewModel>().DoToggleFlyout(acvm);
                             acvm.DoRefresh();
                         }
+                        else if (tag.ToString().Equals("server"))
+                        {
+                            if(SimpleIoc.Default.GetInstance<ServerViewModel>().Server.Enabled)
+                            {
+                                NitoClient client = new NitoClient();
+                                client.connect("127.0.0.1", 3000);
+                            }
+                        }
                     }));
             }
         }
@@ -153,24 +174,35 @@ namespace UniMoveStation.ViewModel
 
         public void Refresh()
         {
-            CameraTabs.Clear();
-            CameraTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
-            foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
             {
-                CameraTabs.Add(scvm);
+                CameraTabs.Clear();
+                CameraTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
+                foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                {
+                    CameraTabs.Add(scvm);
+                }
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(CameraTabs);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
             }
-            IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(CameraTabs);
-            itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
 
-            MotionControllerTabs.Clear();
-            // TODO replace with mc
-            MotionControllerTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
-            foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
             {
-                MotionControllerTabs.Add(mcvm);
+                MotionControllerTabs.Clear();
+                // TODO replace with mc
+                MotionControllerTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
+                foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
+                {
+                    MotionControllerTabs.Add(mcvm);
+                }
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(MotionControllerTabs);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
             }
-            itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(MotionControllerTabs);
-            itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
-        }
-    }
-}
+
+            {
+                ServerTabs.Clear();
+                ServerTabs.Add(SimpleIoc.Default.GetInstance<ServerViewModel>());
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(ServerTabs);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
+            }
+        } // Refresh
+    } // NavigationViewModel
+} // namespace

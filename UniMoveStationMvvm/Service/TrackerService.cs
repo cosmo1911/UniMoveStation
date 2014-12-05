@@ -22,9 +22,22 @@ namespace UniMoveStation.Service
     public class TrackerService : DependencyObject, ITrackerService
     {
         #region Member
+        private IConsoleService ConsoleService
+        {
+            get;
+            set;
+        }
+
         private CancellationTokenSource _ctsUpdate;
         private SingleCameraModel _camera;
         private Task _updateTask;
+        #endregion
+
+        #region Constructor
+        public TrackerService(IConsoleService consoleService)
+        {
+            ConsoleService = consoleService;
+        }
         #endregion
 
         #region Update Task
@@ -163,6 +176,7 @@ namespace UniMoveStation.Service
             if (_camera.Handle == IntPtr.Zero)
             {
                 _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
+                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Started.", _camera.GUID));
                 //dimming = 1f;
                 //			fusion = psmove_fusion_new(tracker,0.001f,1.0f);
             }
@@ -173,27 +187,27 @@ namespace UniMoveStation.Service
         {
             if (_camera.Handle == IntPtr.Zero)
             {
-                Console.WriteLine("start tracker " + _camera.TrackerId + ": " + StartTracker() + "\n");
+                StartTracker();
             }
 
-            Console.WriteLine("Calibrating controller " + mc.Id + " on tracker " + _camera.TrackerId + "...\n");
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({0}).", _camera.GUID, mc.Serial));
+
             byte r = (byte)((mc.Color.r * 255) + 0.5f);
             byte g = (byte)((mc.Color.g * 255) + 0.5f);
             byte b = (byte)((mc.Color.b * 255) + 0.5f);
 
             mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_enable_with_color(_camera.Handle, mc.Handle, r, g, b);
-
-            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
-            {
-                Console.WriteLine("calibrated");
-            }
             
-            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking || mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
+            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking 
+                || mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
             {
                 PsMoveApi.psmove_tracker_update_image(_camera.Handle);
                 PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
                 mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
             }
+
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of Motion Controller ({0}) = {1}", 
+                _camera.GUID, mc.Serial, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
         }
 
         public void DisableTracking(MotionControllerModel motionController)
@@ -201,6 +215,8 @@ namespace UniMoveStation.Service
             PsMoveApi.psmove_tracker_disable(_camera.Handle, motionController.Handle);
             motionController.Tracking[_camera] = false;
             motionController.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracking of Motion Controller ({1}) disabled.", 
+                _camera.GUID, motionController.Serial));
         }
 
         public void DisableTracking()
@@ -221,7 +237,7 @@ namespace UniMoveStation.Service
             {
                 PsMoveApi.delete_PSMoveTracker(_camera.Handle);
                 _camera.Handle = IntPtr.Zero;
-                Console.WriteLine("tracker destroyed");
+                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Destroyed.", _camera.GUID));
             }
             //if (fusion != IntPtr.Zero)
             //{

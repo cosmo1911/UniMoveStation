@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto" 
                            MinHeight="5"
                            />
-            <RowDefinition Height="Auto" 
+            <RowDefinition Height="Auto"
                            MinHeight="80"
                            />
         </Grid.RowDefinitions>
@@ -50,12 +50,13 @@
                         <RowDefinition MaxHeight="30"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Label HorizontalContentAlignment="Center" 
-                           VerticalContentAlignment="Center" 
-                           Height="30"
-                           Background="{StaticResource AccentColorBrush2}" 
-                           Content="{Binding Camera.Name}"
-                           />
+                    <TextBox HorizontalContentAlignment="Center" 
+                             VerticalContentAlignment="Center" 
+                             BorderThickness="0"
+                             Height="30"
+                             Background="{StaticResource AccentColorBrush2}" 
+                             Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
+                             />
                     <local:AspectRatioLayoutDecorator Grid.Column="0" 
                                                       Grid.Row="1"
                                                       AspectRatio="1.3333">
@@ -63,7 +64,7 @@
                             <Label VerticalContentAlignment="Center" 
                                    HorizontalContentAlignment="Center"
                                    Background="{StaticResource AccentColorBrush}"
-                                   Content="No Image"
+                                   Content="no image"
                                    />
                                 
                             <Image HorizontalAlignment="Stretch" 
@@ -202,14 +203,16 @@
                        Text="Console"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Bottom"
-                       Margin="8,0,0,0"
+                       Margin="8 0 0 0"
                        />
 
             <!--Console-->
             <TextBox Grid.Row="1"
-                     BorderThickness="1" 
+                     BorderThickness="1"
                      BorderBrush="{StaticResource AccentColorBrush}"
-                     x:Name="textBox_allCameras" VerticalScrollBarVisibility="Auto"
+                     VerticalScrollBarVisibility="Visible"
+                     IsReadOnly="True"
+                     Text="{Binding ConsoleService.Console.Text}"
                      />
         </Grid>
     </Grid>

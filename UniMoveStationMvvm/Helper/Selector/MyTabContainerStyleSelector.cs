@@ -26,6 +26,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("MyTabItemStyle") as Style;
                 }
+                else if (item is ServerViewModel)
+                {
+                    return element.FindResource("MyTabItemStyle") as Style;
+                }
                 else if (item is MotionControllerViewModel)
                 {
                     return element.FindResource("MyClosableTabItemStyle") as Style;

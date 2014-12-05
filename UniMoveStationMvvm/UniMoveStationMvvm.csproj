@@ -178,27 +178,35 @@
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
     <Compile Include="Design\DesignCLEyeService.cs" />
+    <Compile Include="Design\DesignServerService.cs" />
     <Compile Include="Design\DesignTrackerService.cs" />
     <Compile Include="Design\DesignMotionControllerService.cs" />
-    <Compile Include="Helper\RemoveCameraMessage.cs" />
-    <Compile Include="Helper\AddCameraMessage.cs" />
-    <Compile Include="Helper\RemoveMotionControllerMessage.cs" />
-    <Compile Include="Helper\AddMotionControllerMessage.cs" />
-    <Compile Include="Helper\DictionaryTrackingToBoolConverter.cs" />
-    <Compile Include="Helper\IntToStringConverter.cs" />
-    <Compile Include="Helper\Vector3ToStringConverter.cs" />
-    <Compile Include="Helper\MyFlyoutStyleSelector.cs" />
-    <Compile Include="Helper\MyTabContainerStyleSelector.cs" />
-    <Compile Include="Helper\MyTabItemTemplateSelector .cs" />
-    <Compile Include="Helper\MyTabContentTemplateSelector.cs" />
+    <Compile Include="Helper\Converter\MultiValueConverter.cs" />
+    <Compile Include="Helper\Message\RemoveCameraMessage.cs" />
+    <Compile Include="Helper\Message\AddCameraMessage.cs" />
+    <Compile Include="Helper\Message\RemoveMotionControllerMessage.cs" />
+    <Compile Include="Helper\Message\AddMotionControllerMessage.cs" />
+    <Compile Include="Helper\Converter\DictionaryTrackingToBoolConverter.cs" />
+    <Compile Include="Helper\Converter\Vector3ToStringConverter.cs" />
+    <Compile Include="Helper\Converter\GreaterThanZeroConverter.cs" />
+    <Compile Include="Helper\Selector\MyFlyoutStyleSelector.cs" />
+    <Compile Include="Helper\Selector\MyTabContainerStyleSelector.cs" />
+    <Compile Include="Helper\Selector\MyTabItemTemplateSelector .cs" />
+    <Compile Include="Helper\Selector\MyTabContentTemplateSelector.cs" />
+    <Compile Include="Nito\NitoClient.cs" />
+    <Compile Include="Nito\UmsClient.cs" />
+    <Compile Include="Nito\NitoServer.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
     <Compile Include="Service\CLEyeService.cs" />
-    <Compile Include="Service\ICameraService.cs" />
+    <Compile Include="Service\ConsoleService.cs" />
+    <Compile Include="Service\Interface\ICameraService.cs" />
+    <Compile Include="Service\Interface\IConsoleService.cs" />
     <Compile Include="Service\IMotionControllerService.cs" />
-    <Compile Include="Service\ITrackerService.cs" />
+    <Compile Include="Service\Interface\ITrackerService.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Service\MotionControllerService.cs" />
     <Compile Include="Model\ServerModel.cs" />
+    <Compile Include="Service\ServerService.cs" />
     <Compile Include="Service\TrackerService.cs" />
     <Compile Include="SharpMove\PsMoveApi.cs" />
     <Compile Include="SharpMove\SharpMoveHelper.cs" />
@@ -232,6 +240,9 @@
     </Compile>
     <Compile Include="View\NavigationPanelItemView.xaml.cs">
       <DependentUpon>NavigationPanelItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ServerView.xaml.cs">
+      <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SingleCameraView.xaml.cs">
       <DependentUpon>SingleCameraView.xaml</DependentUpon>
@@ -278,6 +289,10 @@
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ServerView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\SingleCameraView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -318,12 +333,6 @@
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messages\Messages.csproj">
-      <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
-      <Name>Messages</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
@@ -350,7 +359,12 @@
     <Resource Include="Resources\PlayStationTriangle.svg" />
     <Resource Include="Resources\PlayStationX.svg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Messages\Messages.csproj">
+      <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
+      <Name>Messages</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

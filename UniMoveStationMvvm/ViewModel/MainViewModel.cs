@@ -24,31 +24,23 @@ namespace UniMoveStation.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private RelayCommand _settingsCommand;
+        private RelayCommand<FlyoutBaseViewModel> _toggleFlyoutCommand;
+
         public ObservableCollection<FlyoutBaseViewModel> Flyouts
         {
             get;
             private set;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
+        #region Constructor
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
-
             Flyouts = new ObservableCollection<FlyoutBaseViewModel>();
         }
+        #endregion
 
-        private RelayCommand<FlyoutBaseViewModel> _toggleFlyoutCommand;
-
+        #region Commands
         /// <summary>
         /// Gets the ShowFlyout.
         /// </summary>
@@ -60,29 +52,6 @@ namespace UniMoveStation.ViewModel
                     ?? (_toggleFlyoutCommand = new RelayCommand<FlyoutBaseViewModel>(DoToggleFlyout));
             }
         }
-
-        public void DoToggleFlyout(FlyoutBaseViewModel flyout)
-        {
-            if(Flyouts.Count == 0)
-            {
-                foreach (FlyoutBaseViewModel fbvw in SimpleIoc.Default.GetAllCreatedInstances<FlyoutBaseViewModel>())
-                {
-                    Flyouts.Add(fbvw);
-                }
-            }
-            if(!Flyouts.Contains(flyout))
-            {
-                Flyouts.Add(flyout);
-            }
-            foreach(FlyoutBaseViewModel fbvw in Flyouts)
-            {
-                if (fbvw.Equals(flyout)) continue;
-                fbvw.IsOpen = false;
-            }
-            flyout.IsOpen = !flyout.IsOpen;
-        }
-
-        private RelayCommand _settingsCommand;
 
         /// <summary>
         /// Gets the SettingsCommand.
@@ -99,5 +68,22 @@ namespace UniMoveStation.ViewModel
                     }));
             }
         }
+        #endregion
+
+        #region Command Executions
+        public void DoToggleFlyout(FlyoutBaseViewModel flyout)
+        {
+            if(!Flyouts.Contains(flyout))
+            {
+                Flyouts.Add(flyout);
+            }
+            foreach(FlyoutBaseViewModel fbvw in Flyouts)
+            {
+                if (fbvw.Equals(flyout)) continue;
+                fbvw.IsOpen = false;
+            }
+            flyout.IsOpen = !flyout.IsOpen;
+        }
+        #endregion
     } // MainViewModel
 } // namespace

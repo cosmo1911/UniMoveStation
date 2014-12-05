@@ -12,9 +12,22 @@ namespace UniMoveStation.ViewModel.Flyout
 {
     public class SettingsViewModel : FlyoutBaseViewModel
     {
-        public List<AccentColorMenuData> AccentColors { get; set; }
-        public List<AppThemeMenuData> AppThemes { get; set; }
+        private RelayCommand _applyCommand;
+        private RelayCommand _cancelCommand;
 
+        public List<AccentColorMenuData> AccentColors 
+        { 
+            get; 
+            set; 
+        }
+
+        public List<AppThemeMenuData> AppThemes 
+        { 
+            get; 
+            set; 
+        }
+
+        #region Constructor
         public SettingsViewModel()
         {
             Header = "Settings";
@@ -34,6 +47,45 @@ namespace UniMoveStation.ViewModel.Flyout
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
                                     .ToList();
         }
+        #endregion
+
+        #region Commands
+        /// <summary>
+        /// Gets the CancelCommand.
+        /// </summary>
+        public RelayCommand CancelCommand
+        {
+            get
+            {
+                return _cancelCommand
+                    ?? (_cancelCommand = new RelayCommand(DoCancel));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ApplyCommand.
+        /// </summary>
+        public RelayCommand ApplyCommand
+        {
+            get
+            {
+                return _applyCommand
+                    ?? (_applyCommand = new RelayCommand(DoApply));
+            }
+        }
+        #endregion Commands
+
+        #region Command Executions
+        public void DoApply()
+        {
+
+        }
+
+        public void DoCancel()
+        {
+            IsOpen = false;
+        }
+        #endregion
     }
 
     public class AccentColorMenuData
@@ -55,6 +107,7 @@ namespace UniMoveStation.ViewModel.Flyout
                     ?? (_changeAccentCommand = new RelayCommand(DoChangeTheme));
             }
         }
+
         protected virtual void DoChangeTheme()
         {
             var theme = ThemeManager.DetectAppStyle(Application.Current);

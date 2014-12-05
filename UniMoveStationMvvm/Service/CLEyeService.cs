@@ -14,6 +14,18 @@ namespace UniMoveStation.Service
     {
         private SingleCameraModel _camera;
 
+        public IConsoleService ConsoleService
+        {
+            get;
+            set;
+        }
+
+        #region
+        public CLEyeService(IConsoleService consoleService)
+        {
+            ConsoleService = consoleService;
+        }
+        #endregion
         public void Initialize(SingleCameraModel camera)
         {
             _camera = camera;
@@ -25,10 +37,12 @@ namespace UniMoveStation.Service
             //CLEYE_VGA - 15, 30, 40, 50, 60, 75
             Device.Framerate = 60;
             _camera.GUID = CLEyeCameraDevice.CameraUUID(_camera.TrackerId).ToString();
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
         }
 
         public int GetConnectedCount()
         {
+            ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
             return CLEyeCameraDevice.CLEyeGetCameraCount();
         }
 
@@ -39,6 +53,8 @@ namespace UniMoveStation.Service
             Device.AutoGain = true;
             Device.AutoWhiteBalance = true;
             Device.Start();
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
             return Enabled = true;
         }
 
@@ -50,6 +66,7 @@ namespace UniMoveStation.Service
         public bool Stop()
         {
             Device.Stop();
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
             return Enabled = false;
         }
 
@@ -65,14 +82,8 @@ namespace UniMoveStation.Service
         /// </summary>
         public bool Enabled
         {
-            get
-            {
-                return (bool)GetValue(EnabledProperty);
-            }
-            set
-            {
-                SetValue(EnabledProperty, value);
-            }
+            get { return (bool)GetValue(EnabledProperty); }
+            set { SetValue(EnabledProperty, value); }
         }
 
         /// <summary>
@@ -90,7 +101,6 @@ namespace UniMoveStation.Service
             get;
             set;
         }
-
         #endregion
     }
 }

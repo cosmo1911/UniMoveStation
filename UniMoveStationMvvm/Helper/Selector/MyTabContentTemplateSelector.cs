@@ -30,6 +30,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("MotionControllerTabContentTemplate") as DataTemplate;
                 }
+                else if (item is ServerViewModel)
+                {
+                    return element.FindResource("ServerTabContentTemplate") as DataTemplate;
+                }
             }
 
             return null;

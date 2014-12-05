@@ -32,19 +32,13 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             Position = Position.Right;
             Header = "Add Camera";
+            AvailableCameras = new ObservableCollection<SingleCameraModel>();
         }
 
         #region Properties
         public ObservableCollection<SingleCameraModel> AvailableCameras
         {
-            get
-            {
-                if (_availableCameras == null)
-                {
-                    AvailableCameras = new ObservableCollection<SingleCameraModel>();
-                }
-                return _availableCameras;
-            }
+            get { return _availableCameras; }
             set { Set(() => AvailableCameras, ref _availableCameras, value); }
         }
         public SingleCameraModel NewCamera
@@ -126,7 +120,8 @@ namespace UniMoveStation.ViewModel.Flyout
                 SingleCameraViewModel scvw;
                 if(!NewCamera.GUID.Contains("1245678"))
                 {
-                    scvw = new SingleCameraViewModel(NewCamera, new TrackerService(), new CLEyeService());
+                    IConsoleService consoleService = new ConsoleService();
+                    scvw = new SingleCameraViewModel(NewCamera, new TrackerService(consoleService), new CLEyeService(consoleService), consoleService);
                 }
                 else 
                 {
@@ -149,12 +144,12 @@ namespace UniMoveStation.ViewModel.Flyout
         public void DoRefresh()
         {
             ObservableCollection<SingleCameraModel> existingCameras = new ObservableCollection<SingleCameraModel>();
-            AvailableCameras = new ObservableCollection<SingleCameraModel>();
+            AvailableCameras.Clear();
             NewCamera = new SingleCameraModel();
             NewCamera.Name = null;
             NewCamerasDetected = false;
 
-            ICameraService cameraService = new CLEyeService();
+            ICameraService cameraService = new CLEyeService(new ConsoleService());
             int connectedCount = cameraService.GetConnectedCount();
             if (connectedCount > 0)
             {
@@ -169,16 +164,16 @@ namespace UniMoveStation.ViewModel.Flyout
                     cameraService.Initialize(tmp);
                     if(existingCameras.Count > 0)
                     {
+                        bool duplicate = false;
                         foreach (SingleCameraModel sc in existingCameras)
                         {
-                            if (!tmp.GUID.Equals(sc.GUID))
+                            if (tmp.GUID.Equals(sc.GUID))
                             {
-                                if (existingCameras.IndexOf(sc) == existingCameras.Count - 1)
-                                {
-                                    AvailableCameras.Add(tmp);
-                                }
+                                duplicate = true;
+                                break;
                             }
                         }
+                        if (!duplicate) AvailableCameras.Add(tmp);
                     }
                     else
                     {

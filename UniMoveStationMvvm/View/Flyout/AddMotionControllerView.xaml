@@ -66,8 +66,8 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
                                             <mvvm:EventToCommand Command="{Binding AddMotionController.SelectItemCommand, Source={StaticResource ViewModelLocator}}"
-                                                                             CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
-                                                                             />
+                                                                 CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
+                                                                 />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                     <ComboBox.ItemTemplate>

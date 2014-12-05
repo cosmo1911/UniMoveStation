@@ -44,6 +44,12 @@ namespace UniMoveStation.ViewModel
             get;
             private set;
         }
+
+        public IConsoleService ConsoleService
+        {
+            get;
+            private set;
+        }
         #endregion
 
         #region Constructor
@@ -51,10 +57,11 @@ namespace UniMoveStation.ViewModel
         /// Initializes a new instance of the MotionControllerViewModel class.
         /// </summary>
         [PreferredConstructor]
-        public SingleCameraViewModel(SingleCameraModel camera, ITrackerService trackerService, ICameraService cameraService)
+        public SingleCameraViewModel(SingleCameraModel camera, ITrackerService trackerService, ICameraService cameraService, IConsoleService consoleService)
         {
             TrackerService = trackerService;
             CameraService = cameraService;
+            ConsoleService = consoleService;
             Camera = camera;
 
             CameraService.Initialize(Camera);
@@ -85,7 +92,7 @@ namespace UniMoveStation.ViewModel
         /// <summary>
         /// for design time purposes only
         /// </summary>
-        public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService())
+        public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService(), new ConsoleService())
         {
             Camera.Name = "Design " + Camera.TrackerId;
 
@@ -214,6 +221,7 @@ namespace UniMoveStation.ViewModel
         public void DoToggleAnnotate(bool annotate)
         {
             Camera.Annotate = annotate;
+            ConsoleService.WriteLine("Annotate: " + annotate);
         }
 
         private void DoToggleCamera(bool enabled)
@@ -234,6 +242,7 @@ namespace UniMoveStation.ViewModel
                 if (CameraService.Enabled) Camera.ShowImage = CameraService.Stop();
                 else if (TrackerService.Enabled) Camera.ShowImage = false;
             }
+            ConsoleService.WriteLine("Show Image: " + Camera.ShowImage);
         }
 
         public void DoToggleTracking(bool enabled)
@@ -254,6 +263,7 @@ namespace UniMoveStation.ViewModel
                     CameraService.Start();
                 }
             }
+            ConsoleService.WriteLine("Tracking: " + enabled);
         }
 
         public void DoEnableTracking(ListBox listBox)
@@ -275,6 +285,7 @@ namespace UniMoveStation.ViewModel
                 {
                     mc.Tracking[Camera] = false;
                 }
+                ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, isChecked));
             }
         } // DoEnableTracking
         #endregion
