@@ -20,9 +20,82 @@
 
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
-            <Grid>
+            <StackPanel Orientation="Vertical">
                 
-            </Grid>
+                <Grid Margin="0 0 0 4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.ColumnSpan="4"
+                               Margin="0 0 0 2"
+                               Text="Window Position"
+                               />
+                    <TextBlock Grid.Row="1"
+                               Text="X"
+                               Margin="0 4 4 4"
+                               VerticalAlignment="Center"
+                               />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Text="{Binding Settings.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="2"
+                               Text="Y"
+                               Margin="4"
+                               VerticalAlignment="Center"
+                               />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="3"
+                             Text="{Binding Settings.Y, UpdateSourceTrigger=PropertyChanged}"
+                             />
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.ColumnSpan="4"
+                               Margin="0 4 0 2"
+                               Text="Window Size"
+                               />
+                    <TextBlock Grid.Row="1"
+                               Text="X"
+                               Margin="0 4 4 4"
+                               VerticalAlignment="Center"
+                               />
+                    <TextBox Grid.Row="1" 
+                             Text="{Binding Settings.Width, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Column="1"
+                             />
+                    <TextBlock Grid.Row="1" 
+                               Grid.Column="2"
+                               Text="Y"
+                               Margin="4"
+                               VerticalAlignment="Center"
+                               />
+                    <TextBox Grid.Row="1" 
+                             Grid.Column="3"
+                             Text="{Binding Settings.Height, UpdateSourceTrigger=PropertyChanged}"
+                             />
+                </Grid>
+
+
+            </StackPanel>
             
         </ScrollViewer>
         <UniformGrid Columns="2"
@@ -30,13 +103,13 @@
                      Margin="8">
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
-                    Content="apply"
-                    Command="{Binding CreateCommand, Mode=OneWay}"
+                    Content="save"
+                    Command="{Binding SaveCommand}"
                     />
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
-                    Content="cancel"
-                    Command="{Binding CancelCommand, Mode=OneWay}"
+                    Content="reload"
+                    Command="{Binding ReloadCommand}"
                     />
         </UniformGrid>
 

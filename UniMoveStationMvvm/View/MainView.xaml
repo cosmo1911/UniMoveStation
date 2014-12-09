@@ -13,8 +13,12 @@
                       Title="UniMoveStation"
                       BorderThickness="1"
                       BorderBrush="{StaticResource AccentColorBrush}"
-                      Width="1280"
-                      Height="720"
+                      WindowStartupLocation="Manual"
+                      SaveWindowPosition="False"
+                      Width="{Binding Settings.Settings.Width, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
+                      Height="{Binding Settings.Settings.Height, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
+                      Left="{Binding Settings.Settings.X, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
+                      Top="{Binding Settings.Settings.Y, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
                       ShowTitleBar="False">
     

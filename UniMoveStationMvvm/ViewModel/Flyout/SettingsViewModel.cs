@@ -2,18 +2,22 @@
 using MahApps.Metro;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using UniMoveStation.Model;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
     public class SettingsViewModel : FlyoutBaseViewModel
     {
-        private RelayCommand _applyCommand;
-        private RelayCommand _cancelCommand;
+        private RelayCommand _saveCommand;
+        private RelayCommand _reloadCommand;
+        private SettingsModel _settings;
 
         public List<AccentColorMenuData> AccentColors 
         { 
@@ -46,46 +50,112 @@ namespace UniMoveStation.ViewModel.Flyout
                                         BorderColorBrush = a.Resources["BlackColorBrush"] as Brush,
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
                                     .ToList();
+
+            DoReload();
+        }
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// The <see cref="Settings" /> property's name.
+        /// </summary>
+        public const string SettingsPropertyName = "Settings";
+
+        /// <summary>
+        /// Sets and gets the Settings property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// This property's value is broadcasted by the MessengerInstance when it changes.
+        /// </summary>
+        public SettingsModel Settings
+        {
+            get
+            {
+                return _settings;
+            }
+
+            set
+            {
+                if (_settings == value)
+                {
+                    return;
+                }
+
+                var oldValue = _settings;
+                _settings = value;
+                RaisePropertyChanged(() => Settings, oldValue, value, true);
+            }
         }
         #endregion
 
         #region Commands
         /// <summary>
-        /// Gets the CancelCommand.
+        /// Gets the ReloadCommand.
         /// </summary>
-        public RelayCommand CancelCommand
+        public RelayCommand ReloadCommand
         {
             get
             {
-                return _cancelCommand
-                    ?? (_cancelCommand = new RelayCommand(DoCancel));
+                return _reloadCommand
+                    ?? (_reloadCommand = new RelayCommand(DoReload));
             }
         }
 
         /// <summary>
         /// Gets the ApplyCommand.
         /// </summary>
-        public RelayCommand ApplyCommand
+        public RelayCommand SaveCommand
         {
             get
             {
-                return _applyCommand
-                    ?? (_applyCommand = new RelayCommand(DoApply));
+                return _saveCommand
+                    ?? (_saveCommand = new RelayCommand(DoSave));
             }
         }
         #endregion Commands
 
         #region Command Executions
-        public void DoApply()
+        public void DoSave()
         {
-
+            TextWriter writer = null;
+            try
+            {
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
+                writer = new StreamWriter("user.conf.json", false);
+                writer.Write(json);
+            }
+            finally
+            {
+                if (writer != null)
+                    writer.Close();
+            }
         }
 
-        public void DoCancel()
+        public void DoReload()
         {
-            IsOpen = false;
+            TextReader reader = null;
+            try
+            {
+                try
+                {
+                    reader = new StreamReader("user.conf.json");
+                }
+                catch(FileNotFoundException)
+                {
+                    reader = new StreamReader("default.conf.json");
+                }
+                finally
+                {
+                    string fileContents = reader.ReadToEnd();
+                    Settings = Newtonsoft.Json.JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                }
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+            }
         }
-        #endregion
+        #endregion            
     }
 
     public class AccentColorMenuData
