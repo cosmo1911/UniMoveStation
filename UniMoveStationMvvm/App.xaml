@@ -10,15 +10,15 @@
     
     <Application.Resources>
         <ResourceDictionary>
-            <!--Global View Model Locator-->
-            <vm:ViewModelLocator x:Key="ViewModelLocator"
-                                 d:IsDataSource="True" 
-                                 />
             <helper:MyFlyoutStyleSelector x:Key="MyFlyoutStyleSelector"/>
             <helper:MyTabItemTemplateSelector x:Key="MyItemTemplateSelector"/>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            
+
+            <!--Global View Model Locator-->
+            <vm:ViewModelLocator x:Key="ViewModelLocator"
+                                 d:IsDataSource="True" 
+                                 />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
@@ -35,5 +35,6 @@
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

@@ -11,11 +11,13 @@ namespace UniMoveStation.Service
 {
     public interface ICameraService
     {
+        void Initialize(SingleCameraModel camera);
+
         bool Start();
 
         bool Stop();
 
-        void Initialize(SingleCameraModel camera);
+        void Destroy();
 
         bool Enabled
         {

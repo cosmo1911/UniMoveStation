@@ -25,7 +25,8 @@ namespace UniMoveStation.ViewModel
         private RelayCommand<bool> _toggleCameraCommand;
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
-        private RelayCommand<ListBox> _enableTrackingCommand;
+        private RelayCommand<ListBox> _applySelectionCommand;
+        private RelayCommand<ListBox> _cancelSelectionCommand;
 
         public SingleCameraModel Camera
         {
@@ -57,7 +58,11 @@ namespace UniMoveStation.ViewModel
         /// Initializes a new instance of the MotionControllerViewModel class.
         /// </summary>
         [PreferredConstructor]
-        public SingleCameraViewModel(SingleCameraModel camera, ITrackerService trackerService, ICameraService cameraService, IConsoleService consoleService)
+        public SingleCameraViewModel(
+            SingleCameraModel camera, 
+            ITrackerService trackerService, 
+            ICameraService cameraService, 
+            IConsoleService consoleService)
         {
             TrackerService = trackerService;
             CameraService = cameraService;
@@ -70,18 +75,13 @@ namespace UniMoveStation.ViewModel
             Messenger.Default.Register<AddMotionControllerMessage>(this,
                 message =>
                 {
-                    if(!Camera.Controllers.Contains(message.MotionController))
-                    {
-                        Camera.Controllers.Add(message.MotionController);
-                    }
+                    TrackerService.AddMotionController(message.MotionController);
                 });
 
             Messenger.Default.Register<RemoveMotionControllerMessage>(this,
                 message =>
                 {
-                    //TrackerService
-                    message.MotionController.Tracking[Camera] = false;
-                    Camera.Controllers.Remove(message.MotionController);
+                    TrackerService.RemoveMotionController(message.MotionController);
                 });
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
@@ -92,7 +92,11 @@ namespace UniMoveStation.ViewModel
         /// <summary>
         /// for design time purposes only
         /// </summary>
-        public SingleCameraViewModel() : this(new SingleCameraModel(), new DesignTrackerService(),  new DesignCLEyeService(), new ConsoleService())
+        public SingleCameraViewModel() : this(
+            new SingleCameraModel(), 
+            new DesignTrackerService(),  
+            new DesignCLEyeService(), 
+            new ConsoleService())
         {
             Camera.Name = "Design " + Camera.TrackerId;
 
@@ -167,9 +171,9 @@ namespace UniMoveStation.ViewModel
         }
         #endregion
 
-        #region Relay Commands
+        #region Commands
         /// <summary>
-        /// Gets the AnnotateCommand.
+        /// Gets the ToggleAnnotateCommand.
         /// </summary>
         public RelayCommand<bool> ToggleAnnotateCommand
         {
@@ -181,7 +185,7 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
-        /// Gets the MyCommand.
+        /// Gets the ToggleCameraCommand.
         /// </summary>
         public RelayCommand<bool> ToggleCameraCommand
         {
@@ -193,7 +197,7 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
-        /// Gets the EnableTracking.
+        /// Gets the ToggleTrackingCommand.
         /// </summary>
         public RelayCommand<bool> ToggleTrackingCommand
         {
@@ -205,14 +209,26 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
-        /// Gets the EnableTrackingCommand.
+        /// Gets the ApplySelectionCommand.
         /// </summary>
-        public RelayCommand<ListBox> EnableTrackingCommand
+        public RelayCommand<ListBox> ApplySelectionCommand
         {
             get
             {
-                return _enableTrackingCommand
-                    ?? (_enableTrackingCommand = new RelayCommand<ListBox>(DoEnableTracking));
+                return _applySelectionCommand
+                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(DoApplySelection));
+            }
+        }
+
+        /// <summary>
+        /// Gets the CancelSelectionCommand.
+        /// </summary>
+        public RelayCommand<ListBox> CancelSelectionCommand
+        {
+            get
+            {
+                return _cancelSelectionCommand
+                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(DoCancelSelection));
             }
         }
         #endregion
@@ -266,7 +282,7 @@ namespace UniMoveStation.ViewModel
             ConsoleService.WriteLine("Tracking: " + enabled);
         }
 
-        public void DoEnableTracking(ListBox listBox)
+        public void DoApplySelection(ListBox listBox)
         {
             int index = -1;
             foreach(MotionControllerModel mc in listBox.Items)
@@ -287,16 +303,31 @@ namespace UniMoveStation.ViewModel
                 }
                 ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, isChecked));
             }
-        } // DoEnableTracking
+        } // DoApplySelection
+
+        public void DoCancelSelection(ListBox listBox)
+        {
+            int index = -1;
+            foreach (MotionControllerModel mc in listBox.Items)
+            {
+                index++;
+                ListBoxItem listBoxItem = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromItem(mc);
+                ContentPresenter contentPresenter = FindVisualChild<ContentPresenter>(listBoxItem);
+                DataTemplate dataTemplate = contentPresenter.ContentTemplate;
+                CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
+                checkBox.IsChecked = mc.Tracking[Camera];
+                ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
+            }
+        }
         #endregion
 
         #region Misc
         public override void Cleanup()
         {
-            TrackerService.Stop();
-            CameraService.Stop();
+            TrackerService.Destroy();
+            CameraService.Destroy();
             Messenger.Default.Send<RemoveCameraMessage>(new RemoveCameraMessage(Camera));
-            SimpleIoc.Default.Unregister<SingleCameraModel>();
+            SimpleIoc.Default.Unregister<SingleCameraViewModel>(Camera.GUID);
             base.Cleanup();
         }
 

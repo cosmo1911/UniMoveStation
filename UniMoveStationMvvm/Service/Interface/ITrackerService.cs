@@ -22,5 +22,11 @@ namespace UniMoveStation.Service
         bool Start();
 
         bool Stop();
+
+        void Destroy();
+
+        void AddMotionController(MotionControllerModel mc);
+
+        void RemoveMotionController(MotionControllerModel mc);
     }
 }

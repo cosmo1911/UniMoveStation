@@ -22,7 +22,7 @@ namespace UniMoveStation.Helper
             else if (values[1] == DependencyProperty.UnsetValue) return false;
             else
             {
-                ConcurrentDictionary<SingleCameraModel, bool> dict = (ConcurrentDictionary<SingleCameraModel, bool>)values[0];
+                ObservableConcurrentDictionary<SingleCameraModel, bool> dict = (ObservableConcurrentDictionary<SingleCameraModel, bool>)values[0];
                 SingleCameraModel camera = (SingleCameraModel)values[1];
                 bool tracking = dict[camera];
 

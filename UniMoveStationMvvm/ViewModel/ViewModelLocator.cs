@@ -49,13 +49,13 @@ namespace UniMoveStation.ViewModel
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
 
-            SimpleIoc.Default.Register<SettingsViewModel>(true);
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<NavigationViewModel>();
             SimpleIoc.Default.Register<ServerViewModel>();
             SimpleIoc.Default.Register<CamerasViewModel>();
             SimpleIoc.Default.Register<AddMotionControllerViewModel>();
             SimpleIoc.Default.Register<AddCameraViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         public MainViewModel Main
@@ -97,5 +97,5 @@ namespace UniMoveStation.ViewModel
         {
             // TODO Clear the ViewModels
         }
-    }
-}
+    } // ViewModelLocator
+} // namespace

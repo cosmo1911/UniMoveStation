@@ -54,8 +54,6 @@ namespace UniMoveStation.ViewModel.Flyout
         }
         #endregion
 
-        
-
         #region Commands
         /// <summary>
         /// Gets the CancelCommand.
@@ -180,7 +178,7 @@ namespace UniMoveStation.ViewModel.Flyout
                         AvailableCameras.Add(tmp);
                     }
                     
-                    cameraService.Device.Dispose();
+                    cameraService.Destroy();
                 }
 
                 if (AvailableCameras.Count > 0)

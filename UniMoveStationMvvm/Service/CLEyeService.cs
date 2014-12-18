@@ -70,6 +70,12 @@ namespace UniMoveStation.Service
             return Enabled = false;
         }
 
+        public void Destroy()
+        {
+            Device.Dispose();
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
+        }
+
         #region Depedency Properties
         /// <summary>
         /// The <see cref="Enabled" /> dependency property's name.

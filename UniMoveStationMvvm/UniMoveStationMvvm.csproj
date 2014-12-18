@@ -208,7 +208,7 @@
     <Compile Include="Service\ConsoleService.cs" />
     <Compile Include="Service\Interface\ICameraService.cs" />
     <Compile Include="Service\Interface\IConsoleService.cs" />
-    <Compile Include="Service\IMotionControllerService.cs" />
+    <Compile Include="Service\Interface\IMotionControllerService.cs" />
     <Compile Include="Service\Interface\ITrackerService.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Service\MotionControllerService.cs" />
@@ -218,6 +218,7 @@
     <Compile Include="SharpMove\PsMoveApi.cs" />
     <Compile Include="SharpMove\SharpMoveHelper.cs" />
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
+    <Compile Include="Utilities\ObservableConcurrentDictionary.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />

@@ -91,7 +91,8 @@ namespace UniMoveStation.Service
             {
                 _ctsUpdate.Cancel();
                 _updateTask.Wait();
-                DisableTracking();
+                PsMoveApi.delete_PSMoveTracker(_camera.Handle);
+                _camera.Handle = IntPtr.Zero;
             }
         }
         #endregion
@@ -121,15 +122,24 @@ namespace UniMoveStation.Service
             return Enabled = false;
         }
 
-        public void AddMotionController(MotionControllerModel motionController)
+        public void AddMotionController(MotionControllerModel mc)
         {
-            //_tracker.Controllers.Add(motionController.Serial, motionController);
-            // TODO enable tracking
+            if(!_camera.Controllers.Contains(mc))
+            {
+                _camera.Controllers.Add(mc);
+            }
         }
 
-        public void RemoveMotionController(MotionControllerModel motionController)
-        {         
-            //_tracker.Controllers.Remove(motionController.Serial);
+        public void RemoveMotionController(MotionControllerModel mc)
+        {       
+            if(_camera.Controllers.Contains(mc))
+            {
+                if(mc.Tracking[_camera])
+                {
+                    DisableTracking(mc);
+                }
+                _camera.Controllers.Remove(mc);
+            }
         }
 
         public void UpdateImage()
@@ -227,14 +237,14 @@ namespace UniMoveStation.Service
                 {
                     DisableTracking(mc);
                 }
-                DestroyTracker();
             }
         }
 
-        public void DestroyTracker()
+        public void Destroy()
         {
             if (_camera.Handle != IntPtr.Zero)
             {
+                DisableTracking();
                 PsMoveApi.delete_PSMoveTracker(_camera.Handle);
                 _camera.Handle = IntPtr.Zero;
                 ConsoleService.WriteLine(string.Format("[Tracker, {0}] Destroyed.", _camera.GUID));

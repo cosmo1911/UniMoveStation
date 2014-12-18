@@ -61,12 +61,12 @@
             	                          ItemsSource="{Binding}"
             	                          SelectedIndex="-1"
                                           Margin="0 4 0 4"
-                                          x:Name="combo_box_serial"
+                                          x:Name="combo_box_guid"
                                           HorizontalContentAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
                                             <mvvm:EventToCommand Command="{Binding AddCamera.SelectItemCommand, Source={StaticResource ViewModelLocator}}"
-                                                                 CommandParameter="{Binding SelectedItem, ElementName=combo_box_serial}"
+                                                                 CommandParameter="{Binding SelectedItem, ElementName=combo_box_guid}"
                                                                  />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
@@ -79,7 +79,7 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <TextBlock x:Name="text_box_serial" 
+                                <TextBlock x:Name="text_box_guid" 
                                            Text="Select"
                                            IsHitTestVisible="False" 
                                            Visibility="Hidden"
@@ -89,10 +89,10 @@
                             </Grid>
                             <DataTemplate.Triggers>
 
-                                <Trigger SourceName="combo_box_serial" 
+                                <Trigger SourceName="combo_box_guid" 
                                          Property="SelectedItem" 
                                          Value="{x:Null}">
-                                    <Setter TargetName="text_box_serial" 
+                                    <Setter TargetName="text_box_guid" 
                                             Property="Visibility" 
                                             Value="Visible"
                                             />

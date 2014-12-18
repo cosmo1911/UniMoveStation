@@ -69,21 +69,18 @@ namespace UniMoveStation.ViewModel
                 {
                     if(!MotionController.Tracking.ContainsKey(message.Camera))
                     {
-                        MotionController.TrackerStatus.GetOrAdd(message.Camera, PSMoveTrackerStatus.NotCalibrated);
-                        MotionController.Tracking.GetOrAdd(message.Camera, false);
-                        MotionController.Position.GetOrAdd(message.Camera, Vector3.zero);
+                        MotionController.TrackerStatus.Add(message.Camera, PSMoveTrackerStatus.NotCalibrated);
+                        MotionController.Tracking.Add(message.Camera, false);
+                        MotionController.Position.Add(message.Camera, Vector3.zero);
                     }
                 });
 
             Messenger.Default.Register<RemoveCameraMessage>(this,
                 message =>
                 {
-                    PSMoveTrackerStatus trackerStatus;
-                    bool tracking;
-                    Vector3 position;
-                    MotionController.TrackerStatus.TryRemove(message.Camera, out trackerStatus);
-                    MotionController.Tracking.TryRemove(message.Camera, out tracking);
-                    MotionController.Position.TryRemove(message.Camera, out position);
+                    MotionController.TrackerStatus.Remove(message.Camera);
+                    MotionController.Tracking.Remove(message.Camera);
+                    MotionController.Position.Remove(message.Camera);
                 });
 
             Messenger.Default.Send(new AddMotionControllerMessage(MotionController));

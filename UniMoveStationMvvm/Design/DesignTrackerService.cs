@@ -31,24 +31,24 @@ namespace UniMoveStation.Design
             set { Console.WriteLine(value); }
         }
 
-        public void Initialize(SingleCameraModel camera)
+        public void Initialize(SingleCameraModel camera) { _camera = camera; }
+
+        public bool Start() { return Enabled = true; }
+
+        public bool Stop() { return Enabled = false; }
+
+        public void Destroy() { }
+
+        public void UpdateImage() { }
+
+        public void AddMotionController(MotionControllerModel mc) 
         {
-            _camera = camera;
+            _camera.Controllers.Add(mc);
         }
 
-        public bool Start()
+        public void RemoveMotionController(MotionControllerModel mc) 
         {
-            return Enabled = true;
-        }
-
-        public bool Stop()
-        {
-            return Enabled = false;
-        }
-
-        public void UpdateImage()
-        {
-
+            _camera.Controllers.Remove(mc);
         }
         #endregion
         

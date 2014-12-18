@@ -14,7 +14,7 @@
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              d:DataContext="{d:DesignInstance Type=vm:SingleCameraViewModel, IsDesignTimeCreatable=True}"
-             Margin="10">
+             Margin="8">
     
     <UserControl.Resources>
         <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
@@ -168,13 +168,13 @@
                     <UniformGrid>
                         <Button Content="apply"
                                 Margin="8 8 4 8"
-                                Command="{Binding EnableTrackingCommand}"
+                                Command="{Binding ApplySelectionCommand}"
                                 CommandParameter="{Binding ElementName=TrackedControllers}"
                                 />
                         <Button Content="cancel"
                                 Margin="4 8 8 8"
-                                Command="{Binding DisableTrackingCommand}"
-                                CommandParameter="{Binding Path=Items, ElementName=TrackedControllers}"
+                                Command="{Binding CancelSelectionCommand}"
+                                CommandParameter="{Binding ElementName=TrackedControllers}"
                                 />
                     </UniformGrid>
                 </StackPanel>

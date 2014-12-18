@@ -9,7 +9,8 @@
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
-             DataContext="{Binding Server, Source={StaticResource ViewModelLocator}}">
+             DataContext="{Binding Server, Source={StaticResource ViewModelLocator}}"
+             Margin="8">
     <UserControl.Resources>
         <helper:MultiValueConverter x:Key="MultiValueConverter"/>
         <helper:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
@@ -20,8 +21,8 @@
             <RowDefinition Height="Auto" 
                            MinHeight="5"
                            />
-            <RowDefinition Height="Auto" 
-                           MinHeight="80"
+            <RowDefinition MinHeight="80"
+                           Height="240"
                            />
         </Grid.RowDefinitions>
         <Grid>

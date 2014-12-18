@@ -78,7 +78,7 @@
 
             </Style.Triggers>
         </Style>
-
+        
         <!--Closable Tab Item Style -->
         <Style x:Key="MyClosableTabItemStyle"
                TargetType="controls:MetroTabItem"
@@ -114,8 +114,7 @@
         <DataTemplate DataType="{x:Type vm:MotionControllerViewModel}"
                       x:Key="MotionControllerTabItemTemplate">
 
-            <StackPanel Orientation="Horizontal"
-                        MinWidth="210">
+            <StackPanel Orientation="Horizontal">
                 <!--Controller Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
                                  Height="32"
@@ -141,8 +140,7 @@
         <!--Single Camera Tab Item Template-->
         <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
                       x:Key="SingleCameraTabItemTemplate">
-            <StackPanel Orientation="Horizontal"
-                        Width="210">
+            <StackPanel Orientation="Horizontal">
                 <!--Camera Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
                                  Height="32"
@@ -168,8 +166,7 @@
         <DataTemplate DataType="{x:Type vm:CamerasViewModel}"
                       x:Key="AllCamerasTabItemTemplate">
             
-            <StackPanel Orientation="Horizontal"
-                        Width="210">
+            <StackPanel Orientation="Horizontal">
                 <!--Cameras Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
                                  Height="32"
@@ -215,8 +212,7 @@
         <!--Server Tab Item Template-->
         <DataTemplate DataType="{x:Type vm:ServerViewModel}"
                       x:Key="ServerTabItemTemplate">
-            <StackPanel Orientation="Horizontal"
-                        Width="210">
+            <StackPanel Orientation="Horizontal">
                 <!--Camera Icon-->
                 <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
                                  Height="32"
@@ -260,8 +256,8 @@
                         />
             </Style>
         </controls:MetroTabControl.Resources>
-        <TabItem controls:ControlsHelper.HeaderFontSize="16"
-                 VerticalAlignment="Center">
+        <controls:MetroTabItem controls:ControlsHelper.HeaderFontSize="16"
+                               VerticalAlignment="Center">
             <TabItem.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -285,6 +281,13 @@
                                       x:Name="controllers"
                                       Tag="controllers"
                                       TabStripMargin="0">
+                <controls:MetroTabControl.Resources>
+                    <Style TargetType="TabPanel">
+                        <Setter Property="Width"
+                                Value="210"
+                                />
+                    </Style>
+                </controls:MetroTabControl.Resources>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"
@@ -295,7 +298,7 @@
                 
             </controls:MetroTabControl>
 
-        </TabItem>
+        </controls:MetroTabItem>
 
         <TabItem controls:ControlsHelper.HeaderFontSize="16"
                  VerticalAlignment="Center">
@@ -321,6 +324,13 @@
                                       ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
                                       x:Name="cameras"
                                       Tag="cameras">
+                <controls:MetroTabControl.Resources>
+                    <Style TargetType="TabPanel">
+                        <Setter Property="Width"
+                                Value="210"
+                                />
+                    </Style>
+                </controls:MetroTabControl.Resources>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"
@@ -343,6 +353,13 @@
                                       ContentTemplateSelector="{StaticResource MyTabContentTemplateSelector}"
                                       x:Name="server"
                                       Tag="server">
+                <controls:MetroTabControl.Resources>
+                    <Style TargetType="TabPanel">
+                        <Setter Property="Width"
+                                Value="210"
+                                />
+                    </Style>
+                </controls:MetroTabControl.Resources>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <mvvm:EventToCommand Command="{Binding TabSelectedCommand}"

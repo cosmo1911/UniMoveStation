@@ -1,10 +1,13 @@
-﻿using Nito.Async.Sockets;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Nito.Async.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UniMoveStation.Model;
 using UniMoveStation.Nito;
+using UniMoveStation.ViewModel;
 using UnityEngine;
 
 namespace UniMoveStation.Service
@@ -96,17 +99,94 @@ namespace UniMoveStation.Service
 
         private Vector3 getFusionPosition(int trackerIndex, int moveIndex)
         {
-            Vector3 vector = Vector3.zero;
-            //if (!cameraControls[trackerIndex].enabledForTracking)
-            //{
-            //    Console.WriteLine(string.Format("Server: Tracker {0} not enabled." + Environment.NewLine, trackerIndex));
-            //    return vector;
-            //}
-            //else if (trackers[trackerIndex] != null && trackers[trackerIndex].controllers[moveIndex] != null)
-            //{
-            //    vector = trackers[trackerIndex].controllers[moveIndex].m_position;
-            //}
-            return vector;
+            Vector3 position = Vector3.zero;
+            SingleCameraModel camera = GetCamera(trackerIndex);
+            MotionControllerModel mc = GetMotionController(moveIndex);
+
+            if(mc == null)
+            {
+                Console.WriteLine(string.Format("[Server] Controller {0} not available.", moveIndex));
+                return Vector3.zero;
+            }
+            else if(camera == null)
+            {
+                Console.WriteLine(string.Format("[Server] Tracker {0} not available.", trackerIndex));
+                return Vector3.zero;
+            }
+            else
+            {
+                return mc.Position[camera];
+            }
         }
-    }
-}
+
+        private Vector3 getFusionPosition(string trackerName, string moveName)
+        {
+            Vector3 position = Vector3.zero;
+            SingleCameraModel camera = GetCamera(trackerName);
+            MotionControllerModel mc = GetMotionController(moveName);
+
+            if (mc == null)
+            {
+                Console.WriteLine(string.Format("[Server] Controller \"{0}\" not available.", moveName));
+                return Vector3.zero;
+            }
+            else if (camera == null)
+            {
+                Console.WriteLine(string.Format("[Server] Tracker \"{0}\" not available.", trackerName));
+                return Vector3.zero;
+            }
+            else
+            {
+                return mc.Position[camera];
+            }
+        }
+
+        private SingleCameraModel GetCamera(int index)
+        {
+            foreach (SingleCameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            {
+                if (scvw.Camera.TrackerId == index)
+                {
+                    return scvw.Camera;
+                }
+            }
+            return null;
+        }
+
+        private SingleCameraModel GetCamera(string name)
+        {
+            foreach (SingleCameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            {
+                if (scvw.Camera.Name.Equals(name))
+                {
+                    return scvw.Camera;
+                }
+            }
+            return null;
+        }
+
+        private MotionControllerModel GetMotionController(int index)
+        {
+            foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
+            {
+                if (mcvw.MotionController.Id == index)
+                {
+                    return mcvw.MotionController;
+                }
+            }
+            return null;
+        }
+
+        private MotionControllerModel GetMotionController(string name)
+        {
+            foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
+            {
+                if (mcvw.MotionController.Name.Equals(name))
+                {
+                    return mcvw.MotionController;
+                }
+            }
+            return null;
+        }
+    } // ServerService
+} // namespace

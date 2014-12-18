@@ -26,6 +26,8 @@ namespace UniMoveStation.Design
 
         public bool Stop() { return false; }
 
+        public void Destroy() { }
+
         public bool Enabled
         {
             get { return true; }

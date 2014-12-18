@@ -6,12 +6,14 @@
              xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
+             xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}"
+             Margin="8">
     
     <UserControl.Resources>
         <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
@@ -273,6 +275,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -414,6 +417,7 @@
                        Text="Temperature"
                        VerticalAlignment="Center"
                        />
+            
             <TextBox Grid.Row="10"
                      Grid.Column="1"
                      HorizontalContentAlignment="Center"
@@ -421,6 +425,42 @@
                      IsEnabled="False"
                      Margin="0 4 0 4"
                      />
+            <!--Position-->
+            <TextBlock Grid.Row="11"
+                       Margin="0 4 0 4"
+                       Text="Positions"
+                       VerticalAlignment="Center"
+                       />
+            <UniformGrid Grid.Row="11"
+                         Grid.Column="1"
+                         Columns="2">
+
+                <ListBox Grid.Column="0"
+                         ItemsSource="{Binding MotionController.Position.Keys}"
+                         IsEnabled="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                            <TextBlock Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Grid.Column="1"
+                         ItemsSource="{Binding MotionController.Position.Values}"
+                         IsEnabled="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </UniformGrid>
+            
         </Grid>
     </Grid>
 

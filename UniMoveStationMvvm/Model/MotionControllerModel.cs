@@ -55,9 +55,9 @@ namespace UniMoveStation.Model
         #endregion
 
         #region Tracker
-        private ConcurrentDictionary<SingleCameraModel, bool> _tracking;
-        private ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
-        private ConcurrentDictionary<SingleCameraModel, Vector3> _position;
+        private ObservableConcurrentDictionary<SingleCameraModel, bool> _tracking;
+        private ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
+        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _position;
         #endregion
 
 #if DEBUG
@@ -83,16 +83,16 @@ namespace UniMoveStation.Model
         }
 #endif
 
-        public ConcurrentDictionary<SingleCameraModel, Vector3> Position
+        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> Position
         {
             get 
             { 
                 if(_position == null)
                 {
-                    _position = new ConcurrentDictionary<SingleCameraModel, Vector3>();
+                    _position = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
                     foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                     {
-                        _position.AddOrUpdate(scvm.Camera, Vector3.zero, (k, v) => Vector3.zero);
+                        _position.Add(scvm.Camera, Vector3.zero);
                     }
                 }
                 return _position; 
@@ -100,16 +100,16 @@ namespace UniMoveStation.Model
             set { Set(() => Position, ref _position, value); }
         }
 
-        public ConcurrentDictionary<SingleCameraModel, bool> Tracking
+        public ObservableConcurrentDictionary<SingleCameraModel, bool> Tracking
         {
             get
             {
                 if (_tracking == null)
                 {
-                    _tracking = new ConcurrentDictionary<SingleCameraModel, bool>();
+                    _tracking = new ObservableConcurrentDictionary<SingleCameraModel, bool>();
                     foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                     {
-                        _tracking.AddOrUpdate(scvm.Camera, false, (k, v) => false);
+                        _tracking.Add(scvm.Camera, false);
                     }
                 }
                 return _tracking; 
@@ -117,17 +117,16 @@ namespace UniMoveStation.Model
             set { Set(() => Tracking, ref _tracking, value); }
         }
 
-        public ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> TrackerStatus
+        public ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> TrackerStatus
         {
             get
             {
                 if (_trackerStatus == null)
                 {
-                    _trackerStatus = new ConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus>();
+                    _trackerStatus = new ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus>();
                     foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
                     {
-                        _trackerStatus.AddOrUpdate(scvm.Camera, PSMoveTrackerStatus.NotCalibrated, 
-                            (k, v) => PSMoveTrackerStatus.NotCalibrated);
+                        _trackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
                     }
                 }
                 return _trackerStatus; 

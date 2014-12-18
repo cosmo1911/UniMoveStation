@@ -20,7 +20,8 @@
                       Left="{Binding Settings.Settings.X, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       Top="{Binding Settings.Settings.Y, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
-                      ShowTitleBar="False">
+                      ShowTitleBar="False"
+                      ResizeMode="CanResizeWithGrip">
     
     <controls:MetroWindow.Resources>
         <Style x:Key="DefaultFlyoutStyle"
@@ -36,17 +37,13 @@
             <Setter Property="Header"
                     Value="{Binding Header}"
                     />
+            <Setter Property="MinWidth"
+                    Value="300"
+                    />
         </Style>
         <Style x:Key="AddMotionControllerFlyoutStyle" 
-               BasedOn="{StaticResource {x:Type controls:Flyout}}" 
+               BasedOn="{StaticResource DefaultFlyoutStyle}" 
                TargetType="{x:Type controls:Flyout}">
-
-            <Setter Property="IsOpen" 
-                    Value="{Binding IsOpen}"
-                    />
-            <Setter Property="Position" 
-                    Value="{Binding Position}"
-                    />
 
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
@@ -110,16 +107,9 @@
         </Style>
 
         <Style x:Key="AddCameraFlyoutStyle" 
-               BasedOn="{StaticResource {x:Type controls:Flyout}}" 
+               BasedOn="{StaticResource DefaultFlyoutStyle}" 
                TargetType="{x:Type controls:Flyout}">
-
-            <Setter Property="IsOpen"
-                    Value="{Binding IsOpen}"
-                    />
-            <Setter Property="Position"
-                    Value="{Binding Position}"
-                    />
-
+            
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
                     <DataTemplate>

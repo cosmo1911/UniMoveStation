@@ -39,7 +39,7 @@ namespace UniMoveStation.Service
                 : DateTime.Now.TimeOfDay.Seconds.ToString();
             string time = hours + ":" + minutes + ":" + seconds;
 
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            DispatcherHelper.RunAsync(() =>
                 {
                     Console.AppendText("[" + time + "] " + text);
                 });

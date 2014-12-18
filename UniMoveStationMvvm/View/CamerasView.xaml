@@ -11,7 +11,8 @@
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
              d:DesignWidth="856"
-             d:DesignHeight="480">
+             d:DesignHeight="480"
+             Margin="4">
 
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden"
@@ -27,7 +28,8 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid d:DataContext="vm:SingleCameraViewModel">
+                        <Grid d:DataContext="vm:SingleCameraViewModel"
+                              Margin="4">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="30"/>
                                 <RowDefinition Height="Auto"/>
