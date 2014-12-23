@@ -71,7 +71,7 @@ namespace UniMoveStation.ViewModel
                     {
                         MotionController.TrackerStatus.Add(message.Camera, PSMoveTrackerStatus.NotCalibrated);
                         MotionController.Tracking.Add(message.Camera, false);
-                        MotionController.Position.Add(message.Camera, Vector3.zero);
+                        MotionController.RawPosition.Add(message.Camera, Vector3.zero);
                     }
                 });
 
@@ -80,7 +80,7 @@ namespace UniMoveStation.ViewModel
                 {
                     MotionController.TrackerStatus.Remove(message.Camera);
                     MotionController.Tracking.Remove(message.Camera);
-                    MotionController.Position.Remove(message.Camera);
+                    MotionController.RawPosition.Remove(message.Camera);
                 });
 
             Messenger.Default.Send(new AddMotionControllerMessage(MotionController));

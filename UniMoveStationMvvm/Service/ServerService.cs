@@ -115,7 +115,7 @@ namespace UniMoveStation.Service
             }
             else
             {
-                return mc.Position[camera];
+                return mc.RawPosition[camera];
             }
         }
 
@@ -137,7 +137,7 @@ namespace UniMoveStation.Service
             }
             else
             {
-                return mc.Position[camera];
+                return mc.RawPosition[camera];
             }
         }
 

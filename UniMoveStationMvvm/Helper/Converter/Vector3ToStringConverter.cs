@@ -16,7 +16,7 @@ namespace UniMoveStation.Helper
         {
             if (value == null) return null;
             Vector3 v3 = (Vector3) value;
-            return String.Format("{{ {0:F}, {1:F}, {2:F} }}", v3.x, v3.y, v3.z); ;
+            return v3.ToString("F4");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

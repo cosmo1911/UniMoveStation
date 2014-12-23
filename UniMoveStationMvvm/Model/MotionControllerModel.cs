@@ -57,7 +57,8 @@ namespace UniMoveStation.Model
         #region Tracker
         private ObservableConcurrentDictionary<SingleCameraModel, bool> _tracking;
         private ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
-        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _position;
+        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _rawPosition;
+        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _fusionPosition;
         #endregion
 
 #if DEBUG
@@ -83,21 +84,38 @@ namespace UniMoveStation.Model
         }
 #endif
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> Position
+        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> RawPosition
         {
             get 
             { 
-                if(_position == null)
+                if(_rawPosition == null)
                 {
-                    _position = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
+                    _rawPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
                     foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                     {
-                        _position.Add(scvm.Camera, Vector3.zero);
+                        _rawPosition.Add(scvm.Camera, Vector3.zero);
                     }
                 }
-                return _position; 
+                return _rawPosition; 
             }
-            set { Set(() => Position, ref _position, value); }
+            set { Set(() => RawPosition, ref _rawPosition, value); }
+        }
+
+        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> FusionPosition
+        {
+            get
+            {
+                if (_fusionPosition == null)
+                {
+                    _fusionPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    {
+                        _fusionPosition.Add(scvm.Camera, Vector3.zero);
+                    }
+                }
+                return _fusionPosition;
+            }
+            set { Set(() => FusionPosition, ref _fusionPosition, value); }
         }
 
         public ObservableConcurrentDictionary<SingleCameraModel, bool> Tracking

@@ -187,8 +187,8 @@ namespace UniMoveStation.Service
             {
                 _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
                 ConsoleService.WriteLine(string.Format("[Tracker, {0}] Started.", _camera.GUID));
-                //dimming = 1f;
-                //			fusion = psmove_fusion_new(tracker,0.001f,1.0f);
+                PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, 1f);
+                _camera.Fusion = PsMoveApi.new_PSMoveFusion(_camera.Handle, 1.0f, 1000f);
             }
             return _camera.Handle != IntPtr.Zero;
         }
@@ -214,6 +214,8 @@ namespace UniMoveStation.Service
                 PsMoveApi.psmove_tracker_update_image(_camera.Handle);
                 PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
                 mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
+                PsMoveApi.psmove_enable_orientation(mc.Handle, PSMoveBool.True);
+                PsMoveApi.psmove_reset_orientation(mc.Handle);
             }
 
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of Motion Controller ({0}) = {1}", 
@@ -245,16 +247,16 @@ namespace UniMoveStation.Service
             if (_camera.Handle != IntPtr.Zero)
             {
                 DisableTracking();
-                PsMoveApi.delete_PSMoveTracker(_camera.Handle);
+                PsMoveApi.psmove_tracker_free(_camera.Handle);
                 _camera.Handle = IntPtr.Zero;
-                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Destroyed.", _camera.GUID));
+                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker destroyed.", _camera.GUID));
             }
-            //if (fusion != IntPtr.Zero)
-            //{
-            //    psmove_fusion_free(fusion);
-            //    fusion = IntPtr.Zero;
-            //    Console.WriteLine("fusion destroyed");
-            //}
+            if (_camera.Fusion != IntPtr.Zero)
+            {
+                PsMoveApi.psmove_fusion_free(_camera.Fusion);
+                _camera.Fusion = IntPtr.Zero;
+                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Fusion destroyed.", _camera.GUID));
+            }
         }
 
         public void ProcessData()
@@ -265,16 +267,20 @@ namespace UniMoveStation.Service
                 {
                     PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
                     trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
-                    Vector3 position = Vector3.zero;
+                    Vector3 rawPosition = Vector3.zero;
+                    Vector3 fusionPosition = Vector3.zero;
                     if (trackerStatus == PSMoveTrackerStatus.Tracking)
                     {
                         float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
+                        float fx = 0.0f, fy = 0.0f, fz = 0.0f;
                         PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
+                        PsMoveApi.psmove_fusion_get_position(_camera.Fusion, mc.Handle, out fx, out fy, out fz);
 
                         //Console.WriteLine(rx + " " + ry + " " + rrad);
 
                         float rz = PsMoveApi.psmove_tracker_distance_from_radius(_camera.Handle, rrad);
-                        position = new Vector3(rx, ry, rz);
+                        rawPosition = new Vector3(rx, ry, rz);
+                        fusionPosition = new Vector3(fx, fy, fz);
                         //#if YISUP
                         //vec.x = -vec.x;
                         //vec.y = -vec.y;
@@ -302,7 +308,8 @@ namespace UniMoveStation.Service
                         //mc.m_position = vec;
                     }
                     mc.TrackerStatus[_camera] = trackerStatus;
-                    mc.Position[_camera] = position;
+                    mc.RawPosition[_camera] = rawPosition;
+                    mc.FusionPosition[_camera] = fusionPosition;
                 }
             }
         } // ProcessData
@@ -322,9 +329,11 @@ namespace UniMoveStation.Service
             BitmapSource bs = null;
             try
             {
-                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip,
-                   IntPtr.Zero, Int32Rect.Empty,
-                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                    ip,
+                    IntPtr.Zero, 
+                    Int32Rect.Empty,
+                    System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
             }
             catch (Exception e)
             {

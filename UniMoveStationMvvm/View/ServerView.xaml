@@ -38,15 +38,15 @@
             </Grid.RowDefinitions>
             <!--Start-->
             <controls:ToggleSwitch Grid.Row="0" 
-                               Grid.Column="0" 
-                               Margin="0 0 4 4"
-                               OnLabel="Enabled"
-                               OffLabel="Disabled"
-                               x:Name="toggle_server"
-                               HorizontalAlignment="Stretch" 
-                               VerticalAlignment="Center"
-                               HorizontalContentAlignment="Center"
-                               IsChecked="{Binding Server.Enabled}">
+                                   Grid.Column="0" 
+                                   Margin="0 0 4 4"
+                                   OnLabel="Enabled"
+                                   OffLabel="Disabled"
+                                   x:Name="toggle_server"
+                                   HorizontalAlignment="Stretch" 
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding Server.Enabled}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleServerCommand}">
@@ -64,39 +64,39 @@
             </controls:ToggleSwitch>
             <!--Port-->
             <TextBlock Grid.Column="1"
-                   Text="Port"
-                   Margin="4 0 4 4"
-                   VerticalAlignment="Center"
-                   />
+                       Text="Port"
+                       Margin="4 0 4 4"
+                       VerticalAlignment="Center"
+                       />
             <TextBox Grid.Column="2"
-                 Margin="4 0 4 4"
-                 controls:TextboxHelper.Watermark="default: 3000"
-                 BorderThickness="1"
-                 BorderBrush="{DynamicResource AccentColorBrush}"
-                 x:Name="textBox_port"
-                 />
+                     Margin="4 0 0 4"
+                     controls:TextboxHelper.Watermark="default: 3000"
+                     BorderThickness="1"
+                     BorderBrush="{DynamicResource AccentColorBrush}"
+                     x:Name="textBox_port"
+                     />
 
             <!--Disconnect-->
             <Button Grid.Row="1"
-                Grid.Column="0"
-                Margin="0 4 4 4"
-                Content="disconnect clients"
-                Command="{Binding DisconnectClientsCommand}"
-                CommandParameter="{Binding IsChecked, ElementName=checkBox_abortivelyDisconnectClients}"
-                />
+                    Grid.Column="0"
+                    Margin="0 4 4 4"
+                    Content="disconnect clients"
+                    Command="{Binding DisconnectClientsCommand}"
+                    CommandParameter="{Binding IsChecked, ElementName=checkBox_abortivelyDisconnectClients}"
+                    />
             <!--Disconnect Abortively-->
             <CheckBox Grid.Row="1" 
-                  Grid.Column="1"
-                  Margin="4"
-                  Content="Abortively"
-                  x:Name="checkBox_abortivelyDisconnectClients"
-                  />
+                      Grid.Column="1"
+                      Margin="4"
+                      Content="Abortively"
+                      x:Name="checkBox_abortivelyDisconnectClients"
+                      />
             <!--Send Message-->
             <Button Grid.Row="2"
-                Grid.Column="0"
-                Margin="0 4 4 4"
-                Content="send message"
-                Command="{Binding SendMessageCommand}">
+                    Grid.Column="0"
+                    Margin="0 4 4 4"
+                    Content="send message"
+                    Command="{Binding SendMessageCommand}">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource MultiValueConverter}" 
                                   Mode="OneWay">
@@ -109,25 +109,22 @@
                     </MultiBinding>
                 </Button.CommandParameter>
             </Button>
+            <!--Complex Message?-->
+            <CheckBox Grid.Row="2"
+                      Grid.Column="1"
+                      Margin="4"
+                      Content="Complex"
+                      x:Name="checkBox_complexMessage"
+                      />
             <!--Message-->
             <TextBox Grid.Row="2"
-                 Grid.Column="1"
-                 Margin="4"
-                 controls:TextboxHelper.Watermark="Message" 
-                 BorderThickness="1"
-                 BorderBrush="{DynamicResource AccentColorBrush}"
-                 x:Name="textBox_message"
-                 />
-            <!--Complex Message-->
-            <CheckBox Grid.Row="2"
-                  Grid.Column="2"
-                  Margin="4"
-                  Content="Complex"
-                  x:Name="checkBox_complexMessage"
-                  />
-
-            
-
+                     Grid.Column="2"
+                     Margin="4 4 0 4"
+                     controls:TextboxHelper.Watermark="Message" 
+                     BorderThickness="1"
+                     BorderBrush="{DynamicResource AccentColorBrush}"
+                     x:Name="textBox_message"
+                     />
         </Grid>
 
         <GridSplitter Grid.Row="1" 

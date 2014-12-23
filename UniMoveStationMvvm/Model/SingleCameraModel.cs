@@ -23,6 +23,7 @@ namespace UniMoveStation.Model
         private BitmapSource _bitmapSource;
         private ImageSource _imageSource;
         private IntPtr _handle;
+        private IntPtr _fusion;
         private ObservableCollection<MotionControllerModel> _controllers;
 
 #if DEBUG
@@ -87,11 +88,17 @@ namespace UniMoveStation.Model
             get { return _bitmapSource; }
             set { Set(() => BitmapSource, ref _bitmapSource, value); }
         }
-        
+
         public IntPtr Handle
         {
             get { return _handle; }
             set { Set(() => Handle, ref _handle, value); }
+        }
+
+        public IntPtr Fusion
+        {
+            get { return _fusion; }
+            set { Set(() => Fusion, ref _fusion, value); }
         }
 
         public ObservableCollection<MotionControllerModel> Controllers
@@ -110,5 +117,5 @@ namespace UniMoveStation.Model
             }
             set { Set(() => Controllers, ref _controllers, value); }
         }
-    }
-}
+    } // SingleCameraModel
+} // namespace

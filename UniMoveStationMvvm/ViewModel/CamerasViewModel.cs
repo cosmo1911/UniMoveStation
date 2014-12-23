@@ -44,7 +44,10 @@ namespace UniMoveStation.ViewModel
             });
             Messenger.Default.Register<RemoveCameraMessage>(this, message =>
             {
-                Cameras.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                if(SimpleIoc.Default.ContainsCreated<SingleCameraViewModel>(message.Camera.GUID))
+                {
+                    Cameras.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                }
             });
         }
 

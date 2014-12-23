@@ -276,6 +276,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -425,10 +426,10 @@
                      IsEnabled="False"
                      Margin="0 4 0 4"
                      />
-            <!--Position-->
+            <!--Raw Position-->
             <TextBlock Grid.Row="11"
                        Margin="0 4 0 4"
-                       Text="Positions"
+                       Text="Raw Position"
                        VerticalAlignment="Center"
                        />
             <UniformGrid Grid.Row="11"
@@ -436,8 +437,10 @@
                          Columns="2">
 
                 <ListBox Grid.Column="0"
-                         ItemsSource="{Binding MotionController.Position.Keys}"
-                         IsEnabled="False">
+                         ItemsSource="{Binding MotionController.RawPosition.Keys}"
+                         IsEnabled="False"
+                         BorderThickness="1"
+                         Margin="0 4 0 4">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type m:SingleCameraModel}">
                             <TextBlock Text="{Binding Name}"
@@ -448,11 +451,13 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
                 <ListBox Grid.Column="1"
-                         ItemsSource="{Binding MotionController.Position.Values}"
-                         IsEnabled="False">
+                         ItemsSource="{Binding MotionController.RawPosition.Values}"
+                         IsEnabled="False"
+                         BorderThickness="1"
+                         Margin="0 4 0 4">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}"
+                            <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        />
@@ -460,7 +465,47 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </UniformGrid>
-            
+
+            <!--Fusion Position-->
+            <TextBlock Grid.Row="12"
+                       Margin="0 4 0 4"
+                       Text="Fusion Position"
+                       VerticalAlignment="Center"
+                       />
+            <UniformGrid Grid.Row="12"
+                         Grid.Column="1"
+                         Columns="2">
+
+                <ListBox Grid.Column="0"
+                         ItemsSource="{Binding MotionController.FusionPosition.Keys}"
+                         IsEnabled="False"
+                         BorderThickness="1"
+                         Margin="0 4 0 4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                            <TextBlock Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Grid.Column="1"
+                         ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                         IsEnabled="False"
+                         BorderThickness="1"
+                         Margin="0 4 0 4">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </UniformGrid>
+
         </Grid>
     </Grid>
 
