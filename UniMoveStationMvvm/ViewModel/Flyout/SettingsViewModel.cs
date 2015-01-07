@@ -2,6 +2,7 @@
 using MahApps.Metro;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +36,7 @@ namespace UniMoveStation.ViewModel.Flyout
         public SettingsViewModel()
         {
             Header = "Settings";
-
+            
             // create accent color menu items for the demo
             AccentColors = ThemeManager.Accents
                                        .Select(a => new AccentColorMenuData() { 
@@ -155,7 +156,7 @@ namespace UniMoveStation.ViewModel.Flyout
                     reader.Close();
             }
         }
-        #endregion            
+        #endregion
     }
 
     public class AccentColorMenuData

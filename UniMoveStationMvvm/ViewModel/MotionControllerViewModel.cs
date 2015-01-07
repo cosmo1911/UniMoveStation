@@ -83,13 +83,12 @@ namespace UniMoveStation.ViewModel
                     MotionController.RawPosition.Remove(message.Camera);
                 });
 
-            Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
-
+            
             if (mc.Serial != null)
             {
                 SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
-                ViewModelLocator.Instance.Navigation.MotionControllerTabs.Add(this);
-            }
+                Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
+            }           
         }
 
         public MotionControllerViewModel()

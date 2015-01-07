@@ -1,4 +1,5 @@
 ﻿{
   "Location": "0,0",
-  "Size": "1280,720"
+  "Size": "1280,720",
+  "LoadCamerasOnStartUp": false
 }

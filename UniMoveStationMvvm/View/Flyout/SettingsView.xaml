@@ -7,6 +7,7 @@
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:m="clr-namespace:UniMoveStation.Model"
+             xmlns:utils="clr-namespace:UniMoveStation.Utilities"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              d:DataContext="{Binding Settings, Source={StaticResource ViewModelLocator}}">
@@ -44,7 +45,8 @@
                                />
                     <TextBox Grid.Row="1"
                              Grid.Column="1"
-                             Text="{Binding Settings.X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Settings.X, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                     <TextBlock Grid.Row="1"
                                Grid.Column="2"
@@ -54,7 +56,8 @@
                                />
                     <TextBox Grid.Row="1"
                              Grid.Column="3"
-                             Text="{Binding Settings.Y, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Settings.Y, UpdateSourceTrigger=Explicit}"
+                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                 </Grid>
 
@@ -79,7 +82,13 @@
                                VerticalAlignment="Center"
                                />
                     <TextBox Grid.Row="1" 
-                             Text="{Binding Settings.Width, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Settings.Width,
+                        Mode=TwoWay,
+                                            UpdateSourceTrigger=Explicit,
+                                            ValidatesOnDataErrors=True,
+                                            NotifyOnValidationError=True}"
+                             
+                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              Grid.Column="1"
                              />
                     <TextBlock Grid.Row="1" 
@@ -90,9 +99,19 @@
                                />
                     <TextBox Grid.Row="1" 
                              Grid.Column="3"
-                             Text="{Binding Settings.Height, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Settings.Height, UpdateSourceTrigger=Explicit}"
+                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                 </Grid>
+
+                <CheckBox Grid.Row="2"
+                          Content="Load Cameras On Start Up"
+            	          IsChecked="{Binding Settings.LoadCamerasOnStartUp, UpdateSourceTrigger=PropertyChanged}"
+            	          FlowDirection="RightToLeft"
+            	          VerticalAlignment="Center" 
+                          Margin="0 4 0 4"
+                          HorizontalAlignment="Left"
+                          />
 
 
             </StackPanel>

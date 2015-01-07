@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Nito;
 using UniMoveStation.ViewModel.Flyout;
@@ -47,6 +49,30 @@ namespace UniMoveStation.ViewModel
             };
 
             ServerTabs = new ObservableCollection<object>();
+
+            Messenger.Default.Register<AddMotionControllerMessage>(this,
+                message =>
+                {
+                    MotionControllerTabs.Add(SimpleIoc.Default.GetInstance<MotionControllerViewModel>(message.MotionController.Serial));
+                });
+
+            Messenger.Default.Register<RemoveMotionControllerMessage>(this,
+                message =>
+                {
+                    MotionControllerTabs.Remove(SimpleIoc.Default.GetInstance<MotionControllerViewModel>(message.MotionController.Serial));
+                });
+
+            Messenger.Default.Register<AddCameraMessage>(this,
+                message =>
+                {
+                    CameraTabs.Add(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                });
+
+            Messenger.Default.Register<RemoveCameraMessage>(this,
+                message =>
+                {
+                    CameraTabs.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                });
 
             Refresh();
         }

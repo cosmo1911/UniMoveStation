@@ -86,7 +86,6 @@ namespace UniMoveStation.ViewModel
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
-            ViewModelLocator.Instance.Navigation.CameraTabs.Add(this);
         }
 
         /// <summary>

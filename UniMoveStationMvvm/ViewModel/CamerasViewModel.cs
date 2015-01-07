@@ -4,6 +4,8 @@ using GalaSoft.MvvmLight.Messaging;
 using System.Collections.ObjectModel;
 using UniMoveStation.Helper;
 using UniMoveStation.Model;
+using UniMoveStation.Service;
+using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
@@ -49,6 +51,29 @@ namespace UniMoveStation.ViewModel
                     Cameras.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
                 }
             });
+
+            if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+            {
+                AddAllCameras();
+            }
+        }
+
+        public void AddAllCameras()
+        {
+            int count = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
+
+            for(int i = 0; i < count; i++)
+            {
+                SingleCameraModel camera = new SingleCameraModel();
+                IConsoleService consoleService = new ConsoleService();
+                ITrackerService trackerService = new TrackerService(consoleService);
+                ICameraService cameraService = new CLEyeService(consoleService);
+                camera.TrackerId = i;
+                camera.Name = "Camera " + i;
+                cameraService.Initialize(camera);
+                new SingleCameraViewModel(camera, trackerService, cameraService, consoleService);
+            }
+            Refresh();
         }
 
         public void Refresh()
