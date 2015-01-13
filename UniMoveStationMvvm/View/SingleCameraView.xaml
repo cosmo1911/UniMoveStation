@@ -75,7 +75,7 @@
 
                             <CLEyeMulticam:CLEyeCameraImage Device="{Binding CameraService.Device, UpdateSourceTrigger=PropertyChanged}"
                                                             Visibility="{Binding CameraService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                            Source="{Binding Camera.BitmapSource}"
+                                                            Source="{Binding Camera.ImageSource}"
                                                             />
 
                         </Grid>
@@ -126,6 +126,11 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </controls:ToggleSwitch>
+                    <Button Content="Calibrate"
+                            Margin="4"
+                            Command="{Binding CalibrateCameraCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                            />
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" 

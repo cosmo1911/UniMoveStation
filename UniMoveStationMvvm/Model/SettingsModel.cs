@@ -1,11 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.Model
 {
@@ -16,6 +19,7 @@ namespace UniMoveStation.Model
         private double? _x;
         private double? _y;
         private bool _loadCamerasOnStartUp;
+        private ObservableCollection<SingleCameraModel> _cameras;
 
         public SettingsModel()
         {
@@ -24,6 +28,7 @@ namespace UniMoveStation.Model
             X = 0;
             Y = 0;
             LoadCamerasOnStartUp = true;
+            _cameras = new ObservableCollection<SingleCameraModel>();
         }
 
         public double? Width
@@ -54,6 +59,19 @@ namespace UniMoveStation.Model
         {
             get { return _loadCamerasOnStartUp; }
             set { Set(() => LoadCamerasOnStartUp, ref _loadCamerasOnStartUp, value); }
+        }
+
+        public ObservableCollection<SingleCameraModel> Cameras
+        {
+            get
+            {
+                _cameras.Clear();
+                foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                {
+                    _cameras.Add(scvm.Camera);
+                }
+                return _cameras;
+            }
         }
 
         // TODO

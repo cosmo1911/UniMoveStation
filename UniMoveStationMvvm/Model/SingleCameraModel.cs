@@ -8,10 +8,11 @@ using System;
 using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.ViewModel;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace UniMoveStation.Model
 {
-    
+    [JsonObject(MemberSerialization.OptIn)]
     public class SingleCameraModel : ObservableObject
     {
         private bool _annotate = false;
@@ -20,8 +21,7 @@ namespace UniMoveStation.Model
         private string _guid = "";
         private bool _showImage = false;
         private bool _tracking = false;
-        private BitmapSource _bitmapSource;
-        private ImageSource _imageSource;
+        private BitmapSource _imageSource;
         private IntPtr _handle;
         private IntPtr _fusion;
         private ObservableCollection<MotionControllerModel> _controllers;
@@ -33,8 +33,17 @@ namespace UniMoveStation.Model
             TrackerId = ++COUNTER;
             Name = "Design " + TrackerId;
             GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
+            Calibration = new CameraCalibrationModel();
         }
 #endif
+        [JsonProperty]
+        public CameraCalibrationModel Calibration
+        {
+            get;
+            set;
+        }
+
+        [JsonProperty]
         public string GUID
         {
             get { return _guid; }
@@ -53,6 +62,7 @@ namespace UniMoveStation.Model
             set { Set(() => TrackerId, ref _trackerId, value); }
         }
 
+        [JsonProperty]
         public string Name
         {
             get { return _name; }
@@ -72,21 +82,12 @@ namespace UniMoveStation.Model
         }
 
         /// <summary>
-        /// OpenCv / PsMoveApi Image
+        /// Camera Image
         /// </summary>
-        public ImageSource ImageSource
+        public BitmapSource ImageSource
         {
             get { return _imageSource; }
             set { Set(() => ImageSource, ref _imageSource, value); }
-        }
-
-        /// <summary>
-        /// CL Eye Image
-        /// </summary>
-        public BitmapSource BitmapSource
-        {
-            get { return _bitmapSource; }
-            set { Set(() => BitmapSource, ref _bitmapSource, value); }
         }
 
         public IntPtr Handle

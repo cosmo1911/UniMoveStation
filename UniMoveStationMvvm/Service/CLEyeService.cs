@@ -37,12 +37,18 @@ namespace UniMoveStation.Service
             //CLEYE_VGA - 15, 30, 40, 50, 60, 75
             Device.Framerate = 60;
             _camera.GUID = CLEyeCameraDevice.CameraUUID(_camera.TrackerId).ToString();
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
+            if (ConsoleService != null)
+            {
+                ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
+            }
         }
 
         public int GetConnectedCount()
         {
-            ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
+            if (ConsoleService != null)
+            {
+                ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
+            }
             return CLEyeCameraDevice.CLEyeGetCameraCount();
         }
 
@@ -53,27 +59,36 @@ namespace UniMoveStation.Service
             Device.AutoGain = true;
             Device.AutoWhiteBalance = true;
             Device.Start();
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
+            if(ConsoleService != null)
+            {
+                ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
+                ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
+            }
             return Enabled = true;
         }
 
         void Device_BitmapReady(object sender, EventArgs e)
         {
-            _camera.BitmapSource = Device.BitmapSource;
+            _camera.ImageSource = Device.BitmapSource;
         }
 
         public bool Stop()
         {
             Device.Stop();
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
+            if (ConsoleService != null)
+            {
+                ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
+            }
             return Enabled = false;
         }
 
         public void Destroy()
         {
             Device.Dispose();
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
+            if (ConsoleService != null)
+            {
+                ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
+            }
         }
 
         #region Depedency Properties

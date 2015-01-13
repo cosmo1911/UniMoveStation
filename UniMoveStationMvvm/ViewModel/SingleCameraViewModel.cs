@@ -16,12 +16,14 @@ using UniMoveStation.Design;
 using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Helper;
 using System.ComponentModel;
+using MahApps.Metro.Controls;
 
 namespace UniMoveStation.ViewModel
 {
     public class SingleCameraViewModel : ViewModelBase
     {
         #region Member
+        private RelayCommand<MetroWindow> _calibrateCameraCommand;
         private RelayCommand<bool> _toggleCameraCommand;
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
@@ -172,6 +174,18 @@ namespace UniMoveStation.ViewModel
 
         #region Commands
         /// <summary>
+        /// Gets the CalibrateCameraCommand.
+        /// </summary>
+        public RelayCommand<MetroWindow> CalibrateCameraCommand
+        {
+            get
+            {
+                return _calibrateCameraCommand
+                    ?? (_calibrateCameraCommand = new RelayCommand<MetroWindow>(DoCalibrateCamera));
+            }
+        }
+
+        /// <summary>
         /// Gets the ToggleAnnotateCommand.
         /// </summary>
         public RelayCommand<bool> ToggleAnnotateCommand
@@ -317,6 +331,16 @@ namespace UniMoveStation.ViewModel
                 checkBox.IsChecked = mc.Tracking[Camera];
                 ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
             }
+        }
+
+        public void DoCalibrateCamera(MetroWindow window)
+        {
+            //DoToggleCamera(false);
+            DoToggleTracking(false);
+
+            CameraCalibrationService ccs = new CameraCalibrationService(Camera);
+            ccs.ShowDialog(window);
+            
         }
         #endregion
 

@@ -1,0 +1,118 @@
+﻿<Dialogs:BaseMetroDialog xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                         xmlns:Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+                         x:Class="UniMoveStation.View.CameraCalibrationView"
+                         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         mc:Ignorable="d"
+                         xmlns:service="clr-namespace:UniMoveStation.Service"
+                         d:DataContext="{d:DesignInstance Type=service:CameraCalibrationService, IsDesignTimeCreatable=False}"
+                         Title="Camera Calibration">
+    <Grid Margin="0 10 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <Image Width="320"
+                   Height="240"
+                   DataContext="{Binding}"
+                   Source="{Binding Camera.ImageSource}"
+                   />
+            
+            <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Margin="4"
+                               VerticalAlignment="Center"
+                               Text="Mode"
+                               />
+                    <TextBox Grid.Column="1"
+                             Margin="4"
+                             Text="{Binding Camera.Calibration.CurrentMode}"
+                             DataContext="{Binding}"
+                             IsReadOnly="True"
+                             />
+                <TextBlock Grid.Row="1"
+                           Text="Frame Buffer"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <Controls:NumericUpDown Grid.Row="1" 
+                                        Grid.Column="1" 
+                                        Minimum="1"
+                                        Margin="4"
+                                        Value="{Binding Camera.Calibration.FrameBufferSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        DataContext="{Binding}"
+                                        />
+                
+                <TextBlock Grid.Row="2"
+                           Text="Error"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <TextBox Grid.Column="1"
+                         Grid.Row="2"
+                         Margin="4"
+                         Text="{Binding Camera.Calibration.Error}"
+                         DataContext="{Binding}"
+                         IsReadOnly="True"
+                         />
+
+                <TextBlock Grid.Row="3"
+                           Text="StartFlag"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <CheckBox Grid.Column="1"
+                          Grid.Row="3"
+                          Margin="4"
+                          HorizontalAlignment="Center"
+                          IsChecked="{Binding Camera.Calibration.StartFlag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          DataContext="{Binding}"
+                          IsEnabled="False"
+                          />
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Height="85">
+
+            <Button Height="35"
+                    MinWidth="80"
+                    Content="start"
+                    Style="{DynamicResource AccentedDialogSquareButton}"
+                    Margin="0 0 4 0"
+                    Command="{Binding StartCommand}"
+                    DataContext="{Binding}"
+                    />
+            
+            <Button Height="35"
+                    MinWidth="80"
+                    Content="cancel"
+                    Style="{DynamicResource AccentedDialogSquareButton}"
+                    Margin="4 0 4 0"
+                    Command="{Binding CancelCommand}"
+                    DataContext="{Binding}">
+            </Button>
+        </StackPanel>
+    </Grid>
+</Dialogs:BaseMetroDialog>

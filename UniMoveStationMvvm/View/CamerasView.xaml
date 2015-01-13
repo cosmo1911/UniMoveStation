@@ -61,7 +61,7 @@
 
                                     <CLEyeMulticam:CLEyeCameraImage Device="{Binding CameraService.Device, UpdateSourceTrigger=PropertyChanged}"
 									                                Visibility="{Binding CameraService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
-									                                Source="{Binding Camera.BitmapSource}"
+									                                Source="{Binding Camera.ImageSource}"
                                                                     />
                                 </Grid>
                             </local:AspectRatioLayoutDecorator>

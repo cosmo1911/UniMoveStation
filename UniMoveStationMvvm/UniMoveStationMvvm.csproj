@@ -187,6 +187,8 @@
     <Compile Include="Design\DesignServerService.cs" />
     <Compile Include="Design\DesignTrackerService.cs" />
     <Compile Include="Design\DesignMotionControllerService.cs" />
+    <Compile Include="Helper\BitmapSourceConverter.cs" />
+    <Compile Include="Helper\CameraCalibrationMode.cs" />
     <Compile Include="Helper\Converter\MultiValueConverter.cs" />
     <Compile Include="Helper\Message\RemoveCameraMessage.cs" />
     <Compile Include="Helper\Message\AddCameraMessage.cs" />
@@ -199,11 +201,13 @@
     <Compile Include="Helper\Selector\MyTabContainerStyleSelector.cs" />
     <Compile Include="Helper\Selector\MyTabItemTemplateSelector .cs" />
     <Compile Include="Helper\Selector\MyTabContentTemplateSelector.cs" />
+    <Compile Include="Model\CameraCalibrationModel.cs" />
     <Compile Include="Model\SettingsModel.cs" />
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\UmsClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
     <Compile Include="Model\SingleCameraModel.cs" />
+    <Compile Include="Service\CameraCalibrationService.cs" />
     <Compile Include="Service\CLEyeService.cs" />
     <Compile Include="Service\ConsoleService.cs" />
     <Compile Include="Service\Interface\ICameraService.cs" />
@@ -232,6 +236,9 @@
     <Compile Include="ViewModel\NavigationViewModel.cs" />
     <Compile Include="ViewModel\ServerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\Dialog\CameraCalibrationView.xaml.cs">
+      <DependentUpon>CameraCalibrationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CamerasView.xaml.cs">
       <DependentUpon>CamerasView.xaml</DependentUpon>
     </Compile>
@@ -274,6 +281,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="View\Dialog\CameraCalibrationView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CamerasView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

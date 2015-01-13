@@ -1,5 +1,7 @@
-﻿using Emgu.CV.CvEnum;
+﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +17,7 @@ using System.Windows.Media.Imaging;
 using UniMoveStation.Model;
 using UniMoveStation.SharpMove;
 using UniMoveStation.Utilities;
+using UniMoveStation.ViewModel;
 using UnityEngine;
 
 namespace UniMoveStation.Service
@@ -95,6 +98,55 @@ namespace UniMoveStation.Service
                 _camera.Handle = IntPtr.Zero;
             }
         }
+
+        public void LevMarqSparse()
+        {
+            //public static void BundleAdjust(MCvPoint3D64f[] points,               // Positions of points in global coordinate system (input and output), values will be modified by bundle adjustment
+            //                                MCvPoint2D64f[][] imagePoints,        // Projections of 3d points for every camera
+            //                                int[][] visibility,                   // Visibility of 3d points for every camera
+            //                                Matrix<double>[] cameraMatrix,        // Intrinsic matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] R,                   // rotation matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] T,                   // translation vector of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] distCoeffcients,     // distortion coefficients of all cameras (input and output), values will be modified by bundle adjustment
+            //                                MCvTermCriteria termCrit)             // Termination criteria, a reasonable value will be (30, 1.0e-12)
+
+            int cameraCount = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
+            MCvPoint3D64f[] points = new MCvPoint3D64f[CLEyeMulticam.CLEyeCameraDevice.CameraCount];
+            MCvPoint2D64f[][] imagePoints = new MCvPoint2D64f[cameraCount][];
+            int[][] visibility = new int[cameraCount][];
+            Matrix<double>[] cameraMatrix = new Matrix<double>[cameraCount];
+            Matrix<double>[] R = new Matrix<double>[cameraCount];
+            Matrix<double>[] T = new Matrix<double>[cameraCount];
+            Matrix<double>[] distCoefficients = new Matrix<double>[cameraCount];
+            MCvTermCriteria termCrit = new MCvTermCriteria(30, 0.000000000001);
+
+            List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
+            List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
+
+            List<MotionControllerModel> controllers = new List<MotionControllerModel>();
+            List<SingleCameraModel> cameras = new List<SingleCameraModel>();
+            foreach(SingleCameraViewModel scvm in scvms)
+            {
+                cameras.Add(scvm.Camera);
+
+                imagePoints[scvm.Camera.TrackerId] = new MCvPoint2D64f[mcvms.Count];
+                visibility[scvm.Camera.TrackerId] = new int[mcvms.Count];
+
+                foreach (MotionControllerViewModel mcvm in mcvms)
+                {
+                    controllers.Add(mcvm.MotionController);
+
+                    double x = mcvm.MotionController.RawPosition[scvm.Camera].x / 640f;
+                    double y = mcvm.MotionController.RawPosition[scvm.Camera].y / 480f;
+                    imagePoints[scvm.Camera.TrackerId][mcvm.MotionController.Id] = new MCvPoint2D64f(x, y);
+
+                    if(x == 0 && y == 0) visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 0;
+                    else visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 1;
+                }
+            }
+
+            Emgu.CV.LevMarqSparse.BundleAdjust(points, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
+        }
         #endregion
 
         #region Interface Implementation
@@ -154,7 +206,7 @@ namespace UniMoveStation.Service
                 //retrieve and convert image frame
                 IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
                 MIplImage rgb32Image = new MIplImage();
-                rgb32Image = (MIplImage)Marshal.PtrToStructure(frame, typeof(MIplImage));
+                rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
                 //display image
                 System.Drawing.Bitmap bitmap = MIplImagePointerToBitmap(rgb32Image);
                 BitmapSource bitmapSource = loadBitmap(bitmap);
