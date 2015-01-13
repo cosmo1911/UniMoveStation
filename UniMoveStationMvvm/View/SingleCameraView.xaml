@@ -55,7 +55,7 @@
                              BorderThickness="0"
                              Height="30"
                              Background="{StaticResource AccentColorBrush2}" 
-                             Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Camera.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              />
                     <local:AspectRatioLayoutDecorator Grid.Column="0" 
                                                       Grid.Row="1"

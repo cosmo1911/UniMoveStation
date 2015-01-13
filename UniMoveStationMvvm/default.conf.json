@@ -1,23 +1,8 @@
 ﻿{
-  "Location": "0,0",
-  "Size": "1280,720",
-  "LoadCamerasOnStartUp": false
-  "Cameras" : [
-	  {
-		"GUID": "2e250f5a-4fef-4cf9-cfc6-dde479c0b550"
-		"Name": "Camera 0"
-	  },
-	  {
-		"GUID": "b4b269ec-f3b3-051b-3890-e63f3f528fa3"
-		"Name": "Camera 1"
-	  },
-	  {
-		"GUID": "a4bdf917-4e47-8f07-8f5c-ee8026884a3c"
-		"Name": "Camera 2"
-	  },
-	  {
-		"GUID": "72fab1f6-769a-bce8-5c98-2130ad95506b"
-		"Name": "Camera 3"
-	  }
-  ]
+  "Width": 1280.0,
+  "Height": 720.0,
+  "X": 0.0,
+  "Y": 0.0,
+  "LoadCamerasOnStartUp": true,
+  "Cameras": [ ]
 }
