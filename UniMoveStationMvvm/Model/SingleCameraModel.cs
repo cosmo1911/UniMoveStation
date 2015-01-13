@@ -118,5 +118,11 @@ namespace UniMoveStation.Model
             }
             set { Set(() => Controllers, ref _controllers, value); }
         }
+
+        [JsonProperty]
+        public string Type
+        {
+            get { return "SingleCameraModel"; }
+        }
     } // SingleCameraModel
 } // namespace

@@ -11,7 +11,7 @@ namespace UniMoveStation.Model
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    [JsonObject]
+    [JsonObject(MemberSerialization.OptIn)]
     public class CameraCalibrationModel : ViewModelBase
     {
         private double _error;
@@ -31,12 +31,14 @@ namespace UniMoveStation.Model
             _intrinsicParameters = new IntrinsicCameraParameters();
         }
 
+        [JsonProperty]
         public int FrameBufferSize
         {
             get { return _frameBufferSize; }
             set { Set(() => FrameBufferSize, ref _frameBufferSize, value); }
         }
 
+        [JsonProperty]
         public double Error
         {
             get { return _error; }
@@ -54,17 +56,25 @@ namespace UniMoveStation.Model
             get { return _currentMode; }
             set { Set(() => CurrentMode, ref _currentMode, value); }
         }
-
+        
+        [JsonProperty]
         public IntrinsicCameraParameters IntrinsicParameters
         {
             get { return _intrinsicParameters; }
             set { Set(() => IntrinsicParameters, ref _intrinsicParameters, value); }
         }
-
+        
+        [JsonProperty]
         public ExtrinsicCameraParameters[] ExtrinsicParameters
         {
             get { return _extrinsicParameters; }
             set { Set(() => ExtrinsicParameters, ref _extrinsicParameters, value); }
+        }
+
+        [JsonProperty]
+        public string Type
+        {
+            get { return "CameraCalibrationModel"; }
         }
     } // CameraCalibrationModel
 } // namespace

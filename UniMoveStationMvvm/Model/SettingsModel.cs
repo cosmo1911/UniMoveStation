@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.Model
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class SettingsModel : ObservableObject, IDataErrorInfo
     {
         private double? _width;
@@ -31,47 +33,54 @@ namespace UniMoveStation.Model
             _cameras = new ObservableCollection<SingleCameraModel>();
         }
 
+        [JsonProperty]
         public double? Width
         {
             get { return _width; }
             set { Set(() => Width, ref _width, value); }
         }
 
+        [JsonProperty]
         public double? Height
         {
             get { return _height; }
             set { Set(() => Height, ref _height, value); }
         }
 
+        [JsonProperty]
         public double? X
         {
             get { return _x; }
             set { Set(() => X, ref _x, value); }
         }
 
+        [JsonProperty]
         public double? Y
         {
             get { return _y; }
             set { Set(() => Y, ref _y, value); }
         }
 
+        [JsonProperty]
         public bool LoadCamerasOnStartUp
         {
             get { return _loadCamerasOnStartUp; }
             set { Set(() => LoadCamerasOnStartUp, ref _loadCamerasOnStartUp, value); }
         }
 
+        [JsonProperty]
         public ObservableCollection<SingleCameraModel> Cameras
         {
             get
             {
                 _cameras.Clear();
-                foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
                 {
                     _cameras.Add(scvm.Camera);
                 }
                 return _cameras;
             }
+            set { _cameras = value; }
         }
 
         // TODO
@@ -110,5 +119,5 @@ namespace UniMoveStation.Model
         {
             get { return string.Empty; }
         }
-    }
-}
+    } // SettingsModel
+} // namespace

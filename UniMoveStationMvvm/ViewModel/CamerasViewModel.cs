@@ -54,11 +54,12 @@ namespace UniMoveStation.ViewModel
 
             if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
             {
-                AddAllCameras();
+                AddAvailableCameras();
+                //SimpleIoc.Default.GetInstance<SettingsViewModel>().LoadCalibration();
             }
         }
 
-        public void AddAllCameras()
+        public void AddAvailableCameras()
         {
             int count = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
 

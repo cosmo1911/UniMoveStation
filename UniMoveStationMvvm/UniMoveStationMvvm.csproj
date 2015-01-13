@@ -190,6 +190,9 @@
     <Compile Include="Helper\BitmapSourceConverter.cs" />
     <Compile Include="Helper\CameraCalibrationMode.cs" />
     <Compile Include="Helper\Converter\MultiValueConverter.cs" />
+    <Compile Include="Helper\Json\JsonCameraCalibrationConverter.cs" />
+    <Compile Include="Helper\Json\JsonCameraConverter.cs" />
+    <Compile Include="Helper\Json\JsonCreationConverter.cs" />
     <Compile Include="Helper\Message\RemoveCameraMessage.cs" />
     <Compile Include="Helper\Message\AddCameraMessage.cs" />
     <Compile Include="Helper\Message\RemoveMotionControllerMessage.cs" />

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using UniMoveStation.Helper;
 using UniMoveStation.Model;
 
 namespace UniMoveStation.ViewModel.Flyout
@@ -36,7 +38,8 @@ namespace UniMoveStation.ViewModel.Flyout
         public SettingsViewModel()
         {
             Header = "Settings";
-            
+            Settings = new SettingsModel();
+
             // create accent color menu items for the demo
             AccentColors = ThemeManager.Accents
                                        .Select(a => new AccentColorMenuData() { 
@@ -51,7 +54,6 @@ namespace UniMoveStation.ViewModel.Flyout
                                         BorderColorBrush = a.Resources["BlackColorBrush"] as Brush,
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
                                     .ToList();
-
             DoReload();
         }
         #endregion
@@ -120,7 +122,7 @@ namespace UniMoveStation.ViewModel.Flyout
             TextWriter writer = null;
             try
             {
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
+                string json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
                 writer = new StreamWriter("user.conf.json", false);
                 writer.Write(json);
             }
@@ -140,14 +142,43 @@ namespace UniMoveStation.ViewModel.Flyout
                 {
                     reader = new StreamReader("user.conf.json");
                 }
-                catch(FileNotFoundException)
+                catch (FileNotFoundException)
                 {
                     reader = new StreamReader("default.conf.json");
                 }
                 finally
                 {
                     string fileContents = reader.ReadToEnd();
-                    Settings = Newtonsoft.Json.JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                    Settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                }
+            }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+            }
+        }
+
+        public void LoadCalibration()
+        {
+            TextReader reader = null;
+            try
+            {
+                try
+                {
+                    reader = new StreamReader("user.conf.json");
+                }
+                catch (FileNotFoundException)
+                {
+                    reader = new StreamReader("default.conf.json");
+                }
+                finally
+                {
+                    string fileContents = reader.ReadToEnd();
+                    Settings = JsonConvert.DeserializeObject<SettingsModel>(
+                        fileContents,
+                        new JsonCameraConverter(),
+                        new JsonCameraCalibrationConverter());
                 }
             }
             finally
@@ -195,5 +226,5 @@ namespace UniMoveStation.ViewModel.Flyout
             var appTheme = ThemeManager.GetAppTheme(this.Name);
             ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, appTheme);
         }
-    }
-}
+    } // SettingsViewModel
+} // namespace
