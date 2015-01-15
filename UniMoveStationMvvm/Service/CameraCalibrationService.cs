@@ -15,15 +15,20 @@ using UniMoveStation.Model;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight.Threading;
 using UniMoveStation.Helper;
+using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.Service
 {
-    public class CameraCalibrationService : System.Windows.DependencyObject
+    /// <summary>
+    /// http://www.emgu.com/wiki/index.php?title=Camera_Calibration
+    /// </summary>
+    public class CameraCalibrationService
     {
         private BaseMetroDialog _dialog;
         private MetroWindow _owningWindow;
         private RelayCommand _cancelCommand;
         private RelayCommand _startCommand;
+        private RelayCommand _saveCommand;
         private CancellationTokenSource _ctsCameraCalibration;
 
         public SingleCameraModel Camera
@@ -33,7 +38,7 @@ namespace UniMoveStation.Service
         }
         
         #region Display and aquaring chess board info
-        Capture _Capture; // capture device
+        Capture _capture; // capture device
         Image<Bgr, Byte> img; // image captured
         Image<Gray, Byte> Gray_Frame; // image for processing
         const int width = 9;//9 //width of chessboard no. squares in width - 1
@@ -52,10 +57,6 @@ namespace UniMoveStation.Service
 
         #endregion
 
-        #region Dependency Properties
-
-        #endregion
-
         #region Constructor
         public CameraCalibrationService(SingleCameraModel camera)
         {
@@ -71,7 +72,7 @@ namespace UniMoveStation.Service
 
         public async void ShowDialog(MetroWindow window)
         {
-            _Capture = new Capture(Camera.TrackerId);
+            _capture = new Capture(Camera.TrackerId);
             _dialog = new CameraCalibrationView(window);
             _dialog.DataContext = this;
             _owningWindow = window;
@@ -80,8 +81,8 @@ namespace UniMoveStation.Service
 
             await _owningWindow.ShowMetroDialogAsync(_dialog);
             CancellationToken token = _ctsCameraCalibration.Token;
-            _Capture.ImageGrabbed += _Capture_ImageGrabbed;
-            _Capture.Start();
+            _capture.ImageGrabbed += _Capture_ImageGrabbed;
+            _capture.Start();
             try
             {
                 await Task.Run(() =>
@@ -105,8 +106,8 @@ namespace UniMoveStation.Service
             }
             finally
             {
-                _Capture.Stop();
-                _Capture.Dispose();
+                _capture.Stop();
+                _capture.Dispose();
             }
 
             if (_dialog.IsVisible)
@@ -122,7 +123,7 @@ namespace UniMoveStation.Service
         void _Capture_ImageGrabbed(object sender, EventArgs e)
         {
             //lets get a frame from our capture device
-            img = _Capture.RetrieveBgrFrame();
+            img = _capture.RetrieveBgrFrame();
             Gray_Frame = img.Convert<Gray, Byte>();
             
             //apply chess board detection
@@ -247,7 +248,23 @@ namespace UniMoveStation.Service
             get
             {
                 return _startCommand
-                    ?? (_startCommand = new RelayCommand(DoStart));
+                    ?? (_startCommand = new RelayCommand(
+                        DoStart, 
+                        () => Camera.Calibration.StartFlag == false));
+            }
+        }
+
+        /// <summary>
+        /// Gets the SaveCommand.
+        /// </summary>
+        public RelayCommand SaveCommand
+        {
+            get
+            {
+                return _saveCommand
+                    ?? (_saveCommand = new RelayCommand(
+                        DoSave, 
+                        () => Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated));
             }
         }
         #endregion
@@ -259,7 +276,7 @@ namespace UniMoveStation.Service
             {
                 _ctsCameraCalibration.Cancel();
             }
-
+            Camera.Calibration.StartFlag = false;
             await _dialog.RequestCloseAsync();
         }
 
@@ -275,6 +292,12 @@ namespace UniMoveStation.Service
             //allow the start
             Camera.Calibration.StartFlag = true;
 
+        }
+
+        public void DoSave()
+        {
+            ViewModelLocator.Instance.Settings.DoSaveCalibration(Camera);
+            DoCancel();
         }
         #endregion
     } // CameraCalibrationService

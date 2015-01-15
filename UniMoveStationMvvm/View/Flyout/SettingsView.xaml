@@ -83,11 +83,10 @@
                                />
                     <TextBox Grid.Row="1" 
                              Text="{Binding Settings.Width,
-                        Mode=TwoWay,
+                                            Mode=TwoWay,
                                             UpdateSourceTrigger=Explicit,
                                             ValidatesOnDataErrors=True,
                                             NotifyOnValidationError=True}"
-                             
                              utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              Grid.Column="1"
                              />
@@ -123,12 +122,12 @@
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
                     Content="save"
-                    Command="{Binding SaveCommand}"
+                    Command="{Binding SaveSettingsCommand}"
                     />
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
                     Content="reload"
-                    Command="{Binding ReloadCommand}"
+                    Command="{Binding ReloadSettingsCommand}"
                     />
         </UniformGrid>
 

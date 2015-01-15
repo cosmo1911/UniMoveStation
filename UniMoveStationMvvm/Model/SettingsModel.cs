@@ -21,7 +21,6 @@ namespace UniMoveStation.Model
         private double? _x;
         private double? _y;
         private bool _loadCamerasOnStartUp;
-        private ObservableCollection<SingleCameraModel> _cameras;
 
         public SettingsModel()
         {
@@ -30,7 +29,6 @@ namespace UniMoveStation.Model
             X = 0;
             Y = 0;
             LoadCamerasOnStartUp = true;
-            _cameras = new ObservableCollection<SingleCameraModel>();
         }
 
         [JsonProperty]
@@ -66,21 +64,6 @@ namespace UniMoveStation.Model
         {
             get { return _loadCamerasOnStartUp; }
             set { Set(() => LoadCamerasOnStartUp, ref _loadCamerasOnStartUp, value); }
-        }
-
-        [JsonProperty]
-        public ObservableCollection<SingleCameraModel> Cameras
-        {
-            get
-            {
-                _cameras.Clear();
-                foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
-                {
-                    _cameras.Add(scvm.Camera);
-                }
-                return _cameras;
-            }
-            set { _cameras = value; }
         }
 
         // TODO

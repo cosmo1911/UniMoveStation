@@ -36,7 +36,7 @@ namespace UniMoveStation.Model
             Calibration = new CameraCalibrationModel();
         }
 #endif
-        [JsonProperty]
+        
         public CameraCalibrationModel Calibration
         {
             get;

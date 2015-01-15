@@ -114,5 +114,5 @@ namespace UniMoveStation.Utilities
                 bitmap.Palette = palette;
             }
         }
-    }
-}
+    } // Utils
+} // namespace

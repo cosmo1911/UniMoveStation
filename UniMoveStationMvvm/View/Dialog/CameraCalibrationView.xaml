@@ -107,6 +107,15 @@
             
             <Button Height="35"
                     MinWidth="80"
+                    Content="save"
+                    Style="{DynamicResource AccentedDialogSquareButton}"
+                    Margin="4 0 4 0"
+                    Command="{Binding SaveCommand}"
+                    DataContext="{Binding}"
+                    />
+            
+            <Button Height="35"
+                    MinWidth="80"
                     Content="cancel"
                     Style="{DynamicResource AccentedDialogSquareButton}"
                     Margin="4 0 4 0"

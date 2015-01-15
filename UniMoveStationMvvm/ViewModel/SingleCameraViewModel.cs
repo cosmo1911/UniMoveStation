@@ -17,6 +17,7 @@ using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Helper;
 using System.ComponentModel;
 using MahApps.Metro.Controls;
+using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
@@ -88,6 +89,7 @@ namespace UniMoveStation.ViewModel
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
+            SimpleIoc.Default.GetInstance<SettingsViewModel>().LoadCalibration(Camera);
         }
 
         /// <summary>
@@ -229,7 +231,9 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return _applySelectionCommand
-                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(DoApplySelection));
+                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(
+                        DoApplySelection, 
+                        (box) => Camera.Controllers.Count > 0));
             }
         }
 
@@ -241,7 +245,9 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return _cancelSelectionCommand
-                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(DoCancelSelection));
+                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(
+                        DoCancelSelection,
+                        (box) => Camera.Controllers.Count > 0));
             }
         }
         #endregion

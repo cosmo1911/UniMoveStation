@@ -1,8 +1,10 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -18,8 +20,8 @@ namespace UniMoveStation.ViewModel.Flyout
 {
     public class SettingsViewModel : FlyoutBaseViewModel
     {
-        private RelayCommand _saveCommand;
-        private RelayCommand _reloadCommand;
+        private RelayCommand _saveSettingsCommand;
+        private RelayCommand _reloadSettingsCommand;
         private SettingsModel _settings;
 
         public List<AccentColorMenuData> AccentColors 
@@ -54,7 +56,7 @@ namespace UniMoveStation.ViewModel.Flyout
                                         BorderColorBrush = a.Resources["BlackColorBrush"] as Brush,
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
                                     .ToList();
-            DoReload();
+            DoReloadSettings();
         }
         #endregion
 
@@ -92,38 +94,38 @@ namespace UniMoveStation.ViewModel.Flyout
 
         #region Commands
         /// <summary>
-        /// Gets the ReloadCommand.
+        /// Gets the ReloadSettingsCommand.
         /// </summary>
-        public RelayCommand ReloadCommand
+        public RelayCommand ReloadSettingsCommand
         {
             get
             {
-                return _reloadCommand
-                    ?? (_reloadCommand = new RelayCommand(DoReload));
+                return _reloadSettingsCommand
+                    ?? (_reloadSettingsCommand = new RelayCommand(DoReloadSettings));
             }
         }
 
         /// <summary>
-        /// Gets the ApplyCommand.
+        /// Gets the SaveSettingsCommand.
         /// </summary>
-        public RelayCommand SaveCommand
+        public RelayCommand SaveSettingsCommand
         {
             get
             {
-                return _saveCommand
-                    ?? (_saveCommand = new RelayCommand(DoSave));
+                return _saveSettingsCommand
+                    ?? (_saveSettingsCommand = new RelayCommand(DoSaveSettings));
             }
         }
         #endregion Commands
 
         #region Command Executions
-        public void DoSave()
+        public void DoSaveSettings()
         {
             TextWriter writer = null;
             try
             {
                 string json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
-                writer = new StreamWriter("user.conf.json", false);
+                writer = new StreamWriter("cfg\\user.conf.json", false);
                 writer.Write(json);
             }
             finally
@@ -133,58 +135,96 @@ namespace UniMoveStation.ViewModel.Flyout
             }
         }
 
-        public void DoReload()
+        public void DoSaveCameras()
         {
-            TextReader reader = null;
-            try
+            ObservableCollection<SingleCameraModel> cameras = new ObservableCollection<SingleCameraModel>();
+
+            foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
             {
+                TextWriter writer = null;
                 try
                 {
-                    reader = new StreamReader("user.conf.json");
-                }
-                catch (FileNotFoundException)
-                {
-                    reader = new StreamReader("default.conf.json");
+                    string json = JsonConvert.SerializeObject(scvm.Camera, Newtonsoft.Json.Formatting.Indented);
+                    writer = new StreamWriter(String.Format("cfg\\{0}.cam.json", scvm.Camera.GUID), false);
+                    writer.Write(json);
                 }
                 finally
                 {
-                    string fileContents = reader.ReadToEnd();
-                    Settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                    if (writer != null) writer.Close();
                 }
-            }
-            finally
-            {
-                if (reader != null)
-                    reader.Close();
             }
         }
 
-        public void LoadCalibration()
+        public void DoSaveCalibration(SingleCameraModel camera)
+        {
+            TextWriter writer = null;
+            try
+            {
+                string json = JsonConvert.SerializeObject(
+                    camera.Calibration, 
+                    Newtonsoft.Json.Formatting.Indented, 
+                    new JsonIntrinsicCameraParametersConverter(),
+                    new JsonExtrinsicCameraParametersConverter());
+                writer = new StreamWriter(String.Format("cfg\\{0}.calib.json", camera.GUID), false);
+                writer.Write(json);
+            }
+            finally
+            {
+                if (writer != null) writer.Close();
+            }
+        }
+
+        public void DoReloadSettings()
         {
             TextReader reader = null;
             try
             {
                 try
                 {
-                    reader = new StreamReader("user.conf.json");
+                    reader = new StreamReader("cfg\\user.conf.json");
                 }
                 catch (FileNotFoundException)
                 {
-                    reader = new StreamReader("default.conf.json");
-                }
-                finally
-                {
-                    string fileContents = reader.ReadToEnd();
-                    Settings = JsonConvert.DeserializeObject<SettingsModel>(
-                        fileContents,
-                        new JsonCameraConverter(),
-                        new JsonCameraCalibrationConverter());
+                    reader = new StreamReader("cfg\\default.conf.json");
                 }
             }
             finally
             {
                 if (reader != null)
+                {
+                    string fileContents = reader.ReadToEnd();
+                    Settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
                     reader.Close();
+                }
+            }
+        }
+
+        public void LoadCalibration(SingleCameraModel camera)
+        {
+            TextReader reader = null;
+            try
+            {
+                try
+                {
+                    reader = new StreamReader(String.Format("cfg\\{0}.calib.json", camera.GUID));
+                }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+            }
+            finally
+            {
+                if (reader != null)
+                {
+                    string fileContents = reader.ReadToEnd();
+                    camera.Calibration = JsonConvert.DeserializeObject<CameraCalibrationModel>(
+                        fileContents,
+                        new JsonIntrinsicCameraParametersConverter(),
+                        new JsonExtrinsicCameraParametersConverter());
+
+                    reader.Close();
+                }
             }
         }
         #endregion

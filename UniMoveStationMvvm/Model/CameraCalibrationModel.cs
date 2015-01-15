@@ -51,6 +51,7 @@ namespace UniMoveStation.Model
             set { Set(() => StartFlag, ref _startFlag, value); }
         }
 
+        [JsonProperty]
         public CameraCalibrationMode CurrentMode
         {
             get { return _currentMode; }

@@ -107,7 +107,6 @@ namespace UniMoveStation.ViewModel.Flyout
         }
         #endregion
 
-
         #region Command Executions
         public void DoCancel()
         {
@@ -122,7 +121,8 @@ namespace UniMoveStation.ViewModel.Flyout
                 if (NewMotionController.ConnectStatus != PSMoveConnectStatus.Unknown)
                 {
                     mcvw = new MotionControllerViewModel(
-                        NewMotionController, new MotionControllerService());
+                        NewMotionController, 
+                        new MotionControllerService());
                     
                 }
                 else
@@ -179,7 +179,7 @@ namespace UniMoveStation.ViewModel.Flyout
                                     break;
                                 }
                             }
-                        } // foreach
+                        } // end foreach
                         if (!duplicate) AvailableMotionControllers.Add(tmp);
                     }
                     else
@@ -189,11 +189,11 @@ namespace UniMoveStation.ViewModel.Flyout
                             AvailableMotionControllers.Add(tmp);
                         }
                     }
-                } // for
+                } // end for
             }
 
             if (AvailableMotionControllers.Count > 0) NewControllersDetected = true;
         } // DoRefresh
         #endregion
-    }
-}
+    } // AddMotionControllerViewModel
+} // namespace

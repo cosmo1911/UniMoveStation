@@ -55,7 +55,6 @@ namespace UniMoveStation.ViewModel
             if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
             {
                 AddAvailableCameras();
-                //SimpleIoc.Default.GetInstance<SettingsViewModel>().LoadCalibration();
             }
         }
 
