@@ -116,7 +116,7 @@ namespace UniMoveStation.ViewModel.Flyout
             if (NewCamera != null)
             {
                 SingleCameraViewModel scvw;
-                if(!NewCamera.GUID.Contains("1245678"))
+                if (!NewCamera.GUID.Contains("9ABC-DEFG-HIJK-LMNOPQRSTUVW"))
                 {
                     IConsoleService consoleService = new ConsoleService();
                     scvw = new SingleCameraViewModel(NewCamera, new TrackerService(consoleService), new CLEyeService(consoleService), consoleService);

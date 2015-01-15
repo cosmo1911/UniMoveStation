@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using UniMoveStation.Design;
 using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
@@ -25,6 +26,12 @@ namespace UniMoveStation.Service
         {
             ConsoleService = consoleService;
         }
+
+        public CLEyeService()
+        {
+            ConsoleService = new DesignConsoleService();
+        }
+
         #endregion
         public void Initialize(SingleCameraModel camera)
         {
@@ -37,18 +44,15 @@ namespace UniMoveStation.Service
             //CLEYE_VGA - 15, 30, 40, 50, 60, 75
             Device.Framerate = 60;
             _camera.GUID = CLEyeCameraDevice.CameraUUID(_camera.TrackerId).ToString();
-            if (ConsoleService != null)
-            {
-                ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
-            }
+            
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
+            
         }
 
         public int GetConnectedCount()
         {
-            if (ConsoleService != null)
-            {
-                ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
-            }
+            ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
+            
             return CLEyeCameraDevice.CLEyeGetCameraCount();
         }
 
@@ -59,11 +63,10 @@ namespace UniMoveStation.Service
             Device.AutoGain = true;
             Device.AutoWhiteBalance = true;
             Device.Start();
-            if(ConsoleService != null)
-            {
-                ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
-                ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
-            }
+            
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
+            
             return Enabled = true;
         }
 
@@ -75,20 +78,17 @@ namespace UniMoveStation.Service
         public bool Stop()
         {
             Device.Stop();
-            if (ConsoleService != null)
-            {
-                ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
-            }
+            
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
+            
             return Enabled = false;
         }
 
         public void Destroy()
         {
             Device.Dispose();
-            if (ConsoleService != null)
-            {
-                ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
-            }
+            
+            ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
         }
 
         #region Depedency Properties
