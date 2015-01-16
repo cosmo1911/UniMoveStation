@@ -17,17 +17,6 @@ namespace UniMoveStation.View
         {
             InitializeComponent();
             DataContextChanged += SingleCameraView_DataContextChanged;
-            Loaded += (s, e) =>
-                {
-                    Window.GetWindow(this).Closing +=
-                        (s1, e1) =>
-                        {
-                            if(DataContext != null)
-                            {
-                                ((SingleCameraViewModel)DataContext).Cleanup();
-                            }
-                        };
-                };
         }
 
         void SingleCameraView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

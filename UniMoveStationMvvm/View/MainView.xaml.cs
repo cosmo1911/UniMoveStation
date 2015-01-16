@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Windows;
+using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.View
 {
@@ -15,6 +16,15 @@ namespace UniMoveStation.View
         public MainView()
         {
             InitializeComponent();
+
+            Loaded += (s, e) =>
+            {
+                Window.GetWindow(this).Closing +=
+                    (s1, e1) =>
+                    {
+                        ViewModelLocator.Cleanup();
+                    };
+            };
         }
     }
 }

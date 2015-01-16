@@ -17,6 +17,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using System.Windows;
 using UniMoveStation.ViewModel.Flyout;
+using System.Linq;
 
 namespace UniMoveStation.ViewModel
 {
@@ -95,7 +96,16 @@ namespace UniMoveStation.ViewModel
         
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
+
+            foreach(SingleCameraViewModel scvm in ViewModelLocator.Instance.Cameras.Cameras.Reverse())
+            {
+                scvm.Cleanup();
+            }
+
+            foreach(MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().Reverse())
+            {
+                mcvm.Cleanup();
+            }
         }
     } // ViewModelLocator
 } // namespace

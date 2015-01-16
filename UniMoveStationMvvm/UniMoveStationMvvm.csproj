@@ -62,6 +62,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -184,6 +185,7 @@
     <Compile Include="CLEye\CLEyeCameraDevice.cs" />
     <Compile Include="CLEye\CLEyeCameraImage.cs" />
     <Compile Include="Design\DesignCLEyeService.cs" />
+    <Compile Include="Design\DesignConsoleService.cs" />
     <Compile Include="Design\DesignServerService.cs" />
     <Compile Include="Design\DesignTrackerService.cs" />
     <Compile Include="Design\DesignMotionControllerService.cs" />
@@ -493,6 +495,10 @@
     <Folder Include="plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>call "$(DevEnvDir)..\..\vc\vcvarsall.bat" x86
+"$(DevEnvDir)..\..\vc\bin\EditBin.exe" "$(TargetPath)"  /LARGEADDRESSAWARE</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

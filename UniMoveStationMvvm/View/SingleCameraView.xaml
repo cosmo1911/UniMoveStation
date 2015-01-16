@@ -131,6 +131,11 @@
                             Command="{Binding CalibrateCameraCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
                             />
+                    
+                    <Button Content="Bundle Adjust"
+                            Margin="4"
+                            Command="{Binding BundleAdjustCommand}"
+                            />
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" 

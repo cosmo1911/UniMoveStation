@@ -18,6 +18,9 @@ using UniMoveStation.Helper;
 using System.ComponentModel;
 using MahApps.Metro.Controls;
 using UniMoveStation.ViewModel.Flyout;
+using System.Collections.Generic;
+using System.Linq;
+using Emgu.CV;
 
 namespace UniMoveStation.ViewModel
 {
@@ -30,6 +33,7 @@ namespace UniMoveStation.ViewModel
         private RelayCommand<bool> _toggleAnnotateCommand;
         private RelayCommand<ListBox> _applySelectionCommand;
         private RelayCommand<ListBox> _cancelSelectionCommand;
+        private RelayCommand _bundleAdjustCommand;
 
         public SingleCameraModel Camera
         {
@@ -250,6 +254,18 @@ namespace UniMoveStation.ViewModel
                         (box) => Camera.Controllers.Count > 0));
             }
         }
+
+        /// <summary>
+        /// Gets the BundleAdjustCommand.
+        /// </summary>
+        public RelayCommand BundleAdjustCommand
+        {
+            get
+            {
+                return _bundleAdjustCommand
+                    ?? (_bundleAdjustCommand = new RelayCommand(BundleAdjust));
+            }
+        }
         #endregion
 
         #region Command Executions
@@ -381,6 +397,62 @@ namespace UniMoveStation.ViewModel
                 }
             }
             return null;
+        }
+
+        public void BundleAdjust()
+        {
+            //public static void BundleAdjust(MCvPoint3D64f[] points,               // Positions of points in global coordinate system (input and output), values will be modified by bundle adjustment
+            //                                MCvPoint2D64f[][] imagePoints,        // Projections of 3d points for every camera
+            //                                int[][] visibility,                   // Visibility of 3d points for every camera
+            //                                Matrix<double>[] cameraMatrix,        // Intrinsic matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] R,                   // rotation matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] T,                   // translation vector of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[] distCoeffcients,     // distortion coefficients of all cameras (input and output), values will be modified by bundle adjustment
+            //                                MCvTermCriteria termCrit)             // Termination criteria, a reasonable value will be (30, 1.0e-12)
+
+            List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
+            List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
+
+            int cameraCount = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
+            MCvPoint3D64f[] points = new MCvPoint3D64f[mcvms.Count];
+            MCvPoint2D64f[][] imagePoints = new MCvPoint2D64f[cameraCount][];
+            int[][] visibility = new int[cameraCount][];
+            Matrix<double>[] cameraMatrix = new Matrix<double>[cameraCount];
+            Matrix<double>[] R = new Matrix<double>[cameraCount];
+            Matrix<double>[] T = new Matrix<double>[cameraCount];
+            Matrix<double>[] distCoefficients = new Matrix<double>[cameraCount];
+            MCvTermCriteria termCrit = new MCvTermCriteria(30, 0.000000000001);
+
+            if (mcvms.Count == 0) return;
+
+            points[0] = new MCvPoint3D64f(0.0, 0.0, 0.0);
+
+            foreach (SingleCameraViewModel scvm in scvms)
+            {
+
+                imagePoints[scvm.Camera.TrackerId] = new MCvPoint2D64f[mcvms.Count];
+                visibility[scvm.Camera.TrackerId] = new int[mcvms.Count];
+                R[scvm.Camera.TrackerId] = scvm.Camera.Calibration.ExtrinsicParameters[50].RotationVector;
+                T[scvm.Camera.TrackerId] = scvm.Camera.Calibration.ExtrinsicParameters[50].TranslationVector;
+
+                foreach (MotionControllerViewModel mcvm in mcvms)
+                {
+
+                    double x = mcvm.MotionController.RawPosition[scvm.Camera].x;
+                    double y = mcvm.MotionController.RawPosition[scvm.Camera].y;
+                    imagePoints[scvm.Camera.TrackerId][mcvm.MotionController.Id] = new MCvPoint2D64f(x, y);
+
+                    if (x == 0 && y == 0) visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 0;
+                    else visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 1;
+
+                    cameraMatrix[scvm.Camera.TrackerId] = scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix;
+                    distCoefficients[scvm.Camera.TrackerId] = scvm.Camera.Calibration.IntrinsicParameters.DistortionCoeffs;
+                }
+            }
+
+            System.Console.WriteLine(points[0].x + " " + points[0].y + " " + points[0].z);
+            Emgu.CV.LevMarqSparse.BundleAdjust(points, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
+            System.Console.WriteLine(points[0].x + " " + points[0].y + " " + points[0].z);
         }
         #endregion
     } // SingleCameraViewModel
