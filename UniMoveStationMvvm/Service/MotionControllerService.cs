@@ -78,6 +78,10 @@ namespace UniMoveStation.Service
                     while (!token.IsCancellationRequested)
                     {
                         UpdateController();
+                        if(GetButtonUp(PSMoveButton.PS))
+                        {
+                            Orient(PSMoveBool.True);
+                        }
                         Thread.Sleep(new TimeSpan(0, 0, 0, 0, (int)(_motionController.UpdateRate * 1000)));
                     }
                 });
@@ -314,6 +318,7 @@ namespace UniMoveStation.Service
         {
             uint buttons = 0;
 
+            prevButtons = currentButtons;
             // NOTE! There is potentially data waiting in queue. 
             // We need to poll *all* of it by calling psmove_poll() until the queue is empty. Otherwise, data might begin to build up.
             while (PsMoveApi.psmove_poll(_motionController.Handle) > 0)
@@ -382,9 +387,7 @@ namespace UniMoveStation.Service
                 {
                     float qw = 0.0f, qx = 0.0f, qy = 0.0f, qz = 0.0f;
                     PsMoveApi.psmove_get_orientation(_motionController.Handle, out qw, out qx, out qy, out qz);
-
-                    Quaternion rot = new Quaternion(qx, qy, qz, qw);
-                    m_orientationFix = Quaternion.Inverse(rot);
+                    m_orientationFix = new Quaternion(-qx, -qy, -qz, qw);
                 }
             }
             return oriented;

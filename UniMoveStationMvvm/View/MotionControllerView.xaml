@@ -22,7 +22,7 @@
         <!-- Main Grid -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <!-- Top Grid -->
@@ -262,251 +262,255 @@
             </StackPanel>
             <!-- Top Main Grid -->
         </Grid>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!--Name-->
-            <TextBlock Grid.Row="0"
-                       Margin="0 4 0 4"
-                       Text="Name"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="0"
-                     Grid.Column="1"
-                     controls:TextboxHelper.Watermark="Insert"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Name, UpdateSourceTrigger=PropertyChanged}"
-                     Margin="0 4 0 4"
-                     />
-            <!--Serial-->
-            <TextBlock Grid.Row="1"
-                       Margin="0 4 0 4"
-                       Text="Serial"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="1"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Serial}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Connect Status-->
-            <TextBlock Grid.Row="2"
-                       Margin="0 4 0 4"
-                       Text="Connect Status"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="2"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.ConnectStatus}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Connection Type-->
-            <TextBlock Grid.Row="3"
-                       Margin="0 4 0 4"
-                       Text="Connection Type"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="3"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.ConnectionType}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Host-->
-            <TextBlock Grid.Row="4"
-                       Margin="0 4 0 4"
-                       Text="Host Address"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="4"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.HostIp}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Gyroscope-->
-            <TextBlock Grid.Row="5"
-                       Margin="0 4 0 4"
-                       Text="Gyroscope"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="5"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Gyroscope, Converter={StaticResource Vector3ToStringConverter}}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Accelerometer-->
-            <TextBlock Grid.Row="6"
-                       Margin="0 4 0 4"
-                       Text="Accelerometer"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="6"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Accelerometer, Converter={StaticResource Vector3ToStringConverter}}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Magnetometer-->
-            <TextBlock Grid.Row="7"
-                       Margin="0 4 0 4"
-                       Text="Magnetometer"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="7"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Magnetometer, Converter={StaticResource Vector3ToStringConverter}}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Raw Gyroscope-->
-            <TextBlock Grid.Row="8"
-                       Margin="0 4 0 4"
-                       Text="Raw Gyroscope"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="8"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Raw Accelerometer-->
-            <TextBlock Grid.Row="9"
-                       Margin="0 4 0 4"
-                       Text="Raw Accelerometer"
-                       VerticalAlignment="Center"
-                       />
-            <TextBox Grid.Row="9"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.RawAccelerometer, Converter={StaticResource Vector3ToStringConverter}}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Temperature-->
-            <TextBlock Grid.Row="10"
-                       Margin="0 4 0 4"
-                       Text="Temperature"
-                       VerticalAlignment="Center"
-                       />
-            
-            <TextBox Grid.Row="10"
-                     Grid.Column="1"
-                     HorizontalContentAlignment="Center"
-                     Text="{Binding MotionController.Temperature}"
-                     IsEnabled="False"
-                     Margin="0 4 0 4"
-                     />
-            <!--Raw Position-->
-            <TextBlock Grid.Row="11"
-                       Margin="0 4 0 4"
-                       Text="Raw Position"
-                       VerticalAlignment="Center"
-                       />
-            <UniformGrid Grid.Row="11"
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Hidden">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!--Name-->
+                <TextBlock Grid.Row="0"
+                           Margin="0 4 0 4"
+                           Text="Name"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="0"
                          Grid.Column="1"
-                         Columns="2">
-
-                <ListBox Grid.Column="0"
-                         ItemsSource="{Binding MotionController.RawPosition.Keys}"
-                         IsEnabled="False"
-                         BorderThickness="1"
-                         Margin="0 4 0 4">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
-                            <TextBlock Text="{Binding Name}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ListBox Grid.Column="1"
-                         ItemsSource="{Binding MotionController.RawPosition.Values}"
-                         IsEnabled="False"
-                         BorderThickness="1"
-                         Margin="0 4 0 4">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </UniformGrid>
-
-            <!--Fusion Position-->
-            <TextBlock Grid.Row="12"
-                       Margin="0 4 0 4"
-                       Text="Fusion Position"
-                       VerticalAlignment="Center"
-                       />
-            <UniformGrid Grid.Row="12"
+                         controls:TextboxHelper.Watermark="Insert"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Name, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0 4 0 4"
+                         />
+                <!--Serial-->
+                <TextBlock Grid.Row="1"
+                           Margin="0 4 0 4"
+                           Text="Serial"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="1"
                          Grid.Column="1"
-                         Columns="2">
-
-                <ListBox Grid.Column="0"
-                         ItemsSource="{Binding MotionController.FusionPosition.Keys}"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Serial}"
                          IsEnabled="False"
-                         BorderThickness="1"
-                         Margin="0 4 0 4">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
-                            <TextBlock Text="{Binding Name}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <ListBox Grid.Column="1"
-                         ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                         Margin="0 4 0 4"
+                         />
+                <!--Connect Status-->
+                <TextBlock Grid.Row="2"
+                           Margin="0 4 0 4"
+                           Text="Connect Status"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.ConnectStatus}"
                          IsEnabled="False"
-                         BorderThickness="1"
-                         Margin="0 4 0 4">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </UniformGrid>
+                         Margin="0 4 0 4"
+                         />
+                <!--Connection Type-->
+                <TextBlock Grid.Row="3"
+                           Margin="0 4 0 4"
+                           Text="Connection Type"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.ConnectionType}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Host-->
+                <TextBlock Grid.Row="4"
+                           Margin="0 4 0 4"
+                           Text="Host Address"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="4"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.HostIp}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Gyroscope-->
+                <TextBlock Grid.Row="5"
+                           Margin="0 4 0 4"
+                           Text="Gyroscope"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="5"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Gyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Accelerometer-->
+                <TextBlock Grid.Row="6"
+                           Margin="0 4 0 4"
+                           Text="Accelerometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="6"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Accelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Magnetometer-->
+                <TextBlock Grid.Row="7"
+                           Margin="0 4 0 4"
+                           Text="Magnetometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="7"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Magnetometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Gyroscope-->
+                <TextBlock Grid.Row="8"
+                           Margin="0 4 0 4"
+                           Text="Raw Gyroscope"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="8"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Accelerometer-->
+                <TextBlock Grid.Row="9"
+                           Margin="0 4 0 4"
+                           Text="Raw Accelerometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="9"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.RawAccelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Temperature-->
+                <TextBlock Grid.Row="10"
+                           Margin="0 4 0 4"
+                           Text="Temperature"
+                           VerticalAlignment="Center"
+                           />
 
-        </Grid>
+                <TextBox Grid.Row="10"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Temperature}"
+                         IsEnabled="False"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Position-->
+                <TextBlock Grid.Row="11"
+                           Margin="0 4 0 4"
+                           Text="Raw Position"
+                           VerticalAlignment="Center"
+                           />
+                <UniformGrid Grid.Row="11"
+                             Grid.Column="1"
+                             Columns="2">
+
+                    <ListBox Grid.Column="0"
+                             ItemsSource="{Binding MotionController.RawPosition.Keys}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox Grid.Column="1"
+                             ItemsSource="{Binding MotionController.RawPosition.Values}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </UniformGrid>
+
+                <!--Fusion Position-->
+                <TextBlock Grid.Row="12"
+                           Margin="0 4 0 4"
+                           Text="Fusion Position"
+                           VerticalAlignment="Center"
+                           />
+                <UniformGrid Grid.Row="12"
+                             Grid.Column="1"
+                             Columns="2">
+
+                    <ListBox Grid.Column="0"
+                             ItemsSource="{Binding MotionController.FusionPosition.Keys}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox Grid.Column="1"
+                             ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </UniformGrid>
+
+            </Grid>
+        </ScrollViewer>
+        
     </Grid>
 
 </UserControl>

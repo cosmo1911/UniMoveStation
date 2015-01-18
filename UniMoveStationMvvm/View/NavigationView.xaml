@@ -185,6 +185,32 @@
                       x:Key="AllCamerasTabContentTemplate">
             <v:CamerasView/>
         </DataTemplate>
+
+
+        <!--All Motion Controllers Tab Item Template-->
+        <DataTemplate DataType="{x:Type vm:MotionControllersViewModel}"
+                      x:Key="AllMotionControllersTabItemTemplate">
+
+            <StackPanel Orientation="Horizontal">
+                <!--Motion Controllers Icon-->
+                <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                                 Height="32"
+                                 Width="32"
+                                 Margin="8 4 16 4"/>
+                <!--Motion Controllers Label-->
+                <TextBlock Text="{Binding Name}"
+                           FontSize="20"
+                           Height="32"
+                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
+                           />
+            </StackPanel>
+        </DataTemplate>
+        
+        <!--All Motion Controllers Tab Data Template-->
+        <DataTemplate DataType="{x:Type vm:MotionControllersViewModel}"
+                      x:Key="AllMotionControllersTabContentTemplate">
+            <v:MotionControllersView/>
+        </DataTemplate>
         
         <!--Add Button-->
         <DataTemplate x:Key="AddButtonTabItemTemplate">

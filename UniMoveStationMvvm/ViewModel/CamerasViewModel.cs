@@ -1,7 +1,10 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
@@ -18,6 +21,15 @@ namespace UniMoveStation.ViewModel
     public class CamerasViewModel : ViewModelBase
     {
         private string _name;
+        private bool _annotate;
+        private bool _tracking;
+        private bool _showImage;
+
+        private RelayCommand<bool> _toggleCameraCommand;
+        private RelayCommand<bool> _toggleTrackingCommand;
+        private RelayCommand<bool> _toggleAnnotateCommand;
+        private RelayCommand<ListBox> _applySelectionCommand;
+        private RelayCommand<ListBox> _cancelSelectionCommand;
 
         public string Name
         {
@@ -25,7 +37,31 @@ namespace UniMoveStation.ViewModel
             set { Set(() => Name, ref _name, value); }
         }
 
+        public bool Annotate
+        {
+            get { return _annotate; }
+            set { Set(() => Annotate, ref _annotate, value); }
+        }
+
+        public bool Tracking
+        {
+            get { return _tracking; }
+            set { Set(() => Tracking, ref _tracking, value); }
+        }
+
+        public bool ShowImage
+        {
+            get { return _showImage; }
+            set { Set(() => ShowImage, ref _showImage, value); }
+        }
+
         public ObservableCollection<SingleCameraViewModel> Cameras
+        {
+            get;
+            private set;
+        }
+
+        public ObservableCollection<MotionControllerModel> Controllers
         {
             get;
             private set;
@@ -36,14 +72,17 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         public CamerasViewModel()
         {
+
             Name = "all";
             Cameras = new ObservableCollection<SingleCameraViewModel>();
+            Controllers = new ObservableCollection<MotionControllerModel>();
             Refresh();
 
             Messenger.Default.Register<AddCameraMessage>(this, message =>
             {
                 Cameras.Add(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
             });
+
             Messenger.Default.Register<RemoveCameraMessage>(this, message =>
             {
                 if(SimpleIoc.Default.ContainsCreated<SingleCameraViewModel>(message.Camera.GUID))
@@ -51,6 +90,18 @@ namespace UniMoveStation.ViewModel
                     Cameras.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
                 }
             });
+
+            Messenger.Default.Register<AddMotionControllerMessage>(this,
+                message =>
+                {
+                    Controllers.Add(message.MotionController);
+                });
+
+            Messenger.Default.Register<RemoveMotionControllerMessage>(this,
+                message =>
+                {
+                    Controllers.Remove(message.MotionController);
+                });
 
             if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
             {
@@ -89,5 +140,116 @@ namespace UniMoveStation.ViewModel
         {
             base.Cleanup();
         }
+
+        #region Commands
+        /// <summary>
+        /// Gets the ToggleAnnotateCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleAnnotateCommand
+        {
+            get
+            {
+                return _toggleAnnotateCommand
+                    ?? (_toggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ToggleCameraCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleCameraCommand
+        {
+            get
+            {
+                return _toggleCameraCommand
+                    ?? (_toggleCameraCommand = new RelayCommand<bool>(DoToggleCamera));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ToggleTrackingCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleTrackingCommand
+        {
+            get
+            {
+                return _toggleTrackingCommand
+                    ?? (_toggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ApplySelectionCommand.
+        /// </summary>
+        public RelayCommand<ListBox> ApplySelectionCommand
+        {
+            get
+            {
+                return _applySelectionCommand
+                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(
+                        DoApplySelection,
+                        (box) => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
+            }
+        }
+
+        /// <summary>
+        /// Gets the CancelSelectionCommand.
+        /// </summary>
+        public RelayCommand<ListBox> CancelSelectionCommand
+        {
+            get
+            {
+                return _cancelSelectionCommand
+                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(
+                        DoCancelSelection,
+                        (box) => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
+            }
+        }
+        #endregion
+
+        #region Command Exeuctions
+        public void DoToggleAnnotate(bool annotate)
+        {
+            foreach(SingleCameraViewModel scvm in Cameras)
+            {
+                scvm.DoToggleAnnotate(annotate);
+            }
+            Annotate = annotate;
+        }
+
+        public void DoToggleCamera(bool enabled)
+        {
+            foreach (SingleCameraViewModel scvm in Cameras)
+            {
+                scvm.DoToggleCamera(enabled);
+            }
+            ShowImage = enabled;
+        }
+
+        public void DoToggleTracking(bool enabled)
+        {
+            foreach (SingleCameraViewModel scvm in Cameras)
+            {
+                scvm.DoToggleTracking(enabled);
+            }
+            Tracking = enabled;
+        }
+
+        public void DoApplySelection(ListBox listBox)
+        {
+            foreach (SingleCameraViewModel scvm in Cameras)
+            {
+                scvm.DoApplySelection(listBox);
+            }
+        } // DoApplySelection
+
+        public void DoCancelSelection(ListBox listBox)
+        {
+            foreach (SingleCameraViewModel scvm in Cameras)
+            {
+                scvm.DoCancelSelection(listBox);
+            }
+        }
+        #endregion
     } // CamerasViewModel
 } // namespace

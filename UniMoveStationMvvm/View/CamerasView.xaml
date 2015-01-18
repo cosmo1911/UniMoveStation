@@ -4,19 +4,33 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:UniMoveStation"
+             xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:ignore="http://www.ignore.com"
-             xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:helper="clr-namespace:UniMoveStation.Helper"
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
              d:DesignWidth="856"
              d:DesignHeight="480"
              Margin="4">
 
+    <UserControl.Resources>
+        <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
+    </UserControl.Resources>
+
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-		              VerticalScrollBarVisibility="Auto">
+		              VerticalScrollBarVisibility="Hidden">
+
+
             <ItemsControl ItemsSource="{Binding Cameras}"
                           HorizontalContentAlignment="Stretch"
                           Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
@@ -71,6 +85,104 @@
 
             </ItemsControl>
         </ScrollViewer>
+
+        <StackPanel Grid.Row="0" 
+                    Grid.Column="1" 
+                    Orientation="Vertical">
+            <TextBlock Text="Tracked Controllers"
+                       Margin="0 4 4 0"
+                       HorizontalAlignment="Center"
+                       FontFamily="Segoe UI Semibold"
+                       FontSize="16"
+                       />
+            <ListBox ItemsSource="{Binding Controllers, UpdateSourceTrigger=PropertyChanged}"
+                     BorderThickness="0"
+                     Margin="4"
+                     x:Name="TrackedControllers">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type m:MotionControllerModel}">
+                        <CheckBox Margin="4"
+                                  x:Name="CheckBox">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type CheckBox}}"
+                                       TargetType="CheckBox">
+                                    <Setter Property="Content"
+                                            Value="{Binding Name}"
+                                            />
+                                    <Setter Property="IsChecked">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource DictionaryTrackingToBoolConverter}" Mode="OneWay">
+                                                <Binding Path="Tracking"/>
+                                                <Binding Path="DataContext.Camera"
+                                                         RelativeSource="{RelativeSource FindAncestor, AncestorType=UserControl}"
+                                                         />
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <UniformGrid>
+                <Button Content="apply"
+                        Margin="8 8 4 8"
+                        Command="{Binding ApplySelectionCommand}"
+                        CommandParameter="{Binding ElementName=TrackedControllers}"
+                        />
+                <Button Content="cancel"
+                        Margin="4 8 8 8"
+                        Command="{Binding CancelSelectionCommand}"
+                        CommandParameter="{Binding ElementName=TrackedControllers}"
+                        />
+            </UniformGrid>
+
+                <controls:ToggleSwitch Header="Cameras"
+                                       Margin="4"
+                                       x:Name="switch_cameras"
+                                       HorizontalAlignment="Stretch" 
+                                       VerticalAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       IsChecked="{Binding ShowImage}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
+                                                 CommandParameter="{Binding IsChecked, ElementName=switch_cameras}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </controls:ToggleSwitch>
+                <controls:ToggleSwitch Header="Tracking"
+                                       Margin="4"
+                                       x:Name="switch_tracking"
+                                       HorizontalAlignment="Stretch" 
+                                       VerticalAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       IsChecked="{Binding Tracking}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
+                                                 CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"
+                                                 />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </controls:ToggleSwitch>
+                <controls:ToggleSwitch Header="Annotate"
+                                       Margin="4"
+                                       x:Name="switch_annotate"
+                                       HorizontalAlignment="Stretch" 
+                                       VerticalAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       IsChecked="{Binding Annotate}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
+                                                 CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"
+                                                 />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </controls:ToggleSwitch>
+            </StackPanel>
     </Grid>
 
 </UserControl>

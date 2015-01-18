@@ -204,9 +204,11 @@ namespace UniMoveStation.ViewModel.Flyout
             TextReader reader = null;
             try
             {
+                string path = String.Format("cfg\\{0}.calib.json", camera.GUID);
+                if (!File.Exists(path)) return;
                 try
                 {
-                    reader = new StreamReader(String.Format("cfg\\{0}.calib.json", camera.GUID));
+                    reader = new StreamReader(path);
                 }
                 catch (FileNotFoundException ex)
                 {

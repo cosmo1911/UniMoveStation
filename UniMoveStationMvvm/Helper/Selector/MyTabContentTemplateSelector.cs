@@ -22,6 +22,10 @@ namespace UniMoveStation.Helper
                 {
                     return element.FindResource("SingleCameraTabContentTemplate") as DataTemplate;
                 }
+                else if (item is MotionControllersViewModel)
+                {
+                    return element.FindResource("AllMotionControllersTabContentTemplate") as DataTemplate;
+                }
                 else if (item is CamerasViewModel)
                 {
                     return element.FindResource("AllCamerasTabContentTemplate") as DataTemplate;

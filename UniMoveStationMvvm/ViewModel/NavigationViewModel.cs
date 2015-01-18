@@ -213,8 +213,7 @@ namespace UniMoveStation.ViewModel
 
             {
                 MotionControllerTabs.Clear();
-                // TODO replace with mc
-                MotionControllerTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
+                MotionControllerTabs.Add(SimpleIoc.Default.GetInstance<MotionControllersViewModel>());
                 foreach (MotionControllerViewModel mcvm in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
                 {
                     MotionControllerTabs.Add(mcvm);

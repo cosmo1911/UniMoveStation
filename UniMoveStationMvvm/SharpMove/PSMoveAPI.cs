@@ -412,16 +412,16 @@ namespace UniMoveStation.SharpMove
         public static extern IntPtr psmove_fusion_new(IntPtr jarg1, float jarg2, float jarg3);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_fusion_get_projection_matrix@4")]
-        public static extern IntPtr psmove_fusion_get_projection_matrix(IntPtr jarg1);
+        public static extern IntPtr psmove_fusion_get_projection_matrix(IntPtr fusion);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_fusion_get_modelview_matrix@8")]
-        public static extern IntPtr psmove_fusion_get_modelview_matrix(HandleRef jarg1, HandleRef jarg2);
+        public static extern IntPtr psmove_fusion_get_modelview_matrix(IntPtr fusion, IntPtr move);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_fusion_get_position@20")]
-        public static extern void psmove_fusion_get_position(IntPtr jarg1, IntPtr jarg2, out float jarg3, out float jarg4, out float jarg5);
+        public static extern void psmove_fusion_get_position(IntPtr fusion, IntPtr move, out float jarg3, out float jarg4, out float jarg5);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_psmove_fusion_free@4")]
-        public static extern void psmove_fusion_free(IntPtr jarg1);
+        public static extern void psmove_fusion_free(IntPtr fusion);
 
         [DllImport("libpsmoveapi_csharp", EntryPoint = "CSharp_PSMoveTracker_dimming_set@8")]
         public static extern void PSMoveTracker_dimming_set(IntPtr jarg1, float jarg2);

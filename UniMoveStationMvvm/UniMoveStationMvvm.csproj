@@ -63,6 +63,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -95,6 +96,9 @@
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="GlmNet">
+      <HintPath>..\packages\GlmNet.0.0.3.0\lib\net40\GlmNet.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=0.14.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -233,6 +237,7 @@
     <Compile Include="Utilities\InputBindingsManager.cs" />
     <Compile Include="Utilities\ObservableConcurrentDictionary.cs" />
     <Compile Include="Utilities\Utils.cs" />
+    <Compile Include="ViewModel\MotionControllersViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
@@ -244,6 +249,9 @@
     <Compile Include="ViewModel\NavigationViewModel.cs" />
     <Compile Include="ViewModel\ServerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\MotionControllersView.xaml.cs">
+      <DependentUpon>MotionControllersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialog\CameraCalibrationView.xaml.cs">
       <DependentUpon>CameraCalibrationView.xaml</DependentUpon>
     </Compile>
@@ -289,6 +297,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="View\MotionControllersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Dialog\CameraCalibrationView.xaml">
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>

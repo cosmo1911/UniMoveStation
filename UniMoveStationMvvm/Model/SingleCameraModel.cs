@@ -27,10 +27,10 @@ namespace UniMoveStation.Model
         private ObservableCollection<MotionControllerModel> _controllers;
 
 #if DEBUG
-        private static int COUNTER = -1;
+        private static int COUNTER = 0;
         public SingleCameraModel()
         {
-            TrackerId = ++COUNTER;
+            TrackerId = --COUNTER;
             Name = "Design " + TrackerId;
             GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
             Calibration = new CameraCalibrationModel();

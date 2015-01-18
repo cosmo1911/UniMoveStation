@@ -58,11 +58,11 @@ namespace UniMoveStation.Helper
 
             double[] array = jObject["Data"].ToObject<double[]>();
 
-            for (int y = 0; y < rows; y++)
+            for (int row = 0; row < rows; row++)
             {
-                for(int x = 0; x < cols; x++)
+                for(int col = 0; col < cols; col++)
                 {
-                    data[y, x] = array[y * cols + x];
+                    data[row, col] = array[row * cols + col];
                 }
             }
 

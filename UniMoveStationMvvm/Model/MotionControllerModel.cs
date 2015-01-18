@@ -59,6 +59,8 @@ namespace UniMoveStation.Model
         private ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
         private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _rawPosition;
         private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _fusionPosition;
+        private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _projectionMatrix;
+        private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _modelViewMatrix;
         #endregion
 
 #if DEBUG
@@ -83,6 +85,40 @@ namespace UniMoveStation.Model
             Color = UnityEngine.Color.blue;
         }
 #endif
+
+        public ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> ProjectionMatrix
+        {
+            get
+            {
+                if (_projectionMatrix == null)
+                {
+                    _projectionMatrix = new ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    {
+                        _projectionMatrix.Add(scvm.Camera, new Matrix4x4());
+                    }
+                }
+                return _projectionMatrix;
+            }
+            set { Set(() => ProjectionMatrix, ref _projectionMatrix, value); }
+        }
+
+        public ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> ModelViewMatrix
+        {
+            get
+            {
+                if (_modelViewMatrix == null)
+                {
+                    _modelViewMatrix = new ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    {
+                        _modelViewMatrix.Add(scvm.Camera, new Matrix4x4());
+                    }
+                }
+                return _modelViewMatrix;
+            }
+            set { Set(() => ModelViewMatrix, ref _modelViewMatrix, value); }
+        }
 
         public ObservableConcurrentDictionary<SingleCameraModel, Vector3> RawPosition
         {

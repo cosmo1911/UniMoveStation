@@ -187,7 +187,9 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return _calibrateCameraCommand
-                    ?? (_calibrateCameraCommand = new RelayCommand<MetroWindow>(DoCalibrateCamera));
+                    ?? (_calibrateCameraCommand = new RelayCommand<MetroWindow>(
+                        DoCalibrateCamera, 
+                        (window) => Camera.TrackerId == 0));
             }
         }
 
@@ -275,7 +277,7 @@ namespace UniMoveStation.ViewModel
             ConsoleService.WriteLine("Annotate: " + annotate);
         }
 
-        private void DoToggleCamera(bool enabled)
+        public void DoToggleCamera(bool enabled)
         {
             if (enabled)
             {
@@ -357,7 +359,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoCalibrateCamera(MetroWindow window)
         {
-            //DoToggleCamera(false);
+            DoToggleCamera(false);
             DoToggleTracking(false);
 
             CameraCalibrationService ccs = new CameraCalibrationService(Camera);
