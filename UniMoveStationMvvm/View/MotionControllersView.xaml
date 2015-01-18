@@ -19,7 +19,8 @@
              Margin="4">
 
     <UserControl.Resources>
-        <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
+        <helper:MatrixToStringConverter x:Key="MatrixToStringConverter"/>
+        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/> 
     </UserControl.Resources>
 
     <Grid>
@@ -27,41 +28,160 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden"
-		              VerticalScrollBarVisibility="Hidden">
+        <DataGrid ItemsSource="{Binding Controllers}"
+                  d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}"
+                  AutoGenerateColumns="False"
+                  HorizontalScrollBarVisibility="Auto"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False">
+            
+            <!--<Style TargetType="{x:Type DataGridRow}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding}" Value="{x:Static CollectionView.NewItemPlaceholder}">
+                        
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>-->
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseWheel">
+                    <mvvm:EventToCommand Command="{Binding MouseWheelCommand}"
+                                         PassEventArgsToCommand="True"
+                                         />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
+                <!--Name-->
+                <DataGridTextColumn Header="Name"
+                                    Binding="{Binding MotionController.Name}"
+                                    />
+                <!--Serial-->
+                <DataGridTextColumn Header="Serial"
+                                    Binding="{Binding MotionController.Serial}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Connect Status-->
+                <DataGridTextColumn Header="Connect Status"
+                                    Binding="{Binding MotionController.ConnectStatus}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Connection Type-->
+                <DataGridTextColumn Header="Connection Type"
+                                    Binding="{Binding MotionController.ConnectionType}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Host Address-->
+                <DataGridTextColumn Header="Host Address"
+                                    Binding="{Binding MotionController.HostIp}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Gyroscope-->
+                <DataGridTextColumn Header="Gyroscope"
+                                    Binding="{Binding MotionController.Gyroscope}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Raw Gyroscope-->
+                <DataGridTextColumn Header="Raw Gyroscope"
+                                    Binding="{Binding MotionController.RawGyroscope}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Accellerometer-->
+                <DataGridTextColumn Header="Accelerometer"
+                                    Binding="{Binding MotionController.Accelerometer}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Raw Accellerometer-->
+                <DataGridTextColumn Header="Raw Accelerometer"
+                                    Binding="{Binding MotionController.RawAccelerometer}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Magnetometer-->
+                <DataGridTextColumn Header="Magnetometer"
+                                    Binding="{Binding MotionController.Magnetometer}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Orientation-->
+                <DataGridTextColumn Header="Orientation"
+                                    Binding="{Binding MotionController.Orientation}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Raw Position-->
+                <DataGridTemplateColumn Header="Raw Position"
+                                        IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding MotionController.RawPosition.Values}"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                                   Background="Transparent"
+                                                   />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <!--Fusion Position-->
+                <DataGridTemplateColumn Header="Fusion Position"
+                                        IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                                   Background="Transparent"
+                                                   />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <!--Projection Matrix-->
+                <DataGridTemplateColumn Header="Projection"
+                                        IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding MotionController.ProjectionMatrix.Values}"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=., Converter={StaticResource MatrixToStringConverter}}"
+                                                   Background="Transparent"
+                                                   />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-            <ItemsControl ItemsSource="{Binding Controllers}"
-                          HorizontalContentAlignment="Stretch"
-                          Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid d:DataContext="vm:MotionControllerViewModel"
-                              Margin="4">
-                            <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="30"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBox HorizontalContentAlignment="Center" 
-                                     VerticalContentAlignment="Center" 
-                                     BorderThickness="0"
-                                     Height="30"
-                                     Background="{StaticResource AccentColorBrush2}" 
-                                     Text="{Binding MotionController.Name, UpdateSourceTrigger=PropertyChanged}"
-                                     x:Name="name"
-                                     />
-                            
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-            </ItemsControl>
-        </ScrollViewer>
+                <!--Model View Matrix-->
+                <DataGridTemplateColumn Header="Modelview Matrix"
+                                        IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding MotionController.ModelViewMatrix.Values}"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=., Converter={StaticResource MatrixToStringConverter}}"
+                                                   Background="Transparent"
+                                                   />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Grid.Row="0" 
                     Grid.Column="1" 

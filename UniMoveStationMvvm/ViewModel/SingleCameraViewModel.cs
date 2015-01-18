@@ -403,13 +403,15 @@ namespace UniMoveStation.ViewModel
 
         public void BundleAdjust()
         {
-            //public static void BundleAdjust(MCvPoint3D64f[] points,               // Positions of points in global coordinate system (input and output), values will be modified by bundle adjustment
-            //                                MCvPoint2D64f[][] imagePoints,        // Projections of 3d points for every camera
-            //                                int[][] visibility,                   // Visibility of 3d points for every camera
-            //                                Matrix<double>[] cameraMatrix,        // Intrinsic matrices of all cameras (input and output), values will be modified by bundle adjustment
-            //                                Matrix<double>[] R,                   // rotation matrices of all cameras (input and output), values will be modified by bundle adjustment
-            //                                Matrix<double>[] T,                   // translation vector of all cameras (input and output), values will be modified by bundle adjustment
-            //                                Matrix<double>[] distCoeffcients,     // distortion coefficients of all cameras (input and output), values will be modified by bundle adjustment
+            // N = cams
+            // M = points
+            //public static void BundleAdjust(MCvPoint3D64f[N] points,               // Positions of points in global coordinate system (input and output), values will be modified by bundle adjustment
+            //                                MCvPoint2D64f[N][M] imagePoints,        // Projections of 3d points for every camera
+            //                                int[N][M] visibility,                   // Visibility of 3d points for every camera
+            //                                Matrix<double>[N] cameraMatrix,        // Intrinsic matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[N] R,                   // rotation matrices of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[N] T,                   // translation vector of all cameras (input and output), values will be modified by bundle adjustment
+            //                                Matrix<double>[N] distCoeffcients,     // distortion coefficients of all cameras (input and output), values will be modified by bundle adjustment
             //                                MCvTermCriteria termCrit)             // Termination criteria, a reasonable value will be (30, 1.0e-12)
 
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();

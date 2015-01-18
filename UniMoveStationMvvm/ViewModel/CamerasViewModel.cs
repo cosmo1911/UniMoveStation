@@ -103,9 +103,21 @@ namespace UniMoveStation.ViewModel
                     Controllers.Remove(message.MotionController);
                 });
 
-            if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+            if(IsInDesignMode)
             {
-                AddAvailableCameras();
+                Cameras.Add(new SingleCameraViewModel());
+                Cameras.Add(new SingleCameraViewModel());
+                Cameras.Add(new SingleCameraViewModel());
+                Controllers.Add(new MotionControllerModel());
+                Controllers.Add(new MotionControllerModel());
+                Controllers.Add(new MotionControllerModel());
+            }
+            else
+            {
+                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+                {
+                    AddAvailableCameras();
+                }
             }
         }
 

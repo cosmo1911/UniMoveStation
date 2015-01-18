@@ -124,8 +124,9 @@ namespace UniMoveStation.ViewModel.Flyout
             TextWriter writer = null;
             try
             {
+                
                 string json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
-                writer = new StreamWriter("cfg\\user.conf.json", false);
+                writer = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json", false);
                 writer.Write(json);
             }
             finally
@@ -145,7 +146,7 @@ namespace UniMoveStation.ViewModel.Flyout
                 try
                 {
                     string json = JsonConvert.SerializeObject(scvm.Camera, Newtonsoft.Json.Formatting.Indented);
-                    writer = new StreamWriter(String.Format("cfg\\{0}.cam.json", scvm.Camera.GUID), false);
+                    writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", scvm.Camera.GUID), false);
                     writer.Write(json);
                 }
                 finally
@@ -165,7 +166,7 @@ namespace UniMoveStation.ViewModel.Flyout
                     Newtonsoft.Json.Formatting.Indented, 
                     new JsonIntrinsicCameraParametersConverter(),
                     new JsonExtrinsicCameraParametersConverter());
-                writer = new StreamWriter(String.Format("cfg\\{0}.calib.json", camera.GUID), false);
+                writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", camera.GUID), false);
                 writer.Write(json);
             }
             finally
@@ -181,11 +182,11 @@ namespace UniMoveStation.ViewModel.Flyout
             {
                 try
                 {
-                    reader = new StreamReader("cfg\\user.conf.json");
+                    reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json");
                 }
                 catch (FileNotFoundException)
                 {
-                    reader = new StreamReader("cfg\\default.conf.json");
+                    reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\default.conf.json");
                 }
             }
             finally
@@ -204,7 +205,7 @@ namespace UniMoveStation.ViewModel.Flyout
             TextReader reader = null;
             try
             {
-                string path = String.Format("cfg\\{0}.calib.json", camera.GUID);
+                string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", camera.GUID);
                 if (!File.Exists(path)) return;
                 try
                 {

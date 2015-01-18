@@ -54,8 +54,8 @@
                                 <MultiBinding Converter="{StaticResource MultiValueConverter}" Mode="OneWay">
                                     <Binding Path="IsChecked" ElementName="toggle_server"/>
                                     <Binding Path="Text"
-                                         ElementName="textBox_port"
-                                         />
+                                             ElementName="textBox_port"
+                                             />
                                 </MultiBinding>
                             </mvvm:EventToCommand.CommandParameter>
                         </mvvm:EventToCommand>

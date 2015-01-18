@@ -4,7 +4,13 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Input;
 using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
@@ -22,6 +28,8 @@ namespace UniMoveStation.ViewModel
     public class MotionControllersViewModel : ViewModelBase
     {
         private string _name;
+        private RelayCommand<MouseWheelEventArgs> _mouseWheelCommand;
+
 
         public string Name
         {
@@ -40,7 +48,6 @@ namespace UniMoveStation.ViewModel
         /// </summary>
         public MotionControllersViewModel()
         {
-
             Name = "all";
             Controllers = new ObservableCollection<MotionControllerViewModel>();
             Refresh();
@@ -57,9 +64,19 @@ namespace UniMoveStation.ViewModel
                     Controllers.Remove(SimpleIoc.Default.GetInstance<MotionControllerViewModel>(message.MotionController.Serial));
                 });
 
-            if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+
+            if (IsInDesignMode)
             {
-                AddAvailableMotionControllers();
+                Controllers.Add(new MotionControllerViewModel());
+                Controllers.Add(new MotionControllerViewModel());
+                Controllers.Add(new MotionControllerViewModel());
+            }
+            else
+            {
+                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+                {
+                    AddAvailableMotionControllers();
+                }
             }
         }
 
@@ -93,7 +110,26 @@ namespace UniMoveStation.ViewModel
         }
 
         #region Commands
-        
+        /// <summary>
+        /// Gets the MouseWheelCommand.
+        /// </summary>
+        public RelayCommand<MouseWheelEventArgs> MouseWheelCommand
+        {
+            get
+            {
+                return _mouseWheelCommand
+                    ?? (_mouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(
+                    (e) =>
+                    {
+                        //ScrollViewer scrollViewer = (ScrollViewer) e.Source.GetType().BaseType.BaseType.BaseType.GetProperty("ScrollHost").GetValue(dataGrid, null);
+                        ItemsControl ic = e.Source as ItemsControl;
+                        ScrollViewer scrollViewer = ic.GetType().GetProperty("ScrollHost", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(ic) as ScrollViewer;
+
+                        if (e.Delta < 0) scrollViewer.LineRight();
+                        else if (e.Delta > 0) scrollViewer.LineLeft();
+                    }));
+            }
+        }
         #endregion
 
         #region Command Exeuctions

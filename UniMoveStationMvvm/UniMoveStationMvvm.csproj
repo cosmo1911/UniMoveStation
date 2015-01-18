@@ -97,9 +97,6 @@
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="GlmNet">
-      <HintPath>..\packages\GlmNet.0.0.3.0\lib\net40\GlmNet.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro, Version=0.14.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\MahApps.Metro.dll</HintPath>
@@ -196,6 +193,7 @@
     <Compile Include="Helper\BitmapSourceConverter.cs" />
     <Compile Include="Helper\CameraCalibrationMode.cs" />
     <Compile Include="Helper\Converter\MultiValueConverter.cs" />
+    <Compile Include="Helper\Converter\MatrixToStringConverter.cs" />
     <Compile Include="Helper\Json\JsonExtrinsicCameraParametersConverter.cs" />
     <Compile Include="Helper\Json\JsonMatrixConverter.cs" />
     <Compile Include="Helper\Json\JsonCameraCalibrationConverter.cs" />
@@ -367,6 +365,7 @@
     <EmbeddedResource Include="cfg\default.conf.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="cfg\user.conf.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

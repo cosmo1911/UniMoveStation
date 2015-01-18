@@ -199,10 +199,7 @@ namespace UniMoveStation.Service
 
         public void EnableTracking(MotionControllerModel mc)
         {
-            if (_camera.Handle == IntPtr.Zero)
-            {
-                StartTracker();
-            }
+            if (_camera.Handle == IntPtr.Zero) StartTracker();
 
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({0}).", _camera.GUID, mc.Serial));
 
@@ -222,7 +219,7 @@ namespace UniMoveStation.Service
                 PsMoveApi.psmove_reset_orientation(mc.Handle);
             }
 
-            Matrix4x4 proj = mc.ProjectionMatrix[_camera];
+            Matrix4x4 proj = new Matrix4x4();
 
             for (int row = 0; row < 4; row++)
             {
@@ -231,6 +228,8 @@ namespace UniMoveStation.Service
                     proj[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_projection_matrix(_camera.Fusion), row * 4 + col);
                 }
             }
+
+            mc.ProjectionMatrix[_camera] = proj;
 
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of Motion Controller ({0}) = {1}", 
                 _camera.GUID, mc.Serial, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
@@ -282,6 +281,8 @@ namespace UniMoveStation.Service
                     trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
                     Vector3 rawPosition = Vector3.zero;
                     Vector3 fusionPosition = Vector3.zero;
+                    Matrix4x4 model = new Matrix4x4();
+
                     if (trackerStatus == PSMoveTrackerStatus.Tracking)
                     {
                         float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
@@ -320,8 +321,6 @@ namespace UniMoveStation.Service
 
                         //mc.m_position = vec;
 
-                        Matrix4x4 model = mc.ModelViewMatrix[_camera];
-
                         for (int row = 0; row < 4; row++)
                         {
                             for (int col = 0; col < 4; col++)
@@ -329,11 +328,13 @@ namespace UniMoveStation.Service
                                 model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
                             }
                         }
+
                         
                     }
                     mc.TrackerStatus[_camera] = trackerStatus;
                     mc.RawPosition[_camera] = rawPosition;
                     mc.FusionPosition[_camera] = fusionPosition;
+                    mc.ModelViewMatrix[_camera] = model;
                 }
             }
         } // ProcessData
