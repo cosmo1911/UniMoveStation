@@ -194,6 +194,7 @@
     <Compile Include="Helper\CameraCalibrationMode.cs" />
     <Compile Include="Helper\Converter\MultiValueConverter.cs" />
     <Compile Include="Helper\Converter\MatrixToStringConverter.cs" />
+    <Compile Include="Helper\Converter\QuaternionToStringConverter.cs" />
     <Compile Include="Helper\Json\JsonExtrinsicCameraParametersConverter.cs" />
     <Compile Include="Helper\Json\JsonMatrixConverter.cs" />
     <Compile Include="Helper\Json\JsonCameraCalibrationConverter.cs" />

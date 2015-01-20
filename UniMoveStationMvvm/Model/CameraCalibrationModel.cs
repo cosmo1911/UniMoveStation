@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using UniMoveStation.Helper;
+using UnityEngine;
 
 namespace UniMoveStation.Model
 {
@@ -20,6 +21,10 @@ namespace UniMoveStation.Model
         private CameraCalibrationMode _currentMode;
         private IntrinsicCameraParameters _intrinsicParameters;
         private ExtrinsicCameraParameters[] _extrinsicParameters;
+        private Matrix<double> _rotationMatrix;
+        private Matrix<double> _translationVector;
+        private Vector3 _point;
+        private float _yAngle;
 
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationModel class.
@@ -29,6 +34,19 @@ namespace UniMoveStation.Model
             _frameBufferSize = 100;
             _currentMode = CameraCalibrationMode.SavingFrames;
             _intrinsicParameters = new IntrinsicCameraParameters();
+        }
+
+        public Vector3 Point
+        {
+            get { return _point; }
+            set { Set(() => Point, ref _point, value); }
+        }
+
+        [JsonProperty]
+        public float YAngle
+        {
+            get { return _yAngle; }
+            set { Set(() => YAngle, ref _yAngle, value); }
         }
 
         [JsonProperty]
@@ -43,6 +61,20 @@ namespace UniMoveStation.Model
         {
             get { return _error; }
             set { Set(() => Error, ref _error, value); }
+        }
+
+        [JsonProperty]
+        public Matrix<double> RotationMatrix
+        {
+            get { return _rotationMatrix; }
+            set { Set(() => RotationMatrix, ref _rotationMatrix, value); }
+        }
+
+        [JsonProperty]
+        public Matrix<double> TranslationVector
+        {
+            get { return _translationVector; }
+            set { Set(() => TranslationVector, ref _translationVector, value); }
         }
 
         public bool StartFlag

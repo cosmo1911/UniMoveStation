@@ -18,6 +18,7 @@
     
     <UserControl.Resources>
         <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
+        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -136,6 +137,10 @@
                             Margin="4"
                             Command="{Binding BundleAdjustCommand}"
                             />
+                    <TextBox Margin="4"
+                             IsReadOnly="True"
+                             Text="{Binding Camera.Calibration.Point, Converter={StaticResource Vector3ToStringConverter}}"
+                             />
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" 

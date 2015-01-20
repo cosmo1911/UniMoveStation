@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.ViewModel;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using Emgu.CV;
 
 namespace UniMoveStation.Model
 {

@@ -7,7 +7,7 @@
                       xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
                       xmlns:fv="clr-namespace:UniMoveStation.View.Flyout"
                       xmlns:fvm="clr-namespace:UniMoveStation.ViewModel.Flyout"
-                      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+                      xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                       xmlns:actions="clr-namespace:MahApps.Metro.Actions;assembly=MahApps.Metro"
                       x:Class="UniMoveStation.View.MainView"
                       Title="UniMoveStation"
@@ -20,18 +20,18 @@
                       Left="{Binding Settings.Settings.X, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       Top="{Binding Settings.Settings.Y, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
-                      ShowTitleBar="False"
+                      ShowTitleBar="True"
                       ResizeMode="CanResizeWithGrip">
-    
+
     <controls:MetroWindow.Resources>
         <Style x:Key="DefaultFlyoutStyle"
-               BasedOn="{StaticResource {x:Type controls:Flyout}}" 
+               BasedOn="{StaticResource {x:Type controls:Flyout}}"
                TargetType="{x:Type controls:Flyout}">
 
-            <Setter Property="IsOpen" 
+            <Setter Property="IsOpen"
                     Value="{Binding IsOpen}"
                     />
-            <Setter Property="Position" 
+            <Setter Property="Position"
                     Value="{Binding Position}"
                     />
             <Setter Property="Header"
@@ -41,14 +41,14 @@
                     Value="300"
                     />
         </Style>
-        <Style x:Key="AddMotionControllerFlyoutStyle" 
-               BasedOn="{StaticResource DefaultFlyoutStyle}" 
+        <Style x:Key="AddMotionControllerFlyoutStyle"
+               BasedOn="{StaticResource DefaultFlyoutStyle}"
                TargetType="{x:Type controls:Flyout}">
 
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <Grid Margin="10 30 10 10" 
+                        <Grid Margin="10 30 10 10"
                               DataContext="{Binding Source={StaticResource ViewModelLocator}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -65,7 +65,8 @@
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <actions:SetFlyoutOpenAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:Flyout}}}"
-                                                                     Value="False" />
+                                                                     Value="False"
+                                                                     />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <Rectangle Width="20"
@@ -85,7 +86,7 @@
                                        VerticalAlignment="Center"
                                        Text="{Binding AddMotionController.Header}"
                                        />
-                            <Button Grid.Column="2" 
+                            <Button Grid.Column="2"
                                     Width="40"
                                     Height="40"
                                     Style="{DynamicResource MetroCircleButtonStyle}"
@@ -106,10 +107,10 @@
             </Setter>
         </Style>
 
-        <Style x:Key="AddCameraFlyoutStyle" 
-               BasedOn="{StaticResource DefaultFlyoutStyle}" 
+        <Style x:Key="AddCameraFlyoutStyle"
+               BasedOn="{StaticResource DefaultFlyoutStyle}"
                TargetType="{x:Type controls:Flyout}">
-            
+
             <Setter Property="HeaderTemplate">
                 <Setter.Value>
                     <DataTemplate>
@@ -155,7 +156,7 @@
                                        VerticalAlignment="Center"
                                        Text="{Binding AddCamera.Header}"
                                        />
-                            <Button Grid.Column="2" 
+                            <Button Grid.Column="2"
                                     Width="40"
                                     Height="40"
                                     FontFamily="Segoe UI Symbol"
@@ -178,7 +179,7 @@
             </Setter>
         </Style>
     </controls:MetroWindow.Resources>
-    
+
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
             <Button Command="{Binding SettingsCommand}">
@@ -199,7 +200,7 @@
                                  ItemTemplateSelector="{StaticResource MyItemTemplateSelector}"
                                  />
     </controls:MetroWindow.Flyouts>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

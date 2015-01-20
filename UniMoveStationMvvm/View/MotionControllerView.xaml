@@ -14,9 +14,10 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}"
              Margin="8">
-    
+
     <UserControl.Resources>
         <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+        <helper:QuaternionToStringConverter x:Key="QuaternionToStringConverter"/> 
     </UserControl.Resources>
     <Grid>
         <!-- Main Grid -->
@@ -277,6 +278,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
@@ -307,7 +309,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.Serial}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Connect Status-->
@@ -320,7 +322,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.ConnectStatus}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Connection Type-->
@@ -333,7 +335,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.ConnectionType}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Host-->
@@ -346,7 +348,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.HostIp}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Gyroscope-->
@@ -359,7 +361,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.Gyroscope, Converter={StaticResource Vector3ToStringConverter}}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Accelerometer-->
@@ -372,7 +374,7 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.Accelerometer, Converter={StaticResource Vector3ToStringConverter}}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Magnetometer-->
@@ -385,56 +387,69 @@
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.Magnetometer, Converter={StaticResource Vector3ToStringConverter}}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
-                <!--Raw Gyroscope-->
+                <!--Orientation-->
                 <TextBlock Grid.Row="8"
                            Margin="0 4 0 4"
-                           Text="Raw Gyroscope"
+                           Text="Orientation"
                            VerticalAlignment="Center"
                            />
                 <TextBox Grid.Row="8"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
-                         Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
-                         IsEnabled="False"
+                         Text="{Binding MotionController.Orientation, Converter={StaticResource QuaternionToStringConverter}}"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
-                <!--Raw Accelerometer-->
+                <!--Raw Gyroscope-->
                 <TextBlock Grid.Row="9"
                            Margin="0 4 0 4"
-                           Text="Raw Accelerometer"
+                           Text="Raw Gyroscope"
                            VerticalAlignment="Center"
                            />
                 <TextBox Grid.Row="9"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Accelerometer-->
+                <TextBlock Grid.Row="10"
+                           Margin="0 4 0 4"
+                           Text="Raw Accelerometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="10"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.RawAccelerometer, Converter={StaticResource Vector3ToStringConverter}}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Temperature-->
-                <TextBlock Grid.Row="10"
+                <TextBlock Grid.Row="11"
                            Margin="0 4 0 4"
                            Text="Temperature"
                            VerticalAlignment="Center"
                            />
 
-                <TextBox Grid.Row="10"
+                <TextBox Grid.Row="11"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
                          Text="{Binding MotionController.Temperature}"
-                         IsEnabled="False"
+                         IsReadOnly="True"
                          Margin="0 4 0 4"
                          />
                 <!--Raw Position-->
-                <TextBlock Grid.Row="11"
+                <TextBlock Grid.Row="12"
                            Margin="0 4 0 4"
                            Text="Raw Position"
                            VerticalAlignment="Center"
                            />
-                <UniformGrid Grid.Row="11"
+                <UniformGrid Grid.Row="12"
                              Grid.Column="1"
                              Columns="2">
 
@@ -469,12 +484,12 @@
                 </UniformGrid>
 
                 <!--Fusion Position-->
-                <TextBlock Grid.Row="12"
+                <TextBlock Grid.Row="13"
                            Margin="0 4 0 4"
                            Text="Fusion Position"
                            VerticalAlignment="Center"
                            />
-                <UniformGrid Grid.Row="12"
+                <UniformGrid Grid.Row="13"
                              Grid.Column="1"
                              Columns="2">
 

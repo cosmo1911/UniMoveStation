@@ -81,6 +81,7 @@ namespace UniMoveStation.Model
             Move = random.Next(2) > 0;
             PS = random.Next(2) > 0;
             Trigger = random.Next(256);
+            Orientation = new Quaternion();
 
             Color = UnityEngine.Color.blue;
         }

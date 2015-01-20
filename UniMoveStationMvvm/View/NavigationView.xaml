@@ -272,7 +272,7 @@
         <controls:MetroTabControl.Resources>
             <Style TargetType="{x:Type TabPanel}">
                 <Setter Property="Background"
-                        Value="{StaticResource AccentColorBrush}"
+                        Value="Transparent"
                         />
                 <Setter Property="VerticalAlignment"
                         Value="Center"
@@ -282,8 +282,7 @@
                         />
             </Style>
         </controls:MetroTabControl.Resources>
-        <controls:MetroTabItem controls:ControlsHelper.HeaderFontSize="16"
-                               VerticalAlignment="Center">
+        <controls:MetroTabItem VerticalAlignment="Center">
             <TabItem.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -326,8 +325,7 @@
 
         </controls:MetroTabItem>
 
-        <TabItem controls:ControlsHelper.HeaderFontSize="16"
-                 VerticalAlignment="Center">
+        <TabItem VerticalAlignment="Center">
             <TabItem.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -368,8 +366,16 @@
 
         </TabItem>
         
-        <TabItem Header="SERVER"
-                 controls:ControlsHelper.HeaderFontSize="16">
+        <TabItem VerticalAlignment="Center">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="SERVER"
+                                   FontSize="16"
+                                   />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
             <controls:MetroTabControl TabStripPlacement="Left"
                                       TabStripMargin="0"
                                       ItemsSource="{Binding ServerTabs, UpdateSourceTrigger=PropertyChanged}"

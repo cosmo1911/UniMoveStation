@@ -475,7 +475,6 @@ namespace UniMoveStation.Service
             {
                 float w = 0.0f, x = 0.0f, y = 0.0f, z = 0.0f;
                 PsMoveApi.psmove_get_orientation(_motionController.Handle, out w, out x, out y, out z);
-
                 Quaternion rot = new Quaternion(x, y, z, w);
                 rot = rot * m_orientationFix;
 #if YISUP
@@ -484,6 +483,7 @@ namespace UniMoveStation.Service
 #endif
 
                 m_orientation = rot;
+                _motionController.Orientation = rot;
             }
             else
             {

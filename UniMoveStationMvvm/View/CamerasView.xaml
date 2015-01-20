@@ -48,35 +48,35 @@
                                 <RowDefinition MaxHeight="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBox HorizontalContentAlignment="Center" 
-                                     VerticalContentAlignment="Center" 
+                            <TextBox HorizontalContentAlignment="Center"
+                                     VerticalContentAlignment="Center"
                                      BorderThickness="0"
                                      Height="30"
-                                     Background="{StaticResource AccentColorBrush2}" 
+                                     Background="{StaticResource AccentColorBrush2}"
                                      Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
                                      x:Name="name"
                                      />
-                            <local:AspectRatioLayoutDecorator Grid.Column="0" 
+                            <local:AspectRatioLayoutDecorator Grid.Column="0"
 							                                  Grid.Row="1"
 							                                  AspectRatio="1.3333">
                                 <Grid MinWidth="180"
                                       Width="{Binding ActualWidth, ElementName=name}">
-                                    <Label VerticalContentAlignment="Center" 
-									       HorizontalContentAlignment="Center"
-									       Background="{StaticResource AccentColorBrush}"
-									       Content="no image"
+                                    <Label VerticalContentAlignment="Center"
+                  									       HorizontalContentAlignment="Center"
+                  									       Background="{StaticResource AccentColorBrush}"
+                  									       Content="no image"
                                            />
 
-                                    <Image HorizontalAlignment="Stretch" 
-									       VerticalAlignment="Stretch"
-									       Visibility="{Binding Camera.ShowImage, Converter={StaticResource BooleanToVisibilityConverter}}"
-									       Source="{Binding Camera.ImageSource}"
+                                    <Image HorizontalAlignment="Stretch"
+                  									       VerticalAlignment="Stretch"
+                  									       Visibility="{Binding Camera.ShowImage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  									       Source="{Binding Camera.ImageSource}"
                                            />
 
                                     <CLEyeMulticam:CLEyeCameraImage Device="{Binding CameraService.Device, UpdateSourceTrigger=PropertyChanged}"
 									                                Visibility="{Binding CameraService.Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"
 									                                Source="{Binding Camera.ImageSource}"
-                                                                    />
+                                                  />
                                 </Grid>
                             </local:AspectRatioLayoutDecorator>
                         </Grid>
@@ -86,8 +86,8 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <StackPanel Grid.Row="0" 
-                    Grid.Column="1" 
+        <StackPanel Grid.Row="0"
+                    Grid.Column="1"
                     Orientation="Vertical">
             <TextBlock Text="Tracked Controllers"
                        Margin="0 4 4 0"
@@ -141,7 +141,7 @@
                 <controls:ToggleSwitch Header="Cameras"
                                        Margin="4"
                                        x:Name="switch_cameras"
-                                       HorizontalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch"
                                        VerticalAlignment="Center"
                                        HorizontalContentAlignment="Center"
                                        IsChecked="{Binding ShowImage}">
@@ -155,7 +155,7 @@
                 <controls:ToggleSwitch Header="Tracking"
                                        Margin="4"
                                        x:Name="switch_tracking"
-                                       HorizontalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch"
                                        VerticalAlignment="Center"
                                        HorizontalContentAlignment="Center"
                                        IsChecked="{Binding Tracking}">
@@ -170,7 +170,7 @@
                 <controls:ToggleSwitch Header="Annotate"
                                        Margin="4"
                                        x:Name="switch_annotate"
-                                       HorizontalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch"
                                        VerticalAlignment="Center"
                                        HorizontalContentAlignment="Center"
                                        IsChecked="{Binding Annotate}">
