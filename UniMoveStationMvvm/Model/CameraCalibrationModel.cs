@@ -25,6 +25,7 @@ namespace UniMoveStation.Model
         private Matrix<double> _translationVector;
         private Vector3 _point;
         private float _yAngle;
+        private int _position;
 
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationModel class.
@@ -34,12 +35,20 @@ namespace UniMoveStation.Model
             _frameBufferSize = 100;
             _currentMode = CameraCalibrationMode.SavingFrames;
             _intrinsicParameters = new IntrinsicCameraParameters();
+            _translationVector = new Matrix<double>(3, 1);
         }
 
         public Vector3 Point
         {
             get { return _point; }
             set { Set(() => Point, ref _point, value); }
+        }
+
+        [JsonProperty]
+        public int Position
+        {
+            get { return _position; }
+            set { Set(() => Position, ref _position, value); }
         }
 
         [JsonProperty]

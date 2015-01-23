@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -92,13 +93,27 @@
                           DataContext="{Binding}"
                           IsEnabled="False"
                           />
-                <!--Translation-->
+                <!--Position-->
                 <TextBlock Grid.Row="4"
+                           Text="Position / Index"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <TextBox Grid.Column="1"
+                         Grid.Row="4"
+                         Margin="4"
+                         Text="{Binding Camera.Calibration.Position, Mode=TwoWay}"
+                         DataContext="{Binding}"
+                         />
+                
+                <!--Translation-->
+                <TextBlock Grid.Row="5"
                            Text="Translation"
                            VerticalAlignment="Center"
                            Margin="4"
                            />
-                <Grid Grid.Row="4"
+                
+                <Grid Grid.Row="5"
                       Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -109,29 +124,29 @@
                              Margin="4 4 2 4"
                              Controls:TextboxHelper.Watermark="x"
                              DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector}"
+                             Text="{Binding Camera.Calibration.TranslationVector[0\, 0], Mode=TwoWay}"
                              />
                     <TextBox Grid.Column="1"
                              Margin="2 4 2 4"
                              Controls:TextboxHelper.Watermark="y"
                              DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector}"
+                             Text="{Binding Camera.Calibration.TranslationVector[1\, 0], Mode=TwoWay}"
                              />
                     <TextBox Grid.Column="2"
                              Margin="2 4 4 4"
                              Controls:TextboxHelper.Watermark="z"
                              DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector}"
+                             Text="{Binding Camera.Calibration.TranslationVector[2\, 0], Mode=TwoWay}"
                              />
                 </Grid>
                 <!--Y Rotation-->
-                <TextBlock Grid.Row="5"
+                <TextBlock Grid.Row="6"
                            Text="Y Rotation"
                            VerticalAlignment="Center"
                            Margin="4"
                            />
                 <TextBox Grid.Column="1"
-                         Grid.Row="5"
+                         Grid.Row="6"
                          Margin="4"
                          Text="{Binding Camera.Calibration.YAngle, Mode=TwoWay}"
                          DataContext="{Binding}"

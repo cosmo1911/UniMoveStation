@@ -235,7 +235,7 @@
     <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
     <Compile Include="Utilities\InputBindingsManager.cs" />
     <Compile Include="Utilities\ObservableConcurrentDictionary.cs" />
-    <Compile Include="Utilities\Utils.cs" />
+    <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="ViewModel\MotionControllersViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />

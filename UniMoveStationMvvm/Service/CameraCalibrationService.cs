@@ -77,9 +77,9 @@ namespace UniMoveStation.Service
             _dialog.DataContext = this;
             _owningWindow = window;
 
-            _ctsCameraCalibration = new CancellationTokenSource();
-
             await _owningWindow.ShowMetroDialogAsync(_dialog);
+
+            _ctsCameraCalibration = new CancellationTokenSource();
             CancellationToken token = _ctsCameraCalibration.Token;
             _capture.ImageGrabbed += _Capture_ImageGrabbed;
             _capture.Start();

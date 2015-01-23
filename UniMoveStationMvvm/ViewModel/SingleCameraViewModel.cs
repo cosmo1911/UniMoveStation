@@ -421,6 +421,7 @@ namespace UniMoveStation.ViewModel
 
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
             List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
+            IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
 
             int cameraCount = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
             MCvPoint3D64f[] points = new MCvPoint3D64f[mcvms.Count];
@@ -434,7 +435,7 @@ namespace UniMoveStation.ViewModel
 
             if (mcvms.Count == 0) return;
 
-            foreach (SingleCameraViewModel scvm in scvms)
+            foreach (SingleCameraViewModel scvm in orderedScvms)
             {
                 //switch (scvm.Camera.TrackerId)
                 //{
@@ -456,12 +457,12 @@ namespace UniMoveStation.ViewModel
                 //        break;
                 //}
                 //SimpleIoc.Default.GetInstance<SettingsViewModel>().DoSaveCalibration(scvm.Camera);
-                imagePoints[scvm.Camera.TrackerId] = new MCvPoint2D64f[mcvms.Count];
-                visibility[scvm.Camera.TrackerId] = new int[mcvms.Count];
-                cameraMatrix[scvm.Camera.TrackerId] = scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix;
-                R[scvm.Camera.TrackerId] = scvm.Camera.Calibration.RotationMatrix;
-                T[scvm.Camera.TrackerId] = scvm.Camera.Calibration.TranslationVector;
-                distCoefficients[scvm.Camera.TrackerId] = scvm.Camera.Calibration.IntrinsicParameters.DistortionCoeffs;
+                imagePoints[scvm.Camera.Calibration.Position] = new MCvPoint2D64f[mcvms.Count];
+                visibility[scvm.Camera.Calibration.Position] = new int[mcvms.Count];
+                cameraMatrix[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix;
+                R[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.RotationMatrix;
+                T[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.TranslationVector;
+                distCoefficients[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.IntrinsicParameters.DistortionCoeffs;
 
                 foreach (MotionControllerViewModel mcvm in mcvms)
                 {
@@ -469,22 +470,24 @@ namespace UniMoveStation.ViewModel
                     double x = mcvm.MotionController.RawPosition[scvm.Camera].x;
                     double y = mcvm.MotionController.RawPosition[scvm.Camera].y;
                     double z = mcvm.MotionController.RawPosition[scvm.Camera].z;
-                    imagePoints[scvm.Camera.TrackerId][mcvm.MotionController.Id] = new MCvPoint2D64f(x, y);
+                    if (x == 0 && y == 0 && z == 0) return;
 
-                    if (x == 0 && y == 0) visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 0;
+                    imagePoints[scvm.Camera.Calibration.Position][mcvm.MotionController.Id] = new MCvPoint2D64f(x, y);
+
+                    if (x == 0 && y == 0) visibility[scvm.Camera.Calibration.Position][mcvm.MotionController.Id] = 0;
                     else
                     {
-                        visibility[scvm.Camera.TrackerId][mcvm.MotionController.Id] = 1;
+                        visibility[scvm.Camera.Calibration.Position][mcvm.MotionController.Id] = 1;
 
-                        if (scvm.Camera.TrackerId == 0)
+                        if (scvm.Camera.Calibration.Position == 0)
                         {
                             points[mcvm.MotionController.Id] = new MCvPoint3D64f(0, 0, z);
                         }
-                        else if(visibility[scvm.Camera.TrackerId - 1][mcvm.MotionController.Id] == 0)
+                        else if (visibility[scvm.Camera.Calibration.Position - 1][mcvm.MotionController.Id] == 0)
                         {
                             points[mcvm.MotionController.Id] = new MCvPoint3D64f(0, 0, z);
                         }
-                        else if (visibility[scvm.Camera.TrackerId - 1][mcvm.MotionController.Id] == 1)
+                        else if (visibility[scvm.Camera.Calibration.Position - 1][mcvm.MotionController.Id] == 1)
                         {
                             if (points[mcvm.MotionController.Id].x == 0) points[mcvm.MotionController.Id].x = z;
                         }
@@ -493,48 +496,20 @@ namespace UniMoveStation.ViewModel
             }
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
+            Console.WriteLine("Input: ({0}, {1}, {2})", points[0].x, points[0].y, points[0].z);
             Emgu.CV.LevMarqSparse.BundleAdjust(points, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
+            Console.WriteLine("Output: ({0}, {1}, {2})\n", points[0].x, points[0].y, points[0].z);
             //sw.Stop();
             //ConsoleService.WriteLine("bundle adjust: " + sw.Elapsed.ToString());
 
             foreach (SingleCameraViewModel scvm in scvms)
             {
-                scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[scvm.Camera.TrackerId];
-                scvm.Camera.Calibration.RotationMatrix = R[scvm.Camera.TrackerId];
-                scvm.Camera.Calibration.TranslationVector = T[scvm.Camera.TrackerId];
-                scvm.Camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[scvm.Camera.TrackerId];
+                scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[scvm.Camera.Calibration.Position];
+                scvm.Camera.Calibration.RotationMatrix = R[scvm.Camera.Calibration.Position];
+                scvm.Camera.Calibration.TranslationVector = T[scvm.Camera.Calibration.Position];
+                scvm.Camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[scvm.Camera.Calibration.Position];
                 scvm.Camera.Calibration.Point = new Vector3((float)points[0].x, (float)points[0].y, (float) points[0].z);
             }
-        }
-
-        Matrix<double> GetTranslationVector(double x, double y, double z)
-        {
-            double[,] data = new double[3, 1];
-
-            data[0, 0] = x;
-            data[1, 0] = y;
-            data[2, 0] = z;
-
-            return new Matrix<double>(data);
-        }
-
-        Matrix<double> GetYRotationMatrix(float angle)
-        {
-            Matrix<double> rotationMatrix = new Matrix<double>(3, 3);
-
-            rotationMatrix[0, 0] = Mathf.Cos(angle);
-            rotationMatrix[0, 1] = 0;
-            rotationMatrix[0, 2] = Mathf.Sin(angle);
-
-            rotationMatrix[1, 0] = 0;
-            rotationMatrix[1, 1] = 1;
-            rotationMatrix[1, 2] = 0;
-
-            rotationMatrix[2, 0] = -Mathf.Sin(angle);
-            rotationMatrix[2, 1] = 0;
-            rotationMatrix[2, 2] = Mathf.Cos(angle);
-
-            return rotationMatrix;
         }
 
         private async void StartUpdateTask()
