@@ -59,7 +59,7 @@ namespace UniMoveStation.ViewModel
         {
             _motionController = mc;
             _motionControllerService = mcs;
-            Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Blue, PaletteSchemaType.Analogous, 1);
+            Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Red, PaletteSchemaType.Analogous, 1);
 
             MotionControllerService.Initialize(MotionController);
             DoSelectColor(Palette);

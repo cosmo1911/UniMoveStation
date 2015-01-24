@@ -21,6 +21,7 @@ namespace UniMoveStation.Model
         private double? _x;
         private double? _y;
         private bool _loadCamerasOnStartUp;
+        private bool _loadControllersOnStartUp;
 
         public SettingsModel()
         {
@@ -29,6 +30,7 @@ namespace UniMoveStation.Model
             X = 0;
             Y = 0;
             LoadCamerasOnStartUp = true;
+            LoadControllersOnStartUp = true;
         }
 
         [JsonProperty]
@@ -66,7 +68,14 @@ namespace UniMoveStation.Model
             set { Set(() => LoadCamerasOnStartUp, ref _loadCamerasOnStartUp, value); }
         }
 
-        // TODO
+        [JsonProperty]
+        public bool LoadControllersOnStartUp
+        {
+            get { return _loadControllersOnStartUp; }
+            set { Set(() => LoadControllersOnStartUp, ref _loadControllersOnStartUp, value); }
+        }
+
+        // TODO or custom validation rule
         string IDataErrorInfo.this[string columnName]
         {
             get

@@ -132,15 +132,6 @@
                             Command="{Binding CalibrateCameraCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
                             />
-                    
-                    <Button Content="Bundle Adjust"
-                            Margin="4"
-                            Command="{Binding BundleAdjustCommand}"
-                            />
-                    <TextBox Margin="4"
-                             IsReadOnly="True"
-                             Text="{Binding Camera.Calibration.Point, Converter={StaticResource Vector3ToStringConverter}}"
-                             />
                 </StackPanel>
 
                 <StackPanel Grid.Row="0" 

@@ -73,7 +73,7 @@ namespace UniMoveStation.ViewModel
             }
             else
             {
-                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadControllersOnStartUp)
                 {
                     AddAvailableMotionControllers();
                 }

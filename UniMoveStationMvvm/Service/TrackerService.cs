@@ -156,17 +156,26 @@ namespace UniMoveStation.Service
                 }
                 //retrieve and convert image frame
                 IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
-                MIplImage rgb32Image = new MIplImage();
-                rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
+                MIplImage rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
+                Image<Bgr, Byte> img = new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
+
+                // draw center of image for calibration
+                //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
+
+
+                
+                BitmapSource bitmapSource = Emgu.CV.WPF.BitmapSourceConvert.ToBitmapSource(img);
                 //_camera.ImageSource = (BitmapSource) Emgu.CV.WPF.BitmapSourceConvert.ToBitmapSource(new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData)).GetAsFrozen();
                 //display image
-                System.Drawing.Bitmap bitmap = MIplImagePointerToBitmap(rgb32Image);
-                BitmapSource bitmapSource = loadBitmap(bitmap);
+                //System.Drawing.Bitmap bitmap = MIplImagePointerToBitmap(rgb32Image);
+                //BitmapSource bitmapSource = loadBitmap(bitmap);
                 bitmapSource.Freeze();
                 _camera.ImageSource = bitmapSource;
             }
         }
         #endregion
+
+        
 
         #region Tracker
         public void UpdateTracker()
@@ -289,7 +298,8 @@ namespace UniMoveStation.Service
                         float fx = 0.0f, fy = 0.0f, fz = 0.0f;
                         PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
                         PsMoveApi.psmove_fusion_get_position(_camera.Fusion, mc.Handle, out fx, out fy, out fz);
-
+                        rx = (float)((int) (rx + 0.5));
+                        ry = (float)((int) (ry + 0.5));
                         //Console.WriteLine(rx + " " + ry + " " + rrad);
 
                         float rz = PsMoveApi.psmove_tracker_distance_from_radius(_camera.Handle, rrad);

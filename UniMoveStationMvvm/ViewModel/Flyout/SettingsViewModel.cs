@@ -168,7 +168,8 @@ namespace UniMoveStation.ViewModel.Flyout
                     Newtonsoft.Json.Formatting.Indented, 
                     new JsonIntrinsicCameraParametersConverter(),
                     new JsonExtrinsicCameraParametersConverter(),
-                    new JsonMatrixConverter());
+                    new JsonMatrixConverter(),
+                    new JsonPointFConverter());
                 writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", camera.GUID), false);
                 writer.Write(json);
             }
@@ -228,7 +229,8 @@ namespace UniMoveStation.ViewModel.Flyout
                         fileContents,
                         new JsonIntrinsicCameraParametersConverter(),
                         new JsonExtrinsicCameraParametersConverter(),
-                        new JsonMatrixConverter());
+                        new JsonMatrixConverter(),
+                        new JsonPointFConverter());
 
                     reader.Close();
                 }

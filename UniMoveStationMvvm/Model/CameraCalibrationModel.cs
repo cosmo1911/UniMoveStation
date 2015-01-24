@@ -1,17 +1,13 @@
 ﻿using Emgu.CV;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Drawing;
 using UniMoveStation.Helper;
 using UnityEngine;
 
 namespace UniMoveStation.Model
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class CameraCalibrationModel : ViewModelBase
     {
@@ -26,6 +22,7 @@ namespace UniMoveStation.Model
         private Vector3 _point;
         private float _yAngle;
         private int _position;
+        private List<PointF> _correspondingPoints;
 
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationModel class.
@@ -36,12 +33,21 @@ namespace UniMoveStation.Model
             _currentMode = CameraCalibrationMode.SavingFrames;
             _intrinsicParameters = new IntrinsicCameraParameters();
             _translationVector = new Matrix<double>(3, 1);
+            _rotationMatrix = new Matrix<double>(3, 3);
+            _correspondingPoints = new List<PointF>();
         }
 
         public Vector3 Point
         {
             get { return _point; }
             set { Set(() => Point, ref _point, value); }
+        }
+
+        [JsonProperty]
+        public List<PointF> CorrespondingPoints
+        {
+            get { return _correspondingPoints; }
+            set { Set(() => CorrespondingPoints, ref _correspondingPoints, value); }
         }
 
         [JsonProperty]

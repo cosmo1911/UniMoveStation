@@ -9,12 +9,6 @@ using UniMoveStation.SharpMove;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class AddCameraViewModel : FlyoutBaseViewModel
     {
         private SingleCameraModel _newCamera;

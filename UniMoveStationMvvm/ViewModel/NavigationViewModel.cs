@@ -16,12 +16,6 @@ using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class NavigationViewModel : ViewModelBase
     {
         private int _lastSelectedIndex = 0;

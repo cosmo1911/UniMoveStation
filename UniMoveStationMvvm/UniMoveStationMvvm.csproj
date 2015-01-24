@@ -196,6 +196,7 @@
     <Compile Include="Helper\Converter\MatrixToStringConverter.cs" />
     <Compile Include="Helper\Converter\QuaternionToStringConverter.cs" />
     <Compile Include="Helper\Json\JsonExtrinsicCameraParametersConverter.cs" />
+    <Compile Include="Helper\Json\JsonPointFConverter.cs" />
     <Compile Include="Helper\Json\JsonMatrixConverter.cs" />
     <Compile Include="Helper\Json\JsonCameraCalibrationConverter.cs" />
     <Compile Include="Helper\Json\JsonCameraConverter.cs" />
@@ -248,6 +249,9 @@
     <Compile Include="ViewModel\NavigationViewModel.cs" />
     <Compile Include="ViewModel\ServerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\Dialog\FcpView.xaml.cs">
+      <DependentUpon>FcpView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MotionControllersView.xaml.cs">
       <DependentUpon>MotionControllersView.xaml</DependentUpon>
     </Compile>
@@ -296,6 +300,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Resource>
+    <Page Include="View\Dialog\FcpView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\MotionControllersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

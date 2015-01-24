@@ -22,7 +22,7 @@
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
-                
+                <!--Window Position-->
                 <Grid Margin="0 0 0 4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -60,7 +60,7 @@
                              utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                 </Grid>
-
+                <!--Window Size-->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -102,16 +102,40 @@
                              utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                 </Grid>
-
-                <CheckBox Grid.Row="2"
-                          Content="Load Cameras On Start Up"
-            	          IsChecked="{Binding Settings.LoadCamerasOnStartUp, UpdateSourceTrigger=PropertyChanged}"
-            	          FlowDirection="RightToLeft"
-            	          VerticalAlignment="Center" 
-                          Margin="0 4 0 4"
-                          HorizontalAlignment="Left"
-                          />
-
+                <!--Load Controllers on Start Up-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock VerticalAlignment="Center"
+                               Text="Load Controllers on Start Up"
+                               Margin="0 4 2 4"
+                               />
+                    <CheckBox Grid.Column="1"
+            	              IsChecked="{Binding Settings.LoadControllersOnStartUp, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Center"
+            	              VerticalAlignment="Center" 
+                              Margin="2 4 0 4"
+                              />
+                    <!--Load Cameras on Start Up-->
+                    <TextBlock Grid.Row="1"
+                               VerticalAlignment="Center"
+                               Text="Load Cameras on Start Up"
+                               Margin="0 4 2 4"
+                               />
+                    <CheckBox Grid.Row="1"
+                              Grid.Column="1"
+            	              IsChecked="{Binding Settings.LoadCamerasOnStartUp, UpdateSourceTrigger=PropertyChanged}"
+                              HorizontalAlignment="Center"
+            	              VerticalAlignment="Center" 
+                              Margin="2 4 0 4"
+                              />
+                </Grid>
 
             </StackPanel>
             
