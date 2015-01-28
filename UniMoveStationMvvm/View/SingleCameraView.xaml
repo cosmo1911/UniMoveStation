@@ -127,6 +127,45 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Debug"
+                                           Margin="4"
+                                           x:Name="switch_debug"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Debug}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_debug}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotX, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            />
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotY, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            />
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotZ, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            />
                     <Button Content="Calibrate"
                             Margin="4"
                             Command="{Binding CalibrateCameraCommand}"

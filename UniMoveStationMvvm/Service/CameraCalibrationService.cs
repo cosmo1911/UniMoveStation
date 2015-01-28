@@ -72,50 +72,47 @@ namespace UniMoveStation.Service
 
         public async void ShowDialog(MetroWindow window)
         {
-            _capture = new Capture(Camera.TrackerId);
             _dialog = new CameraCalibrationView(window);
             _dialog.DataContext = this;
             _owningWindow = window;
 
             await _owningWindow.ShowMetroDialogAsync(_dialog);
 
-            _ctsCameraCalibration = new CancellationTokenSource();
-            CancellationToken token = _ctsCameraCalibration.Token;
-            _capture.ImageGrabbed += _Capture_ImageGrabbed;
-            _capture.Start();
-            try
+            
+            // Can only access the first camera without CL Eye SDK
+            if(Camera.TrackerId == 0)
             {
-                await Task.Run(() =>
+                _capture = new Capture(Camera.TrackerId);
+                _ctsCameraCalibration = new CancellationTokenSource();
+                CancellationToken token = _ctsCameraCalibration.Token;
+
+                _capture.ImageGrabbed += _Capture_ImageGrabbed;
+                _capture.Start();
+                try
                 {
-                    while (!token.IsCancellationRequested)
+                    await Task.Run(() =>
                     {
-                        if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
+                        while (!token.IsCancellationRequested)
                         {
+                            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
+                            {
 
+                            }
                         }
-                    }
-                });
-            }
-            catch (OperationCanceledException)
-            {
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-            }
-            finally
-            {
-                _capture.Stop();
-                _capture.Dispose();
-            }
-
-            if (_dialog.IsVisible)
-            {
-                await _dialog.RequestCloseAsync();
-                if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
+                    });
+                }
+                catch (OperationCanceledException)
                 {
-                    await _owningWindow.ShowMessageAsync("Camera Calibration", "Calibration successful.");
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+                finally
+                {
+                    _capture.Stop();
+                    _capture.Dispose();
                 }
             }
         }
@@ -250,7 +247,7 @@ namespace UniMoveStation.Service
                 return _startCommand
                     ?? (_startCommand = new RelayCommand(
                         DoStart, 
-                        () => Camera.Calibration.StartFlag == false));
+                        () => Camera.Calibration.StartFlag == false && Camera.TrackerId == 0));
             }
         }
 

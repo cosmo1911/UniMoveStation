@@ -143,7 +143,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
-                <!--Projection Matrix-->
+                <!--Projection Matrix--><!--
                 <DataGridTemplateColumn Header="Projection"
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
@@ -162,7 +162,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!--Model View Matrix-->
+                --><!--Model View Matrix--><!--
                 <DataGridTemplateColumn Header="Modelview Matrix"
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
@@ -179,7 +179,7 @@
                             </ListBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
             </DataGrid.Columns>
         </DataGrid>
 

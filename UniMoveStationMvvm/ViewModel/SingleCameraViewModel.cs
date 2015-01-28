@@ -36,11 +36,9 @@ namespace UniMoveStation.ViewModel
         private RelayCommand<bool> _toggleCameraCommand;
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
+        private RelayCommand<bool> _toggleDebugCommand;
         private RelayCommand<ListBox> _applySelectionCommand;
         private RelayCommand<ListBox> _cancelSelectionCommand;
-
-        List<PointF> points1;
-        List<PointF> points2;
 
         public SingleCameraModel Camera
         {
@@ -101,9 +99,6 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send<AddCameraMessage>(new AddCameraMessage(Camera));
             SimpleIoc.Default.GetInstance<SettingsViewModel>().LoadCalibration(Camera);
-
-            points1 = new List<PointF>();
-            points2 = new List<PointF>();
         }
 
         /// <summary>
@@ -197,9 +192,7 @@ namespace UniMoveStation.ViewModel
             get
             {
                 return _calibrateCameraCommand
-                    ?? (_calibrateCameraCommand = new RelayCommand<MetroWindow>(
-                        DoCalibrateCamera, 
-                        (window) => Camera.TrackerId == 0));
+                    ?? (_calibrateCameraCommand = new RelayCommand<MetroWindow>(DoCalibrateCamera));
             }
         }
 
@@ -212,6 +205,18 @@ namespace UniMoveStation.ViewModel
             {
                 return _toggleAnnotateCommand
                     ?? (_toggleAnnotateCommand = new RelayCommand<bool>(DoToggleAnnotate));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ToggleDebugCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleDebugCommand
+        {
+            get
+            {
+                return _toggleDebugCommand
+                    ?? (_toggleDebugCommand = new RelayCommand<bool>(DoToggleDebug));
             }
         }
 
@@ -273,6 +278,12 @@ namespace UniMoveStation.ViewModel
         {
             Camera.Annotate = annotate;
             ConsoleService.WriteLine("Annotate: " + annotate);
+        }
+
+        public void DoToggleDebug(bool debug)
+        {
+            Camera.Debug = debug;
+            ConsoleService.WriteLine("Debug: " + debug);
         }
 
         public void DoToggleCamera(bool enabled)

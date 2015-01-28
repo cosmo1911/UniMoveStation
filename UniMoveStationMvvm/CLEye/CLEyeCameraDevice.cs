@@ -501,8 +501,8 @@ namespace CLEyeMulticam
 
                     Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
                     {
-                        if (BitmapReady != null) BitmapReady(this, null);
                         BitmapSource.Invalidate();
+                        if (BitmapReady != null) BitmapReady(this, null);
                     }, null);
                     i++;
                 }

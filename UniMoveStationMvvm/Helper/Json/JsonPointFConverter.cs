@@ -40,9 +40,8 @@ namespace UniMoveStation.Helper
             else
             {
                 PointF point = (PointF) value;
-
                 JObject o = new JObject();
-                o.Add("Data", new JArray(point.X, point.Y));
+                o.Add("PointF", new JArray(point.X, point.Y));
 
                 o.WriteTo(writer);
             }
@@ -53,7 +52,7 @@ namespace UniMoveStation.Helper
 
             JObject jObject = JObject.Load(reader);
 
-            float[] data = jObject["Data"].ToObject<float[]>();
+            float[] data = jObject["PointF"].ToObject<float[]>();
 
 
             return new PointF(data[0], data[1]);

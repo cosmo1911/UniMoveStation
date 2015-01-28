@@ -14,8 +14,8 @@
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
-             d:DesignWidth="856"
-             d:DesignHeight="480"
+             d:DesignWidth="1280"
+             d:DesignHeight="720"
              Margin="4">
 
     <UserControl.Resources>
@@ -139,55 +139,74 @@
                         />
             </UniformGrid>
 
-                <controls:ToggleSwitch Header="Cameras"
-                                       Margin="4"
-                                       x:Name="switch_cameras"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       IsChecked="{Binding ShowImage}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
-                                                 CommandParameter="{Binding IsChecked, ElementName=switch_cameras}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </controls:ToggleSwitch>
-                <controls:ToggleSwitch Header="Tracking"
-                                       Margin="4"
-                                       x:Name="switch_tracking"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       IsChecked="{Binding Tracking}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
-                                                 CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"
-                                                 />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </controls:ToggleSwitch>
-                <controls:ToggleSwitch Header="Annotate"
-                                       Margin="4"
-                                       x:Name="switch_annotate"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       IsChecked="{Binding Annotate}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
-                                                 CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"
-                                                 />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </controls:ToggleSwitch>
-
+            <controls:ToggleSwitch Header="Cameras"
+                                   Margin="4"
+                                   x:Name="switch_cameras"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding ShowImage}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
+                                             CommandParameter="{Binding IsChecked, ElementName=switch_cameras}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:ToggleSwitch>
+            <controls:ToggleSwitch Header="Tracking"
+                                   Margin="4"
+                                   x:Name="switch_tracking"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding Tracking}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
+                                                CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"
+                                                />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:ToggleSwitch>
+            <controls:ToggleSwitch Header="Annotate"
+                                   Margin="4"
+                                   x:Name="switch_annotate"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding Annotate}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
+                                             CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"
+                                             />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:ToggleSwitch>
+            <controls:ToggleSwitch Header="Debug"
+                                   Margin="4"
+                                   x:Name="switch_debug"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding Debug}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
+                                             CommandParameter="{Binding IsChecked, ElementName=switch_debug}"
+                                             />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:ToggleSwitch>
+            
             <Button Content="FCP"
                     Margin="4"
                     Command="{Binding FindCorrespondingPointsCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                    />
+            <Button Content="Fundamental"
+                    Margin="4"
+                    Command="{Binding FindFundamentalMatricesCommand}"
                     />
             <Button Content="Bundle Adjust"
                     Margin="4"

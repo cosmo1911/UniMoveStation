@@ -1,6 +1,8 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,8 @@ namespace UniMoveStation.Service
         #region Update Task
         private async void StartUpdateTask()
         {
+            if (_updateTask != null && _updateTask.Status == TaskStatus.Running) return;
+
             _ctsUpdate = new CancellationTokenSource();
             CancellationToken token = _ctsUpdate.Token;
             StartTracker();
@@ -145,24 +149,131 @@ namespace UniMoveStation.Service
             }
         }
 
+        private void DrawCubeToImage(Image<Bgr, byte> img)
+        {
+            if (_camera.Calibration.ObjectPointsProjected == null 
+                || _camera.Calibration.ObjectPointsProjected.Length != 8) return;
+            
+
+            System.Drawing.Point[] points = Array.ConvertAll<PointF, System.Drawing.Point>(
+                _camera.Calibration.ObjectPointsProjected, 
+                Utils.PointFtoPoint);
+
+            System.Drawing.Point[] cubeFront = new System.Drawing.Point[4] 
+                {
+                   points[0],
+                   points[1],
+                   points[2],
+                   points[3],
+                };
+
+            System.Drawing.Point[] cubeBack = new System.Drawing.Point[4]
+                {
+                   points[4],
+                   points[5],
+                   points[6],
+                   points[7],
+                };
+
+            System.Drawing.Point[] cubeLeft = new System.Drawing.Point[4]
+                {
+                   points[0],
+                   points[3],
+                   points[4],
+                   points[7],
+                };
+
+            System.Drawing.Point[] cubeRight = new System.Drawing.Point[4]
+                {
+                   points[1],
+                   points[2],
+                   points[5],
+                   points[6],
+                };
+
+            switch(_camera.Calibration.Position)
+            {
+                case 0:
+
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    break;
+                case 1:
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    break;
+                case 2:
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    break;
+                case 3:
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    break;
+            }
+            
+        }
+
         public void UpdateImage()
         {
             if (_camera.ShowImage && _camera.Handle != IntPtr.Zero)
             {
                 //display useful information
-                if (_camera.Annotate)
-                {
-                    PsMoveApi.psmove_tracker_annotate(_camera.Handle);
-                }
+                if (_camera.Annotate) PsMoveApi.psmove_tracker_annotate(_camera.Handle);
                 //retrieve and convert image frame
                 IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
                 MIplImage rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
                 Image<Bgr, Byte> img = new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
 
-                // draw center of image for calibration
-                //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
+                if (_camera.Debug) DrawCubeToImage(img);
 
+                if(true == false)
+                {
+                    // draw center of image for calibration
+                    img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
 
+                    List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
+                    List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
+                    IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy((view) => view.Camera.Calibration.Position);
+                    
+                    foreach (SingleCameraViewModel scvm in orderedScvms)
+                    {
+                        Bgr bgr = new Bgr();
+                        if (scvm.Camera.Calibration.Position > 1 || _camera.Calibration.Position > 1) continue;
+                        switch (scvm.Camera.Calibration.Position)
+                        {
+                            case 0:
+                                bgr = new Bgr(255, 0, 0);
+                                break;
+                            case 1:
+                                bgr = new Bgr(0, 255, 0);
+                                break;
+                            case 2:
+                                bgr = new Bgr(0, 0, 255);
+                                break;
+                            case 3:
+                                bgr = new Bgr(255, 255, 0);
+                                break;
+                        }
+
+                        foreach (PointF point in scvm.Camera.Calibration.CorrespondingPoints)
+                        {
+                            img.Draw(new Cross2DF(point, 7, 7), bgr, 1);
+
+                            if (scvm.Camera.Calibration.Position == _camera.Calibration.Position) continue;
+                            img.Draw(new LineSegment2DF(point, _camera.Calibration.CorrespondingPoints[scvm.Camera.Calibration.CorrespondingPoints.IndexOf(point)]), bgr, 1);
+
+                        }
+                    }
+                }
                 
                 BitmapSource bitmapSource = Emgu.CV.WPF.BitmapSourceConvert.ToBitmapSource(img);
                 //_camera.ImageSource = (BitmapSource) Emgu.CV.WPF.BitmapSourceConvert.ToBitmapSource(new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData)).GetAsFrozen();
@@ -174,8 +285,6 @@ namespace UniMoveStation.Service
             }
         }
         #endregion
-
-        
 
         #region Tracker
         public void UpdateTracker()
@@ -302,8 +411,7 @@ namespace UniMoveStation.Service
                         ry = (float)((int) (ry + 0.5));
                         //Console.WriteLine(rx + " " + ry + " " + rrad);
 
-                        float rz = PsMoveApi.psmove_tracker_distance_from_radius(_camera.Handle, rrad);
-                        rawPosition = new Vector3(rx, ry, rz);
+                        rawPosition = new Vector3(rx, ry, rrad);
                         fusionPosition = new Vector3(fx, fy, fz);
                         //#if YISUP
                         //vec.x = -vec.x;
@@ -331,15 +439,40 @@ namespace UniMoveStation.Service
 
                         //mc.m_position = vec;
 
-                        for (int row = 0; row < 4; row++)
-                        {
-                            for (int col = 0; col < 4; col++)
-                            {
-                                model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
-                            }
-                        }
+                        //for (int row = 0; row < 4; row++)
+                        //{
+                        //    for (int col = 0; col < 4; col++)
+                        //    {
+                        //        model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
+                        //    }
+                        //}
 
-                        
+                        PointF[] imgPts = Utils.GetImagePointsF(mc.RawPosition[_camera]);
+
+                        ExtrinsicCameraParameters ex = Emgu.CV.CameraCalibration.FindExtrinsicCameraParams2(
+                            _camera.Calibration.ObjectPoints2D,
+                            imgPts,
+                            _camera.Calibration.IntrinsicParameters);
+
+                        RotationVector3D rot = new RotationVector3D();
+                        rot.RotationMatrix = ex.RotationVector.RotationMatrix;
+                        rot.RotationMatrix *= Utils.GetXRotationMatrix(_camera.Calibration.RotX);
+                        rot.RotationMatrix *= Utils.GetYRotationMatrix(_camera.Calibration.RotY);
+                        rot.RotationMatrix *= Utils.GetZRotationMatrix(_camera.Calibration.RotZ + _camera.Calibration.Position * 90);
+
+                        _camera.Calibration.ExtrinsicParameters[mc.Id] = new ExtrinsicCameraParameters(rot, ex.TranslationVector);
+
+                        //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
+                        //Emgu.CV.CvInvoke.cvInvert(rot.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
+
+                        //Matrix<double> rotInv = new Matrix<double>(3, 3, dstPtr);
+
+                       
+
+                        _camera.Calibration.ObjectPointsProjected = Emgu.CV.CameraCalibration.ProjectPoints(
+                            _camera.Calibration.ObjectPoints3D,
+                            _camera.Calibration.ExtrinsicParameters[mc.Id],
+                            _camera.Calibration.IntrinsicParameters);
                     }
                     mc.TrackerStatus[_camera] = trackerStatus;
                     mc.RawPosition[_camera] = rawPosition;
@@ -348,114 +481,6 @@ namespace UniMoveStation.Service
                 }
             }
         } // ProcessData
-        #endregion
-        #region Tools
-        [DllImport("gdi32")]
-        static extern int DeleteObject(IntPtr o);
-
-        /// <summary>
-        /// http://stackoverflow.com/a/1118557
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static BitmapSource loadBitmap(System.Drawing.Bitmap source)
-        {
-            IntPtr ip = source.GetHbitmap();
-            BitmapSource bs = null;
-            try
-            {
-                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    ip,
-                    IntPtr.Zero, 
-                    Int32Rect.Empty,
-                    System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
-            finally
-            {
-                DeleteObject(ip);
-            }
-            
-            return bs;
-        }
-
-        /// <summary>
-        /// http://www.cnblogs.com/xrwang/archive/2010/01/26/TheInteractionOfOpenCv-EmguCvANDDotNet.html
-        /// </summary>
-        /// <param name="ptr"></param>
-        /// <returns></returns>
-        public static Bitmap MIplImagePointerToBitmap(MIplImage image)
-        {
-            
-            PixelFormat pixelFormat; // pixel format
-            string unsupportedDepth = "Unsupported pixel bit depth IPL_DEPTH";
-            string unsupportedChannels = "The number of channels is not supported (only 1,2,4 channels)";
-            switch (image.nChannels)
-            {
-                case 1:
-                    switch (image.depth)
-                    {
-                        case IPL_DEPTH.IPL_DEPTH_8U:
-                            pixelFormat = PixelFormat.Format8bppIndexed;
-                            break;
-                        case IPL_DEPTH.IPL_DEPTH_16U:
-                            pixelFormat = PixelFormat.Format16bppGrayScale;
-                            break;
-                        default:
-                            throw new NotImplementedException(unsupportedDepth);
-                    }
-                    break;
-                case 3:
-                    switch (image.depth)
-                    {
-                        case IPL_DEPTH.IPL_DEPTH_8U:
-                            pixelFormat = PixelFormat.Format24bppRgb;
-                            break;
-                        case IPL_DEPTH.IPL_DEPTH_16U:
-                            pixelFormat = PixelFormat.Format48bppRgb;
-                            break;
-                        default:
-                            throw new NotImplementedException(unsupportedDepth);
-                    }
-                    break;
-                case 4:
-                    switch (image.depth)
-                    {
-                        case IPL_DEPTH.IPL_DEPTH_8U:
-                            pixelFormat = PixelFormat.Format32bppArgb;
-                            break;
-                        case IPL_DEPTH.IPL_DEPTH_16U:
-                            pixelFormat = PixelFormat.Format64bppArgb;
-                            break;
-                        default:
-                            throw new NotImplementedException(unsupportedDepth);
-                    }
-                    break;
-                default:
-                    throw new NotImplementedException(unsupportedChannels);
-
-            }
-            Bitmap bitmap = new Bitmap(image.width, image.height, image.widthStep, pixelFormat, image.imageData);
-            // For grayscale images, but also to modify the color palette
-            if (pixelFormat == PixelFormat.Format8bppIndexed)
-                SetColorPaletteOfGrayscaleBitmap(bitmap);
-            return bitmap;
-        }
-
-        public static void SetColorPaletteOfGrayscaleBitmap(Bitmap bitmap)
-        {
-            PixelFormat pixelFormat = bitmap.PixelFormat;
-            if (pixelFormat == PixelFormat.Format8bppIndexed)
-            {
-                ColorPalette palette = bitmap.Palette;
-                for (int i = 0; i < palette.Entries.Length; i++)
-                    palette.Entries[i] = System.Drawing.Color.FromArgb(255, i, i, i);
-                bitmap.Palette = palette;
-            }
-        }
         #endregion
     } // TrackerService
 } // Namespace

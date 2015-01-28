@@ -22,6 +22,7 @@ namespace UniMoveStation.Model
         private string _guid = "";
         private bool _showImage = false;
         private bool _tracking = false;
+        private bool _debug = false;
         private BitmapSource _imageSource;
         private IntPtr _handle;
         private IntPtr _fusion;
@@ -55,6 +56,12 @@ namespace UniMoveStation.Model
         {
             get { return _annotate; }
             set { Set(() => Annotate, ref _annotate, value); }
+        }
+
+        public bool Debug
+        {
+            get { return _debug; }
+            set { Set(() => Debug, ref _debug, value); }
         }
 
         public int TrackerId
