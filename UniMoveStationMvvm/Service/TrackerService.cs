@@ -85,10 +85,12 @@ namespace UniMoveStation.Service
             catch(OperationCanceledException ex)
             {
                 Console.WriteLine(ex.StackTrace);
+                Stop();
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.StackTrace);
+                Stop();
             }
         }
 
@@ -233,12 +235,13 @@ namespace UniMoveStation.Service
                 MIplImage rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
                 Image<Bgr, Byte> img = new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
 
+
                 if (_camera.Debug) DrawCubeToImage(img);
 
-                if(true == false)
+                if(true)
                 {
                     // draw center of image for calibration
-                    img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
+                    //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
 
                     List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
                     List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
@@ -246,31 +249,44 @@ namespace UniMoveStation.Service
                     
                     foreach (SingleCameraViewModel scvm in orderedScvms)
                     {
-                        Bgr bgr = new Bgr();
-                        if (scvm.Camera.Calibration.Position > 1 || _camera.Calibration.Position > 1) continue;
-                        switch (scvm.Camera.Calibration.Position)
+                        if (scvm.Camera.Calibration.Position > 0) continue;
+                        foreach (SingleCameraViewModel scvm2 in orderedScvms)
                         {
-                            case 0:
-                                bgr = new Bgr(255, 0, 0);
-                                break;
-                            case 1:
-                                bgr = new Bgr(0, 255, 0);
-                                break;
-                            case 2:
-                                bgr = new Bgr(0, 0, 255);
-                                break;
-                            case 3:
-                                bgr = new Bgr(255, 255, 0);
-                                break;
-                        }
+                            if(scvm.Camera.Calibration.ObjectPointsProjected == null || scvm2.Camera.Calibration.ObjectPointsProjected == null) continue;
+                            else if (scvm.Camera.Calibration.Position == scvm2.Camera.Calibration.Position) continue;
+                            else if (scvm.Camera.Calibration.Position > 1) continue;
 
-                        foreach (PointF point in scvm.Camera.Calibration.CorrespondingPoints)
-                        {
-                            img.Draw(new Cross2DF(point, 7, 7), bgr, 1);
+                            IntPtr points1Ptr = Utils.CreatePointListPointer(scvm.Camera.Calibration.ObjectPointsProjected);
+                            IntPtr points2Ptr = Utils.CreatePointListPointer(scvm2.Camera.Calibration.ObjectPointsProjected);
 
-                            if (scvm.Camera.Calibration.Position == _camera.Calibration.Position) continue;
-                            img.Draw(new LineSegment2DF(point, _camera.Calibration.CorrespondingPoints[scvm.Camera.Calibration.CorrespondingPoints.IndexOf(point)]), bgr, 1);
+                            Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
 
+                            IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
+                            Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
+                            
+                            Matrix<double> lines1 = new Matrix<double>(8, 3);
+                            Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix.Ptr, lines1.Ptr);
+
+                            Matrix<double> lines2 = new Matrix<double>(8, 3);
+                            Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix.Ptr, lines2.Ptr);
+
+                            for(int i = 0; i < scvm.Camera.Calibration.ObjectPointsProjected.Length; i++)
+                            {
+                                System.Drawing.Point[] points = new System.Drawing.Point[2]
+                                {
+                                    new System.Drawing.Point(0, (int) -(lines2[i, 2]/lines2[i, 1])),
+                                    new System.Drawing.Point(img.Cols, (int) (-(lines2[i, 2] + lines2[i, 0] * img.Cols) / lines2[i, 1]))
+                                };
+                                img.DrawPolyline(points, false, new Bgr(255, 255, 0), 1);
+
+                                points = new System.Drawing.Point[2]
+                                {
+                                    new System.Drawing.Point(0, (int) -(lines1[i, 2]/lines1[i, 1])),
+                                    new System.Drawing.Point(img.Cols, (int) (-(lines1[i, 2] + lines1[i, 0] * img.Cols) / lines1[i, 1]))
+                                };
+                                img.DrawPolyline(points, false, new Bgr(255, 0, 255), 1);
+                            }
+                            continue;
                         }
                     }
                 }
@@ -291,14 +307,22 @@ namespace UniMoveStation.Service
         {
             if (_camera.Handle != IntPtr.Zero && !_ctsUpdate.IsCancellationRequested)
             {
-                PsMoveApi.psmove_tracker_update_image(_camera.Handle);
-                foreach (MotionControllerModel mc in _camera.Controllers)
+                try
                 {
-                    if (mc.Tracking[_camera])
+                    PsMoveApi.psmove_tracker_update_image(_camera.Handle);
+                    foreach (MotionControllerModel mc in _camera.Controllers)
                     {
-                        PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
-                        ProcessData();
+                        if (mc.Tracking[_camera])
+                        {
+                            PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
+                            ProcessData();
+                        }
                     }
+                }
+                catch(AccessViolationException e)
+                {
+                    Console.WriteLine(e.StackTrace);
+                    Stop();
                 }
             }
         }
@@ -454,25 +478,47 @@ namespace UniMoveStation.Service
                             imgPts,
                             _camera.Calibration.IntrinsicParameters);
 
-                        RotationVector3D rot = new RotationVector3D();
-                        rot.RotationMatrix = ex.RotationVector.RotationMatrix;
-                        rot.RotationMatrix *= Utils.GetXRotationMatrix(_camera.Calibration.RotX);
-                        rot.RotationMatrix *= Utils.GetYRotationMatrix(_camera.Calibration.RotY);
-                        rot.RotationMatrix *= Utils.GetZRotationMatrix(_camera.Calibration.RotZ + _camera.Calibration.Position * 90);
+                        ex.RotationVector[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
+                        ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.Position * _camera.Calibration.YAngle);
+                        ex.RotationVector[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
 
-                        _camera.Calibration.ExtrinsicParameters[mc.Id] = new ExtrinsicCameraParameters(rot, ex.TranslationVector);
+
+                        _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
 
                         //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
-                        //Emgu.CV.CvInvoke.cvInvert(rot.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
+                        //Emgu.CV.CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
 
                         //Matrix<double> rotInv = new Matrix<double>(3, 3, dstPtr);
-
-                       
 
                         _camera.Calibration.ObjectPointsProjected = Emgu.CV.CameraCalibration.ProjectPoints(
                             _camera.Calibration.ObjectPoints3D,
                             _camera.Calibration.ExtrinsicParameters[mc.Id],
                             _camera.Calibration.IntrinsicParameters);
+
+
+                        Matrix<double> worldRotation = ex.RotationVector.Clone(); ;
+
+                        worldRotation[0, 0] -= (Math.PI / 180) * _camera.Calibration.RotX;
+                        worldRotation[1, 0] -= (Math.PI / 180) * (_camera.Calibration.RotY - _camera.Calibration.Position * _camera.Calibration.YAngle);
+                        worldRotation[2, 0] -= (Math.PI / 180) * _camera.Calibration.RotZ;
+                        
+                        Matrix<double> worldTranslation = Utils.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
+
+                        Matrix<double> p = new Matrix<double>(4, 1);
+                        p[0, 0] = ex.TranslationVector[0, 0];
+                        p[1, 0] = ex.TranslationVector[1, 0];
+                        p[2, 0] = ex.TranslationVector[2, 0];
+                        p[3, 0] = 1;
+
+                        Matrix<double> point = new Matrix<double>(4, 1);
+
+                        Matrix<double> dst = new Matrix<double>(3, 3);
+                        CvInvoke.cvRodrigues2(worldRotation.Ptr, dst, IntPtr.Zero);
+
+                        worldRotation = Utils.ConvertToHomogenous(dst);
+
+                        Matrix<double> m = worldRotation * worldTranslation * p;
+
                     }
                     mc.TrackerStatus[_camera] = trackerStatus;
                     mc.RawPosition[_camera] = rawPosition;

@@ -553,11 +553,9 @@ namespace UniMoveStation.ViewModel
 
             foreach(SingleCameraViewModel scvm in orderedScvms)
             {
-                if (scvm.Camera.Calibration.Position > 0) continue;
-
                 foreach (SingleCameraViewModel scvm2 in orderedScvms)
                 {
-                    if (scvm.Camera.Calibration.Position == scvm2.Camera.Calibration.Position || scvm2.Camera.Calibration.Position > 1) continue;
+                    if (scvm.Camera.Calibration.Position == scvm2.Camera.Calibration.Position) continue;
                     else
                     {
                         Matrix<double> fundamentalMatrix = FindFundamentalMatrix(scvm.Camera, scvm2.Camera);
@@ -573,13 +571,10 @@ namespace UniMoveStation.ViewModel
             IntPtr points1Ptr = Utils.CreatePointListPointer(Utils.NormalizePoints(cam1.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
             IntPtr points2Ptr = Utils.CreatePointListPointer(Utils.NormalizePoints(cam2.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
 
-            IntPtr statusPtr = CvInvoke.cvCreateMat(1, 8, MAT_DEPTH.CV_8U);
+            Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
+
             IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
-            Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrixPtr, CV_FM.CV_FM_7POINT, 3, 0.99, statusPtr);
-
-            Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3, fundamentalMatrixPtr);
-
-            Matrix<double> status = new Matrix<double>(1, 8, statusPtr);
+            Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
 
             return fundamentalMatrix;
         }

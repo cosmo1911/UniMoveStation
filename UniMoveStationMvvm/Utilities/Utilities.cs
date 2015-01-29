@@ -35,6 +35,62 @@ namespace UniMoveStation.Utilities
             return new System.Drawing.Point((int)(p.X + 0.5), (int)(p.Y + 0.5));
         }
 
+        public static Matrix<double> Get3DTranslationMatrix(double x, double y, double z)
+        {
+            Matrix<double> m = new Matrix<double>(4, 4);
+            m.SetIdentity();
+            m[0, 3] = x;
+            m[1, 3] = y;
+            m[2, 3] = z;
+
+            return m;
+        }
+
+        public static Matrix<double> ConvertToHomogenous(Matrix<double> matrix)
+        {
+            if(matrix.Rows < 2 || matrix.Cols < 2 || (matrix.Rows != matrix.Cols))
+            {
+                throw new ArgumentException("symmetric matrix > 1x1 expected");
+            }
+
+            Matrix<double> m = new Matrix<double>(matrix.Rows + 1, matrix.Cols + 1);
+            m.SetIdentity();
+            for(int row = 0; row < matrix.Rows; row++)
+            {
+                for (int col = 0; col < matrix.Cols; col++)
+                {
+                    m[row, col] = matrix[row, col];
+                }
+            }
+            return m;
+        }
+
+        public static Matrix<double> Get2DTranslationMatrix(double x, double y)
+        {
+            Matrix<double> m = new Matrix<double>(3, 3);
+            m.SetIdentity();
+            m[0, 3] = x;
+            m[1, 3] = y;
+
+            return m;
+        }
+
+        public static Matrix<double> Get3DTranslationMatrix(Matrix<double> translation)
+        {
+            if(translation.Cols == 1 && translation.Rows == 3)
+            {
+                return Get3DTranslationMatrix(translation[0, 0], translation[1, 0], translation[2, 0]);
+            }
+            else if(translation.Cols == 3 && translation.Rows == 1)
+            {
+                return Get3DTranslationMatrix(translation[0, 0], translation[0, 1], translation[0, 2]);
+            }
+            else
+            {
+                throw new ArgumentException("3x1 or 1x3 matrix expected");
+            }
+        }
+
         public static Matrix<double> GetXRotationMatrix(float degrees)
         {
             float rad = (float)(Math.PI / 180) * degrees;
