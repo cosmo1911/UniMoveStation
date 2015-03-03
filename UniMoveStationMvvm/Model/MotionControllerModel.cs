@@ -59,6 +59,8 @@ namespace UniMoveStation.Model
         private ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
         private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _rawPosition;
         private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _fusionPosition;
+        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _cameraPosition;
+        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _worldPosition;
         private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _projectionMatrix;
         private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _modelViewMatrix;
         #endregion
@@ -153,6 +155,40 @@ namespace UniMoveStation.Model
                 return _fusionPosition;
             }
             set { Set(() => FusionPosition, ref _fusionPosition, value); }
+        }
+
+        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> CameraPosition
+        {
+            get
+            {
+                if (_cameraPosition == null)
+                {
+                    _cameraPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    {
+                        _cameraPosition.Add(scvm.Camera, Vector3.zero);
+                    }
+                }
+                return _cameraPosition;
+            }
+            set { Set(() => CameraPosition, ref _cameraPosition, value); }
+        }
+
+        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> WorldPosition
+        {
+            get
+            {
+                if (_worldPosition == null)
+                {
+                    _worldPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
+                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    {
+                        _worldPosition.Add(scvm.Camera, Vector3.zero);
+                    }
+                }
+                return _worldPosition;
+            }
+            set { Set(() => WorldPosition, ref _worldPosition, value); }
         }
 
         public ObservableConcurrentDictionary<SingleCameraModel, bool> Tracking

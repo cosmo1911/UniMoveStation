@@ -196,7 +196,6 @@ namespace UniMoveStation.Service
             switch(_camera.Calibration.Position)
             {
                 case 0:
-
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
                     img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
                     img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
@@ -246,31 +245,30 @@ namespace UniMoveStation.Service
                     List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
                     List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
                     IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy((view) => view.Camera.Calibration.Position);
-                    
+
                     foreach (SingleCameraViewModel scvm in orderedScvms)
                     {
-                        if (scvm.Camera.Calibration.Position > 0) continue;
-                        foreach (SingleCameraViewModel scvm2 in orderedScvms)
+
+                        if (scvm.Camera.Calibration.ObjectPointsProjected == null || _camera.Calibration.ObjectPointsProjected == null) continue;
+                        else if (scvm.Camera.Calibration.Position == _camera.Calibration.Position) continue;
+                        else if (scvm.Camera.Calibration.Position > 1) continue;
+
+                        IntPtr points1Ptr = Utils.CreatePointListPointer(scvm.Camera.Calibration.ObjectPointsProjected);
+                        IntPtr points2Ptr = Utils.CreatePointListPointer(_camera.Calibration.ObjectPointsProjected);
+
+                        Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
+
+                        IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
+                        Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
+
+                        Matrix<double> lines1 = new Matrix<double>(8, 3);
+                        Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix.Ptr, lines1.Ptr);
+
+                        Matrix<double> lines2 = new Matrix<double>(8, 3);
+                        Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix.Ptr, lines2.Ptr);
+
+                        for (int i = 0; i < scvm.Camera.Calibration.ObjectPointsProjected.Length; i++)
                         {
-                            if(scvm.Camera.Calibration.ObjectPointsProjected == null || scvm2.Camera.Calibration.ObjectPointsProjected == null) continue;
-                            else if (scvm.Camera.Calibration.Position == scvm2.Camera.Calibration.Position) continue;
-                            else if (scvm.Camera.Calibration.Position > 1) continue;
-
-                            IntPtr points1Ptr = Utils.CreatePointListPointer(scvm.Camera.Calibration.ObjectPointsProjected);
-                            IntPtr points2Ptr = Utils.CreatePointListPointer(scvm2.Camera.Calibration.ObjectPointsProjected);
-
-                            Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
-
-                            IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
-                            Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
-                            
-                            Matrix<double> lines1 = new Matrix<double>(8, 3);
-                            Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix.Ptr, lines1.Ptr);
-
-                            Matrix<double> lines2 = new Matrix<double>(8, 3);
-                            Emgu.CV.CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix.Ptr, lines2.Ptr);
-
-                            for(int i = 0; i < scvm.Camera.Calibration.ObjectPointsProjected.Length; i++)
                             {
                                 System.Drawing.Point[] points = new System.Drawing.Point[2]
                                 {
@@ -278,16 +276,18 @@ namespace UniMoveStation.Service
                                     new System.Drawing.Point(img.Cols, (int) (-(lines2[i, 2] + lines2[i, 0] * img.Cols) / lines2[i, 1]))
                                 };
                                 img.DrawPolyline(points, false, new Bgr(255, 255, 0), 1);
-
-                                points = new System.Drawing.Point[2]
-                                {
-                                    new System.Drawing.Point(0, (int) -(lines1[i, 2]/lines1[i, 1])),
-                                    new System.Drawing.Point(img.Cols, (int) (-(lines1[i, 2] + lines1[i, 0] * img.Cols) / lines1[i, 1]))
-                                };
-                                img.DrawPolyline(points, false, new Bgr(255, 0, 255), 1);
                             }
-                            continue;
+
+                            //{
+                            //    System.Drawing.Point[] points = new System.Drawing.Point[2]
+                            //    {
+                            //        new System.Drawing.Point(0, (int) -(lines1[i, 2]/lines1[i, 1])),
+                            //        new System.Drawing.Point(img.Cols, (int) (-(lines1[i, 2] + lines1[i, 0] * img.Cols) / lines1[i, 1]))
+                            //    };
+                            //    img.DrawPolyline(points, false, new Bgr(255, 0, 255), 1);
+                            //}
                         }
+
                     }
                 }
                 
@@ -479,11 +479,20 @@ namespace UniMoveStation.Service
                             _camera.Calibration.IntrinsicParameters);
 
                         ex.RotationVector[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
-                        ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.Position * _camera.Calibration.YAngle);
+                        ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
                         ex.RotationVector[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
 
-
                         _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
+                        Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
+                        R3x3_cameraToWorld = rotate(-_camera.Calibration.RotX, -_camera.Calibration.RotY - _camera.Calibration.YAngle, -_camera.Calibration.RotZ);
+
+                        Matrix<double> test3x1 = new Matrix<double>(3, 1);
+                        test3x1[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
+                        test3x1[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
+                        test3x1[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
+
+                        Matrix<double> test3x3 = new Matrix<double>(3, 3);
+                        CvInvoke.cvRodrigues2(test3x1, test3x3, IntPtr.Zero);
 
                         //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
                         //Emgu.CV.CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
@@ -495,29 +504,22 @@ namespace UniMoveStation.Service
                             _camera.Calibration.ExtrinsicParameters[mc.Id],
                             _camera.Calibration.IntrinsicParameters);
 
+                        Matrix<double> cameraPositionInWorldSpace4x4 = Utils.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
 
-                        Matrix<double> worldRotation = ex.RotationVector.Clone(); ;
+                        Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(4, 1);
+                        coordinatesInCameraSpace_homo[0, 0] = ex.TranslationVector[0, 0];
+                        coordinatesInCameraSpace_homo[1, 0] = ex.TranslationVector[1, 0];
+                        coordinatesInCameraSpace_homo[2, 0] = ex.TranslationVector[2, 0];
+                        coordinatesInCameraSpace_homo[3, 0] = 1;
 
-                        worldRotation[0, 0] -= (Math.PI / 180) * _camera.Calibration.RotX;
-                        worldRotation[1, 0] -= (Math.PI / 180) * (_camera.Calibration.RotY - _camera.Calibration.Position * _camera.Calibration.YAngle);
-                        worldRotation[2, 0] -= (Math.PI / 180) * _camera.Calibration.RotZ;
-                        
-                        Matrix<double> worldTranslation = Utils.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
-
-                        Matrix<double> p = new Matrix<double>(4, 1);
-                        p[0, 0] = ex.TranslationVector[0, 0];
-                        p[1, 0] = ex.TranslationVector[1, 0];
-                        p[2, 0] = ex.TranslationVector[2, 0];
-                        p[3, 0] = 1;
-
-                        Matrix<double> point = new Matrix<double>(4, 1);
-
-                        Matrix<double> dst = new Matrix<double>(3, 3);
-                        CvInvoke.cvRodrigues2(worldRotation.Ptr, dst, IntPtr.Zero);
-
-                        worldRotation = Utils.ConvertToHomogenous(dst);
-
-                        Matrix<double> m = worldRotation * worldTranslation * p;
+                        mc.CameraPosition[_camera] = new Vector3((float) coordinatesInCameraSpace_homo[0, 0], (float) coordinatesInCameraSpace_homo[1, 0], (float) coordinatesInCameraSpace_homo[2, 0]);
+                        Matrix<double> Rt_homo = Utils.ConvertToHomogenous(-1 * R3x3_cameraToWorld);
+                        Matrix<double> x_world_homo = Utils.ConvertToHomogenous(R3x3_cameraToWorld) * coordinatesInCameraSpace_homo;
+                        Rt_homo[0, 3] = x_world_homo[0, 0];
+                        Rt_homo[1, 3] = x_world_homo[1, 0];
+                        Rt_homo[2, 3] = x_world_homo[2, 0];
+                        x_world_homo = cameraPositionInWorldSpace4x4 * x_world_homo;
+                        mc.WorldPosition[_camera] = new Vector3((float)x_world_homo[0, 0], (float)x_world_homo[1, 0], (float)x_world_homo[2, 0]);
 
                     }
                     mc.TrackerStatus[_camera] = trackerStatus;
@@ -527,6 +529,43 @@ namespace UniMoveStation.Service
                 }
             }
         } // ProcessData
+
+        /** this conversion uses NASA standard aeroplane conventions as described on page:
+        *   http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm
+        *   Coordinate System: right hand
+        *   Positive angle: right hand
+        *   Order of euler angles: heading first, then attitude, then bank
+        *   matrix row column ordering:
+        *   [m00 m01 m02]
+        *   [m10 m11 m12]
+        *   [m20 m21 m22]*/
+        public Matrix<double> rotate(double x, double y, double z)
+        {
+            double heading = (Math.PI / 180) * y;
+            double attitude = (Math.PI / 180) * z;
+            double bank = (Math.PI / 180) * x;
+
+            // Assuming the angles are in radians.
+            double ch = Math.Cos(heading);
+            double sh = Math.Sin(heading);
+            double ca = Math.Cos(attitude);
+            double sa = Math.Sin(attitude);
+            double cb = Math.Cos(bank);
+            double sb = Math.Sin(bank);
+
+            Matrix<double> r = new Matrix<double>(3, 3);
+            r[0, 0] = ch * ca;
+            r[0, 1] = sh * sb - ch * sa * cb;
+            r[0, 2] = ch * sa * sb + sh * cb;
+            r[1, 0] = sa;
+            r[1, 1] = ca * cb;
+            r[1, 2] = -ca * sb;
+            r[2, 0] = -sh * ca;
+            r[2, 1] = sh * sa * cb + ch * sb;
+            r[2, 2] = -sh * sa * sb + ch * cb;
+
+            return r;
+        }
         #endregion
     } // TrackerService
 } // Namespace

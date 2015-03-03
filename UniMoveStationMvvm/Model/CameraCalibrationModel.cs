@@ -22,6 +22,7 @@ namespace UniMoveStation.Model
         private Matrix<double> _rotationMatrix;
         private Matrix<double> _translationVector;
         private Vector3 _point;
+        private float _xAngle;
         private float _yAngle;
         private int _position;
 
@@ -72,7 +73,7 @@ namespace UniMoveStation.Model
             {
                 if (_objectPoints2d == null)
                 {
-                    float radiusCm = (float)((int)((13.0 / Math.PI) * 100)) / 200f;
+                    float radiusCm = (float)((int)((14.0 / Math.PI) * 100)) / 200f;
                     float diameterCm = (float)((int)((14.0 / Math.PI) * 100)) / 100f;
 
                     _objectPoints2d = new MCvPoint3D32f[4];
@@ -80,6 +81,11 @@ namespace UniMoveStation.Model
                     _objectPoints2d[1] = new MCvPoint3D32f(radiusCm, -radiusCm, 0);
                     _objectPoints2d[2] = new MCvPoint3D32f(radiusCm, radiusCm, 0);
                     _objectPoints2d[3] = new MCvPoint3D32f(-radiusCm, radiusCm, 0);
+
+                    //_objectPoints2d[0] = new MCvPoint3D32f(-radiusCm, 0, -radiusCm);
+                    //_objectPoints2d[1] = new MCvPoint3D32f(radiusCm, 0, -radiusCm);
+                    //_objectPoints2d[2] = new MCvPoint3D32f(radiusCm, 0, radiusCm);
+                    //_objectPoints2d[3] = new MCvPoint3D32f(-radiusCm, 0, radiusCm);
 
                     //_objectPoints2d[0] = new MCvPoint3D32f(0, 0, 0);
                     //_objectPoints2d[1] = new MCvPoint3D32f(diameterCm, 0, 0);
@@ -102,19 +108,19 @@ namespace UniMoveStation.Model
             {
                 if (_objectPoints3d == null)
                 {
-                    float radiusCm = (float)((int)((13.0 / Math.PI) * 100)) / 200f;
+                    float radiusCm = (float)((int)((14.0 / Math.PI) * 100)) / 200f;
                     float diameterCm = (float)((int)((14.0 / Math.PI) * 100)) / 100f;
 
                     _objectPoints3d = new MCvPoint3D32f[8];
-                    _objectPoints3d[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, radiusCm);
-                    _objectPoints3d[1] = new MCvPoint3D32f(radiusCm, -radiusCm, radiusCm);
-                    _objectPoints3d[2] = new MCvPoint3D32f(radiusCm, radiusCm, radiusCm);
-                    _objectPoints3d[3] = new MCvPoint3D32f(-radiusCm, radiusCm, radiusCm);
+                    _objectPoints3d[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);
+                    _objectPoints3d[1] = new MCvPoint3D32f(radiusCm, -radiusCm, -radiusCm);
+                    _objectPoints3d[2] = new MCvPoint3D32f(radiusCm, radiusCm, -radiusCm);
+                    _objectPoints3d[3] = new MCvPoint3D32f(-radiusCm, radiusCm, -radiusCm);
 
-                    _objectPoints3d[4] = new MCvPoint3D32f(-radiusCm, radiusCm, -radiusCm);
-                    _objectPoints3d[5] = new MCvPoint3D32f(radiusCm, radiusCm, -radiusCm);
-                    _objectPoints3d[6] = new MCvPoint3D32f(radiusCm, -radiusCm, -radiusCm);
-                    _objectPoints3d[7] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);
+                    _objectPoints3d[4] = new MCvPoint3D32f(-radiusCm, radiusCm, radiusCm);
+                    _objectPoints3d[5] = new MCvPoint3D32f(radiusCm, radiusCm, radiusCm);
+                    _objectPoints3d[6] = new MCvPoint3D32f(radiusCm, -radiusCm, radiusCm);
+                    _objectPoints3d[7] = new MCvPoint3D32f(-radiusCm, -radiusCm, radiusCm);
 
                     //_objectPoints3d[0] = new MCvPoint3D32f(0, 0, 0);
                     //_objectPoints3d[1] = new MCvPoint3D32f(diameterCm, 0, 0);
@@ -159,6 +165,13 @@ namespace UniMoveStation.Model
         {
             get { return _position; }
             set { Set(() => Position, ref _position, value); }
+        }
+
+        [JsonProperty]
+        public float XAngle
+        {
+            get { return _xAngle; }
+            set { Set(() => XAngle, ref _xAngle, value); }
         }
 
         [JsonProperty]

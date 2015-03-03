@@ -16,17 +16,18 @@ namespace UniMoveStation.Model
     [JsonObject(MemberSerialization.OptIn)]
     public class SingleCameraModel : ObservableObject
     {
-        private bool _annotate = false;
-        private int _trackerId = -1;
-        private string _name = "name";
-        private string _guid = "";
-        private bool _showImage = false;
-        private bool _tracking = false;
-        private bool _debug = false;
+        private bool _annotate;
+        private int _trackerId;
+        private string _name;
+        private string _guid;
+        private bool _showImage;
+        private bool _tracking;
+        private bool _debug;
         private BitmapSource _imageSource;
         private IntPtr _handle;
         private IntPtr _fusion;
         private ObservableCollection<MotionControllerModel> _controllers;
+        private CameraCalibrationModel _calibration;
 
 #if DEBUG
         private static int COUNTER = 0;
@@ -38,11 +39,11 @@ namespace UniMoveStation.Model
             Calibration = new CameraCalibrationModel();
         }
 #endif
-        
+
         public CameraCalibrationModel Calibration
         {
-            get;
-            set;
+            get { return _calibration; }
+            set { Set(() => Calibration, ref _calibration, value); }
         }
 
         [JsonProperty]

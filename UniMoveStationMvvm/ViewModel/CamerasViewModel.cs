@@ -47,8 +47,9 @@ namespace UniMoveStation.ViewModel
         private RelayCommand _bundleAdjustCommand;
         private CancellationTokenSource _ctsBundle;
         private Task _bundleTask;
-
+        
         private RelayCommand<MetroWindow> _fcpCommand;
+        private RelayCommand<MetroWindow> _cameraPositioningCalibrationCommand;
         private CancellationTokenSource _ctsFcp;
         private Task _fcpTask;
         private bool _fcpFinished;
@@ -58,7 +59,6 @@ namespace UniMoveStation.ViewModel
         private RelayCommand _cancelCommand;
         private RelayCommand _startCommand;
         private RelayCommand _saveCommand;
-
 
         private RelayCommand _findFundamentalMatricesCommand;
 
@@ -153,6 +153,13 @@ namespace UniMoveStation.ViewModel
                 if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
                 {
                     AddAvailableCameras();
+                }
+                if(SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.Debug)
+                {
+                    new SingleCameraViewModel();
+                    new SingleCameraViewModel();
+                    new SingleCameraViewModel();
+                    new SingleCameraViewModel();
                 }
             }
         }
@@ -280,6 +287,18 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
+        /// Gets the FindCorrespondingPointsCommand.
+        /// </summary>
+        public RelayCommand<MetroWindow> CameraPositioningCalibrationCommand
+        {
+            get
+            {
+                return _cameraPositioningCalibrationCommand
+                    ?? (_cameraPositioningCalibrationCommand = new RelayCommand<MetroWindow>(ShowCameraPositioningCalibrationDialog));
+            }
+        }
+
+        /// <summary>
         /// Gets the ButtonCommand.
         /// </summary>
         public RelayCommand CancelCommand
@@ -383,7 +402,7 @@ namespace UniMoveStation.ViewModel
         {
             foreach (SingleCameraViewModel scvm in Cameras)
             {
-                scvm.DoApplySelection(listBox);
+                //scvm.DoApplySelection(listBox);
             }
         }
 
@@ -391,7 +410,7 @@ namespace UniMoveStation.ViewModel
         {
             foreach (SingleCameraViewModel scvm in Cameras)
             {
-                scvm.DoCancelSelection(listBox);
+                //scvm.DoCancelSelection(listBox);
             }
         }
 
@@ -406,8 +425,10 @@ namespace UniMoveStation.ViewModel
                 foreach (MotionControllerViewModel mcvm in mcvms)
                 {
                     Vector3 v3 = mcvm.MotionController.RawPosition[scvm.Camera];
+                    // tracking lost
                     if (v3.x == 0 && v3.y == 0)
                     {
+                        // remove already obtained points of the current loop
                         if (scvm.Camera.Calibration.Position != 0)
                         {
                             foreach (SingleCameraViewModel scvm2 in orderedScvms)
@@ -481,8 +502,8 @@ namespace UniMoveStation.ViewModel
                         double rz = scvm.Camera.Calibration.ExtrinsicParameters[0].TranslationVector[2, 0];
 
                         point.x = rx + scvm.Camera.Calibration.ObjectPoints3D[i].x;
-                        point.y = rx + scvm.Camera.Calibration.ObjectPoints3D[i].y;
-                        point.z = rx + scvm.Camera.Calibration.ObjectPoints3D[i].z;
+                        point.y = ry + scvm.Camera.Calibration.ObjectPoints3D[i].y;
+                        point.z = rz + scvm.Camera.Calibration.ObjectPoints3D[i].z;
                     }
                 }
                 visibility[scvm.Camera.Calibration.Position] = new int[mcvms.Count * pointCount];
@@ -546,7 +567,6 @@ namespace UniMoveStation.ViewModel
 
         void DoFindFundamentalMatrices()
         {
-
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
             List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
             IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
@@ -614,7 +634,6 @@ namespace UniMoveStation.ViewModel
             HomographyMatrix h = Emgu.CV.CameraCalibration.FindHomography(src, dst, HOMOGRAPHY_METHOD.RANSAC, 3);
 
             PointF test = cam1.Calibration.ObjectPointsProjected[0];
-            
         }
 
         private async void StartBundleAdjustTask()
@@ -705,6 +724,11 @@ namespace UniMoveStation.ViewModel
             _owningWindow = window;
 
             await _owningWindow.ShowMetroDialogAsync(_dialog);
+        }
+
+        private async void ShowCameraPositioningCalibrationDialog(MetroWindow window)
+        {
+            new CameraPositioningCalibrationService(Cameras).ShowMetroDialog(window);
         }
 
         public async void DoCancel()

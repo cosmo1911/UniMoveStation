@@ -20,6 +20,7 @@ namespace UniMoveStation.Model
         private double? _height;
         private double? _x;
         private double? _y;
+        private bool _debug;
         private bool _loadCamerasOnStartUp;
         private bool _loadControllersOnStartUp;
 
@@ -31,6 +32,13 @@ namespace UniMoveStation.Model
             Y = 0;
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
+        }
+
+        [JsonProperty]
+        public bool Debug
+        {
+            get { return _debug; }
+            set { Set(() => Debug, ref _debug, value); }
         }
 
         [JsonProperty]

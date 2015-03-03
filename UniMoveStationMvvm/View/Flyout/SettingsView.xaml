@@ -111,6 +111,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock VerticalAlignment="Center"
                                Text="Load Controllers on Start Up"
@@ -135,6 +136,21 @@
             	              VerticalAlignment="Center" 
                               Margin="2 4 0 4"
                               />
+                    <TextBlock Grid.Row="2"
+                               VerticalAlignment="Center"
+                               Text="Debug"
+                               Margin="0 4 2 4"
+                               />
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="1"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="2 4 0 4"
+                              IsChecked="{Binding Settings.Settings.Debug, 
+                                          Mode=TwoWay, 
+                                          Source={StaticResource ViewModelLocator},
+                                          UpdateSourceTrigger=PropertyChanged}"
+                                          />
                 </Grid>
 
             </StackPanel>

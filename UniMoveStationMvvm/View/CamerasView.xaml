@@ -198,10 +198,15 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
-            
+
             <Button Content="FCP"
                     Margin="4"
                     Command="{Binding FindCorrespondingPointsCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                    />
+            <Button Content="Position Calibration"
+                    Margin="4"
+                    Command="{Binding CameraPositioningCalibrationCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
                     />
             <Button Content="Fundamental"

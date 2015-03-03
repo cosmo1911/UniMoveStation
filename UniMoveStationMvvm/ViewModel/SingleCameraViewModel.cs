@@ -37,8 +37,6 @@ namespace UniMoveStation.ViewModel
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
         private RelayCommand<bool> _toggleDebugCommand;
-        private RelayCommand<ListBox> _applySelectionCommand;
-        private RelayCommand<ListBox> _cancelSelectionCommand;
 
         public SingleCameraModel Camera
         {
@@ -243,34 +241,6 @@ namespace UniMoveStation.ViewModel
                     ?? (_toggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking));
             }
         }
-
-        /// <summary>
-        /// Gets the ApplySelectionCommand.
-        /// </summary>
-        public RelayCommand<ListBox> ApplySelectionCommand
-        {
-            get
-            {
-                return _applySelectionCommand
-                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(
-                        DoApplySelection, 
-                        (box) => Camera.Controllers.Count > 0));
-            }
-        }
-
-        /// <summary>
-        /// Gets the CancelSelectionCommand.
-        /// </summary>
-        public RelayCommand<ListBox> CancelSelectionCommand
-        {
-            get
-            {
-                return _cancelSelectionCommand
-                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(
-                        DoCancelSelection,
-                        (box) => Camera.Controllers.Count > 0));
-            }
-        }
         #endregion
 
         #region Command Executions
@@ -328,43 +298,7 @@ namespace UniMoveStation.ViewModel
             ConsoleService.WriteLine("Tracking: " + enabled);
         }
 
-        public void DoApplySelection(ListBox listBox)
-        {
-            int index = -1;
-            foreach(MotionControllerModel mc in listBox.Items)
-            {
-                index++;
-                ListBoxItem listBoxItem = (ListBoxItem) listBox.ItemContainerGenerator.ContainerFromItem(mc);
-                ContentPresenter contentPresenter = FindVisualChild<ContentPresenter>(listBoxItem);
-                DataTemplate dataTemplate = contentPresenter.ContentTemplate;
-                CheckBox checkBox = (CheckBox) dataTemplate.FindName("CheckBox", contentPresenter);
-                bool isChecked = (bool) checkBox.IsChecked;
-                if (isChecked)
-                {
-                    mc.Tracking[Camera] = true;
-                }
-                else
-                {
-                    mc.Tracking[Camera] = false;
-                }
-                ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, isChecked));
-            }
-        } // DoApplySelection
-
-        public void DoCancelSelection(ListBox listBox)
-        {
-            int index = -1;
-            foreach (MotionControllerModel mc in listBox.Items)
-            {
-                index++;
-                ListBoxItem listBoxItem = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromItem(mc);
-                ContentPresenter contentPresenter = FindVisualChild<ContentPresenter>(listBoxItem);
-                DataTemplate dataTemplate = contentPresenter.ContentTemplate;
-                CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
-                checkBox.IsChecked = mc.Tracking[Camera];
-                ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
-            }
-        }
+        
 
         public void DoCalibrateCamera(MetroWindow window)
         {
@@ -386,30 +320,6 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Unregister<SingleCameraViewModel>(Camera.GUID);
             base.Cleanup();
         }
-
-        /// <summary>
-        /// http://msdn.microsoft.com/en-us/library/bb613579.aspx
-        /// </summary>
-        /// <typeparam name="childItem"></typeparam>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        private childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-                if (child != null && child is childItem)
-                    return (childItem)child;
-                else
-                {
-                    childItem childOfChild = FindVisualChild<childItem>(child);
-                    if (childOfChild != null)
-                        return childOfChild;
-                }
-            }
-            return null;
-        }
-
         #endregion
     } // SingleCameraViewModel
 } // Namespace

@@ -91,7 +91,7 @@ namespace UniMoveStation.Service
             ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
         }
 
-        #region Depedency Properties
+        #region Dependency Properties
         /// <summary>
         /// The <see cref="Enabled" /> dependency property's name.
         /// </summary>

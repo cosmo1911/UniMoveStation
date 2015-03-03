@@ -366,5 +366,28 @@ namespace UniMoveStation.Utilities
                 bitmap.Palette = palette;
             }
         }
+
+        /// <summary>
+        /// http://msdn.microsoft.com/en-us/library/bb613579.aspx
+        /// </summary>
+        /// <typeparam name="childItem"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
+        {
+            for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                    return (childItem)child;
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
+        }
     } // Utils
 } // namespace

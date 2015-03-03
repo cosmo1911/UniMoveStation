@@ -245,12 +245,11 @@
                                        HorizontalAlignment="Stretch" 
                                        VerticalAlignment="Center"
                                        HorizontalContentAlignment="Center"
-                                       x:Name="button_toggle_connection"
                                        IsChecked="{Binding MotionControllerService.Enabled}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <mvvm:EventToCommand Command="{Binding ToggleConnectionCommand}"
-                                                 CommandParameter="{Binding IsChecked, ElementName=button_toggle_connection}"
+                                                 CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type controls:ToggleSwitch}}}"
                                                  />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>

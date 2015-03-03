@@ -44,7 +44,7 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
-        /// Initializes a new instance of the AllCamerasViewModel class.
+        /// Initializes a new instance of the MotionControllersViewModel class.
         /// </summary>
         public MotionControllersViewModel()
         {
@@ -76,6 +76,11 @@ namespace UniMoveStation.ViewModel
                 if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadControllersOnStartUp)
                 {
                     AddAvailableMotionControllers();
+                }
+                if(SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.Debug)
+                {   
+                    new MotionControllerViewModel();
+                    new MotionControllerViewModel();
                 }
             }
         }
@@ -110,26 +115,7 @@ namespace UniMoveStation.ViewModel
         }
 
         #region Commands
-        /// <summary>
-        /// Gets the MouseWheelCommand.
-        /// </summary>
-        public RelayCommand<MouseWheelEventArgs> MouseWheelCommand
-        {
-            get
-            {
-                return _mouseWheelCommand
-                    ?? (_mouseWheelCommand = new RelayCommand<MouseWheelEventArgs>(
-                    (e) =>
-                    {
-                        //ScrollViewer scrollViewer = (ScrollViewer) e.Source.GetType().BaseType.BaseType.BaseType.GetProperty("ScrollHost").GetValue(dataGrid, null);
-                        ItemsControl ic = e.Source as ItemsControl;
-                        ScrollViewer scrollViewer = ic.GetType().GetProperty("ScrollHost", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(ic) as ScrollViewer;
-
-                        if (e.Delta < 0) scrollViewer.LineRight();
-                        else if (e.Delta > 0) scrollViewer.LineLeft();
-                    }));
-            }
-        }
+        
         #endregion
 
         #region Command Exeuctions

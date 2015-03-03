@@ -158,8 +158,6 @@ namespace UniMoveStation.ViewModel.Flyout
 
         public void DoSaveCalibration(SingleCameraModel camera)
         {
-            camera.Calibration.RotationMatrix = Utilities.Utils.GetYRotationMatrix(camera.Calibration.YAngle);
-
             TextWriter writer = null;
             try
             {

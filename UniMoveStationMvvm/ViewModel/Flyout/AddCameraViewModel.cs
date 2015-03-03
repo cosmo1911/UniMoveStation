@@ -137,8 +137,10 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             ObservableCollection<SingleCameraModel> existingCameras = new ObservableCollection<SingleCameraModel>();
             AvailableCameras.Clear();
-            NewCamera = new SingleCameraModel();
-            NewCamera.Name = null;
+            NewCamera = new SingleCameraModel()
+            {
+                Name = null
+            };
             NewCamerasDetected = false;
 
             ICameraService cameraService = new CLEyeService(new ConsoleService());
@@ -182,5 +184,5 @@ namespace UniMoveStation.ViewModel.Flyout
             }
         }
         #endregion
-    }
-}
+    } // AddCameraViewModel
+} // namespace
