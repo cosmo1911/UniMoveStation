@@ -23,6 +23,7 @@ namespace UniMoveStation.Model
         private bool _showImage;
         private bool _tracking;
         private bool _debug;
+        private bool _visualization;
         private BitmapSource _imageSource;
         private IntPtr _handle;
         private IntPtr _fusion;
@@ -30,10 +31,10 @@ namespace UniMoveStation.Model
         private CameraCalibrationModel _calibration;
 
 #if DEBUG
-        private static int COUNTER = 0;
+        private static int COUNTER = -1;
         public SingleCameraModel()
         {
-            TrackerId = --COUNTER;
+            TrackerId = COUNTER--;
             Name = "Design " + TrackerId;
             GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
             Calibration = new CameraCalibrationModel();
@@ -53,6 +54,14 @@ namespace UniMoveStation.Model
             set { Set(() => GUID, ref _guid, value); }
         }
 
+        [JsonProperty]
+        public bool Visualization
+        {
+            get { return _visualization; }
+            set { Set(() => Visualization, ref _visualization, value); }
+        }
+
+        [JsonProperty]
         public bool Annotate
         {
             get { return _annotate; }

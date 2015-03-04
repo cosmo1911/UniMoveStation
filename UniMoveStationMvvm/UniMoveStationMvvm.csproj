@@ -245,6 +245,7 @@
     <Compile Include="Service\MotionControllerService.cs" />
     <Compile Include="Model\ServerModel.cs" />
     <Compile Include="Service\ServerService.cs" />
+    <Compile Include="Service\HelixCameraVisualizationService.cs" />
     <Compile Include="Service\TrackerService.cs" />
     <Compile Include="SharpMove\PsMoveApi.cs" />
     <Compile Include="SharpMove\SharpMoveHelper.cs" />

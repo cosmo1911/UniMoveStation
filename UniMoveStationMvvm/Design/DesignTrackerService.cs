@@ -43,7 +43,10 @@ namespace UniMoveStation.Design
 
         public void AddMotionController(MotionControllerModel mc) 
         {
-            _camera.Controllers.Add(mc);
+            if (!_camera.Controllers.Contains(mc))
+            {
+                _camera.Controllers.Add(mc);
+            }
         }
 
         public void RemoveMotionController(MotionControllerModel mc) 

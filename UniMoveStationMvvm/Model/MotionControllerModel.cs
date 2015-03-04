@@ -70,8 +70,8 @@ namespace UniMoveStation.Model
 
         public MotionControllerModel()
         {
-            Name = "Design";
-            Id = ++COUNTER;
+            Id = COUNTER--;
+            Name = "Design " + Id;
             Serial = "00:00:00:00:00:0" + Id;
             System.Random random = new System.Random();
             Circle = random.Next(2) > 0;
@@ -369,6 +369,9 @@ namespace UniMoveStation.Model
             set { Set(() => UpdateRate, ref _updateRate, Math.Max(value, MIN_UPDATE_RATE)); }
         }
 
+        /// <summary>
+        /// 0..1
+        /// </summary>
         public Color Color
         {
             get { return _color; }
@@ -452,5 +455,5 @@ namespace UniMoveStation.Model
             get { return _rumble; }
             set { Set(() => Rumble, ref _rumble, value); }
         }
-    }
-}
+    } // MotionControllerModel
+} // namespace

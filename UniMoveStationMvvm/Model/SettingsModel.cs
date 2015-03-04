@@ -23,6 +23,7 @@ namespace UniMoveStation.Model
         private bool _debug;
         private bool _loadCamerasOnStartUp;
         private bool _loadControllersOnStartUp;
+        private List<string> _movedHosts;
 
         public SettingsModel()
         {
@@ -32,6 +33,11 @@ namespace UniMoveStation.Model
             Y = 0;
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
+            Debug = false;
+            _movedHosts = new List<string>()
+            {
+                "127.0.0.1"
+            };
         }
 
         [JsonProperty]
@@ -39,6 +45,13 @@ namespace UniMoveStation.Model
         {
             get { return _debug; }
             set { Set(() => Debug, ref _debug, value); }
+        }
+
+        [JsonProperty]
+        public List<string> MovedHosts
+        {
+            get { return _movedHosts; }
+            set { Set(() => MovedHosts, ref _movedHosts, value); }
         }
 
         [JsonProperty]

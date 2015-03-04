@@ -26,6 +26,10 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using Emgu.CV.CvEnum;
+using System.Collections.ObjectModel;
+using System.Windows.Media.Media3D;
+using HelixToolkit.Wpf;
+using GalaSoft.MvvmLight.Threading;
 
 namespace UniMoveStation.ViewModel
 {
@@ -36,6 +40,7 @@ namespace UniMoveStation.ViewModel
         private RelayCommand<bool> _toggleCameraCommand;
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
+        private RelayCommand<bool> _toggleVisualizationCommand;
         private RelayCommand<bool> _toggleDebugCommand;
 
         public SingleCameraModel Camera
@@ -61,6 +66,12 @@ namespace UniMoveStation.ViewModel
             get;
             private set;
         }
+
+        public HelixCameraVisualizationService VisualizationService
+        {
+            get;
+            private set;
+        }
         #endregion
 
         #region Constructor
@@ -74,13 +85,15 @@ namespace UniMoveStation.ViewModel
             ICameraService cameraService, 
             IConsoleService consoleService)
         {
+            Camera = camera;
             TrackerService = trackerService;
             CameraService = cameraService;
             ConsoleService = consoleService;
-            Camera = camera;
+            VisualizationService = new HelixCameraVisualizationService();
 
             CameraService.Initialize(Camera);
             TrackerService.Initialize(Camera);
+            VisualizationService.Initialize(Camera);
 
             Messenger.Default.Register<AddMotionControllerMessage>(this,
                 message =>
@@ -207,6 +220,18 @@ namespace UniMoveStation.ViewModel
         }
 
         /// <summary>
+        /// Gets the ToggleAnnotateCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleVisualizationCommand
+        {
+            get
+            {
+                return _toggleVisualizationCommand
+                    ?? (_toggleVisualizationCommand = new RelayCommand<bool>(DoToggleVisualization));
+            }
+        }
+
+        /// <summary>
         /// Gets the ToggleDebugCommand.
         /// </summary>
         public RelayCommand<bool> ToggleDebugCommand
@@ -298,7 +323,11 @@ namespace UniMoveStation.ViewModel
             ConsoleService.WriteLine("Tracking: " + enabled);
         }
 
-        
+        public void DoToggleVisualization(bool enabled)
+        {
+            if (enabled) VisualizationService.Start();
+            else VisualizationService.Stop();
+        }
 
         public void DoCalibrateCamera(MetroWindow window)
         {
@@ -314,12 +343,13 @@ namespace UniMoveStation.ViewModel
         #region Misc
         public override void Cleanup()
         {
+            VisualizationService.Stop();
             TrackerService.Destroy();
             CameraService.Destroy();
             Messenger.Default.Send<RemoveCameraMessage>(new RemoveCameraMessage(Camera));
             SimpleIoc.Default.Unregister<SingleCameraViewModel>(Camera.GUID);
             base.Cleanup();
-        }
+        }      
         #endregion
     } // SingleCameraViewModel
 } // Namespace

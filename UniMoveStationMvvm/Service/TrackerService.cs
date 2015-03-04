@@ -151,78 +151,6 @@ namespace UniMoveStation.Service
             }
         }
 
-        private void DrawCubeToImage(Image<Bgr, byte> img)
-        {
-            if (_camera.Calibration.ObjectPointsProjected == null 
-                || _camera.Calibration.ObjectPointsProjected.Length != 8) return;
-            
-
-            System.Drawing.Point[] points = Array.ConvertAll<PointF, System.Drawing.Point>(
-                _camera.Calibration.ObjectPointsProjected, 
-                Utils.PointFtoPoint);
-
-            System.Drawing.Point[] cubeFront = new System.Drawing.Point[4] 
-                {
-                   points[0],
-                   points[1],
-                   points[2],
-                   points[3],
-                };
-
-            System.Drawing.Point[] cubeBack = new System.Drawing.Point[4]
-                {
-                   points[4],
-                   points[5],
-                   points[6],
-                   points[7],
-                };
-
-            System.Drawing.Point[] cubeLeft = new System.Drawing.Point[4]
-                {
-                   points[0],
-                   points[3],
-                   points[4],
-                   points[7],
-                };
-
-            System.Drawing.Point[] cubeRight = new System.Drawing.Point[4]
-                {
-                   points[1],
-                   points[2],
-                   points[5],
-                   points[6],
-                };
-
-            switch(_camera.Calibration.Position)
-            {
-                case 0:
-                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
-                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
-                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    break;
-                case 1:
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
-                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
-                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
-                    break;
-                case 2:
-                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
-                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
-                    break;
-                case 3:
-                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
-                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
-                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
-                    break;
-            }
-            
-        }
-
         public void UpdateImage()
         {
             if (_camera.ShowImage && _camera.Handle != IntPtr.Zero)
@@ -315,7 +243,7 @@ namespace UniMoveStation.Service
                         if (mc.Tracking[_camera])
                         {
                             PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
-                            ProcessData();
+                            ProcessData(mc);
                         }
                     }
                 }
@@ -373,8 +301,8 @@ namespace UniMoveStation.Service
 
             mc.ProjectionMatrix[_camera] = proj;
 
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of Motion Controller ({0}) = {1}", 
-                _camera.GUID, mc.Serial, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of {0} = {2}", 
+                _camera.GUID, mc.Name, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
         }
 
         public void DisableTracking(MotionControllerModel motionController)
@@ -413,122 +341,192 @@ namespace UniMoveStation.Service
             }
         }
 
-        public void ProcessData()
+        public void ProcessData(MotionControllerModel mc)
         {
             if (_camera.Handle != IntPtr.Zero)
             {
-                foreach (MotionControllerModel mc in _camera.Controllers)
+                PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
+                if(mc.Id >= 0) trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
+                Vector3 rawPosition = Vector3.zero;
+                Vector3 fusionPosition = Vector3.zero;
+                Matrix4x4 model = new Matrix4x4();
+
+                if (trackerStatus == PSMoveTrackerStatus.Tracking)
                 {
-                    PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
-                    trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
-                    Vector3 rawPosition = Vector3.zero;
-                    Vector3 fusionPosition = Vector3.zero;
-                    Matrix4x4 model = new Matrix4x4();
+                    float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
+                    float fx = 0.0f, fy = 0.0f, fz = 0.0f;
+                    PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
+                    PsMoveApi.psmove_fusion_get_position(_camera.Fusion, mc.Handle, out fx, out fy, out fz);
+                    rx = (float)((int) (rx + 0.5));
+                    ry = (float)((int) (ry + 0.5));
+                    //Console.WriteLine(rx + " " + ry + " " + rrad);
 
-                    if (trackerStatus == PSMoveTrackerStatus.Tracking)
-                    {
-                        float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
-                        float fx = 0.0f, fy = 0.0f, fz = 0.0f;
-                        PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
-                        PsMoveApi.psmove_fusion_get_position(_camera.Fusion, mc.Handle, out fx, out fy, out fz);
-                        rx = (float)((int) (rx + 0.5));
-                        ry = (float)((int) (ry + 0.5));
-                        //Console.WriteLine(rx + " " + ry + " " + rrad);
+                    rawPosition = new Vector3(rx, ry, rrad);
+                    fusionPosition = new Vector3(fx, fy, fz);
+                    //#if YISUP
+                    //vec.x = -vec.x;
+                    //vec.y = -vec.y;
+                    //vec.z = -vec.z;
+                    //#endif
+                    //tc.m_positionScalePos = Vector3.Max(vec, tc.m_positionScalePos);
+                    //tc.m_positionScaleNeg = Vector3.Min(vec, tc.m_positionScaleNeg);
 
-                        rawPosition = new Vector3(rx, ry, rrad);
-                        fusionPosition = new Vector3(fx, fy, fz);
-                        //#if YISUP
-                        //vec.x = -vec.x;
-                        //vec.y = -vec.y;
-                        //vec.z = -vec.z;
-                        //#endif
-                        //tc.m_positionScalePos = Vector3.Max(vec, tc.m_positionScalePos);
-                        //tc.m_positionScaleNeg = Vector3.Min(vec, tc.m_positionScaleNeg);
+                    //Vector3 extents = tc.m_positionScalePos - tc.m_positionScaleNeg;
 
-                        //Vector3 extents = tc.m_positionScalePos - tc.m_positionScaleNeg;
+                    //vec = vec - tc.m_positionScaleNeg;
+                    //vec.x = vec.x/extents.x;
+                    //vec.y = vec.y/extents.y;
+                    //vec.z = vec.z/extents.z;
+                    //vec = vec*2.0f - Vector3.one;
 
-                        //vec = vec - tc.m_positionScaleNeg;
-                        //vec.x = vec.x/extents.x;
-                        //vec.y = vec.y/extents.y;
-                        //vec.z = vec.z/extents.z;
-                        //vec = vec*2.0f - Vector3.one;
+                    //for (int i = mc.m_positionHistory.Length - 1; i > 0; --i)
+                    //{
+                    //    mc.m_positionHistory[i] = mc.m_positionHistory[i - 1];
+                    //}
+                    //mc.m_positionHistory[0] = vec;
 
-                        //for (int i = mc.m_positionHistory.Length - 1; i > 0; --i)
-                        //{
-                        //    mc.m_positionHistory[i] = mc.m_positionHistory[i - 1];
-                        //}
-                        //mc.m_positionHistory[0] = vec;
+                    //vec = m_positionHistory[0]*0.3f + m_positionHistory[1]*0.5f + m_positionHistory[2]*0.1f + m_positionHistory[3]*0.05f + m_positionHistory[4]*0.05f;
 
-                        //vec = m_positionHistory[0]*0.3f + m_positionHistory[1]*0.5f + m_positionHistory[2]*0.1f + m_positionHistory[3]*0.05f + m_positionHistory[4]*0.05f;
+                    //mc.m_position = vec;
 
-                        //mc.m_position = vec;
+                    //for (int row = 0; row < 4; row++)
+                    //{
+                    //    for (int col = 0; col < 4; col++)
+                    //    {
+                    //        model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
+                    //    }
+                    //}
 
-                        //for (int row = 0; row < 4; row++)
-                        //{
-                        //    for (int col = 0; col < 4; col++)
-                        //    {
-                        //        model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
-                        //    }
-                        //}
+                    PointF[] imgPts = Utils.GetImagePointsF(mc.RawPosition[_camera]);
 
-                        PointF[] imgPts = Utils.GetImagePointsF(mc.RawPosition[_camera]);
+                    ExtrinsicCameraParameters ex = Emgu.CV.CameraCalibration.FindExtrinsicCameraParams2(
+                        _camera.Calibration.ObjectPoints2D,
+                        imgPts,
+                        _camera.Calibration.IntrinsicParameters);
 
-                        ExtrinsicCameraParameters ex = Emgu.CV.CameraCalibration.FindExtrinsicCameraParams2(
-                            _camera.Calibration.ObjectPoints2D,
-                            imgPts,
-                            _camera.Calibration.IntrinsicParameters);
+                    ex.RotationVector[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
+                    ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
+                    ex.RotationVector[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
 
-                        ex.RotationVector[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
-                        ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
-                        ex.RotationVector[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
+                    _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
+                    Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
+                    R3x3_cameraToWorld = rotate(-_camera.Calibration.RotX, -_camera.Calibration.RotY - _camera.Calibration.YAngle, -_camera.Calibration.RotZ);
 
-                        _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
-                        Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
-                        R3x3_cameraToWorld = rotate(-_camera.Calibration.RotX, -_camera.Calibration.RotY - _camera.Calibration.YAngle, -_camera.Calibration.RotZ);
+                    Matrix<double> test3x1 = new Matrix<double>(3, 1);
+                    test3x1[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
+                    test3x1[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
+                    test3x1[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
 
-                        Matrix<double> test3x1 = new Matrix<double>(3, 1);
-                        test3x1[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
-                        test3x1[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
-                        test3x1[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
+                    Matrix<double> test3x3 = new Matrix<double>(3, 3);
+                    CvInvoke.cvRodrigues2(test3x1, test3x3, IntPtr.Zero);
 
-                        Matrix<double> test3x3 = new Matrix<double>(3, 3);
-                        CvInvoke.cvRodrigues2(test3x1, test3x3, IntPtr.Zero);
+                    //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
+                    //Emgu.CV.CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
 
-                        //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
-                        //Emgu.CV.CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
+                    //Matrix<double> rotInv = new Matrix<double>(3, 3, dstPtr);
 
-                        //Matrix<double> rotInv = new Matrix<double>(3, 3, dstPtr);
+                    _camera.Calibration.ObjectPointsProjected = Emgu.CV.CameraCalibration.ProjectPoints(
+                        _camera.Calibration.ObjectPoints3D,
+                        _camera.Calibration.ExtrinsicParameters[mc.Id],
+                        _camera.Calibration.IntrinsicParameters);
 
-                        _camera.Calibration.ObjectPointsProjected = Emgu.CV.CameraCalibration.ProjectPoints(
-                            _camera.Calibration.ObjectPoints3D,
-                            _camera.Calibration.ExtrinsicParameters[mc.Id],
-                            _camera.Calibration.IntrinsicParameters);
+                    Matrix<double> cameraPositionInWorldSpace4x4 = Utils.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
 
-                        Matrix<double> cameraPositionInWorldSpace4x4 = Utils.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
+                    Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(4, 1);
+                    coordinatesInCameraSpace_homo[0, 0] = ex.TranslationVector[0, 0];
+                    coordinatesInCameraSpace_homo[1, 0] = ex.TranslationVector[1, 0];
+                    coordinatesInCameraSpace_homo[2, 0] = ex.TranslationVector[2, 0];
+                    coordinatesInCameraSpace_homo[3, 0] = 1;
 
-                        Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(4, 1);
-                        coordinatesInCameraSpace_homo[0, 0] = ex.TranslationVector[0, 0];
-                        coordinatesInCameraSpace_homo[1, 0] = ex.TranslationVector[1, 0];
-                        coordinatesInCameraSpace_homo[2, 0] = ex.TranslationVector[2, 0];
-                        coordinatesInCameraSpace_homo[3, 0] = 1;
+                    mc.CameraPosition[_camera] = new Vector3((float) coordinatesInCameraSpace_homo[0, 0], (float) coordinatesInCameraSpace_homo[1, 0], (float) coordinatesInCameraSpace_homo[2, 0]);
+                    Matrix<double> Rt_homo = Utils.ConvertToHomogenous(-1 * R3x3_cameraToWorld);
+                    Matrix<double> x_world_homo = Utils.ConvertToHomogenous(R3x3_cameraToWorld) * coordinatesInCameraSpace_homo;
+                    Rt_homo[0, 3] = x_world_homo[0, 0];
+                    Rt_homo[1, 3] = x_world_homo[1, 0];
+                    Rt_homo[2, 3] = x_world_homo[2, 0];
+                    x_world_homo = cameraPositionInWorldSpace4x4 * x_world_homo;
+                    mc.WorldPosition[_camera] = new Vector3((float)x_world_homo[0, 0], (float)x_world_homo[1, 0], (float)x_world_homo[2, 0]);
 
-                        mc.CameraPosition[_camera] = new Vector3((float) coordinatesInCameraSpace_homo[0, 0], (float) coordinatesInCameraSpace_homo[1, 0], (float) coordinatesInCameraSpace_homo[2, 0]);
-                        Matrix<double> Rt_homo = Utils.ConvertToHomogenous(-1 * R3x3_cameraToWorld);
-                        Matrix<double> x_world_homo = Utils.ConvertToHomogenous(R3x3_cameraToWorld) * coordinatesInCameraSpace_homo;
-                        Rt_homo[0, 3] = x_world_homo[0, 0];
-                        Rt_homo[1, 3] = x_world_homo[1, 0];
-                        Rt_homo[2, 3] = x_world_homo[2, 0];
-                        x_world_homo = cameraPositionInWorldSpace4x4 * x_world_homo;
-                        mc.WorldPosition[_camera] = new Vector3((float)x_world_homo[0, 0], (float)x_world_homo[1, 0], (float)x_world_homo[2, 0]);
-
-                    }
-                    mc.TrackerStatus[_camera] = trackerStatus;
-                    mc.RawPosition[_camera] = rawPosition;
-                    mc.FusionPosition[_camera] = fusionPosition;
-                    mc.ModelViewMatrix[_camera] = model;
                 }
+                mc.TrackerStatus[_camera] = trackerStatus;
+                mc.RawPosition[_camera] = rawPosition;
+                mc.FusionPosition[_camera] = fusionPosition;
+                mc.ModelViewMatrix[_camera] = model;
             }
         } // ProcessData
+
+
+
+        private void DrawCubeToImage(Image<Bgr, byte> img)
+        {
+            if (_camera.Calibration.ObjectPointsProjected == null
+                || _camera.Calibration.ObjectPointsProjected.Length != 8) return;
+
+
+            System.Drawing.Point[] points = Array.ConvertAll<PointF, System.Drawing.Point>(
+                _camera.Calibration.ObjectPointsProjected,
+                Utils.PointFtoPoint);
+
+            System.Drawing.Point[] cubeFront = new System.Drawing.Point[4] 
+                {
+                   points[0],
+                   points[1],
+                   points[2],
+                   points[3],
+                };
+
+            System.Drawing.Point[] cubeBack = new System.Drawing.Point[4]
+                {
+                   points[4],
+                   points[5],
+                   points[6],
+                   points[7],
+                };
+
+            System.Drawing.Point[] cubeLeft = new System.Drawing.Point[4]
+                {
+                   points[0],
+                   points[3],
+                   points[4],
+                   points[7],
+                };
+
+            System.Drawing.Point[] cubeRight = new System.Drawing.Point[4]
+                {
+                   points[1],
+                   points[2],
+                   points[5],
+                   points[6],
+                };
+
+            switch (_camera.Calibration.Position)
+            {
+                case 0:
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    break;
+                case 1:
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    break;
+                case 2:
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    break;
+                case 3:
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    break;
+            }
+        }
 
         /** this conversion uses NASA standard aeroplane conventions as described on page:
         *   http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm

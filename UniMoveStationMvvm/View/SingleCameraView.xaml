@@ -11,6 +11,7 @@
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:m="clr-namespace:UniMoveStation.Model"
              xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:helix="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              d:DataContext="{d:DesignInstance Type=vm:SingleCameraViewModel, IsDesignTimeCreatable=True}"
@@ -40,22 +41,26 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MinWidth="180" Width="*"/>
                     <ColumnDefinition MaxWidth="200"/>
-                    <ColumnDefinition MaxWidth="200"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="180"/>
                 </Grid.RowDefinitions>
-                <Grid>
+                <Grid Margin="0 0 4 0">
                     <!-- Left Main Column -->
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="30"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <TextBox HorizontalContentAlignment="Center" 
                              VerticalContentAlignment="Center" 
                              BorderThickness="0"
                              Height="30"
-                             Background="{StaticResource AccentColorBrush2}" 
+                             Background="{StaticResource AccentColorBrush2}"
+                             Grid.ColumnSpan="2"
                              Text="{Binding Camera.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              />
                     <local:AspectRatioLayoutDecorator Grid.Column="0" 
@@ -81,98 +86,22 @@
 
                         </Grid>
                     </local:AspectRatioLayoutDecorator>
+
+                    <helix:HelixViewport3D x:Name="viewport"
+                                           Grid.Row="1"
+                                           ShowViewCube="False"
+                                           Grid.Column="1"
+                                           Background="{helix:LinearGradientBrush Gray, LightGray}"
+                                           ItemsSource="{Binding VisualizationService.Items}">
+                        <helix:HelixViewport3D.DefaultCamera>
+                            <PerspectiveCamera Position="150,150,150"
+                                               LookDirection="-100,-100,-100"
+                                               UpDirection="0,0,1"
+                                               FieldOfView="75"
+                                               NearPlaneDistance="0.001"/>
+                        </helix:HelixViewport3D.DefaultCamera>
+                    </helix:HelixViewport3D>
                 </Grid>
-                <StackPanel Grid.Row="0" 
-                            Grid.Column="2" 
-                            Orientation="Vertical">
-                    <controls:ToggleSwitch Header="Camera"
-                                           Margin="4"
-                                           x:Name="switch_camera"
-                                           HorizontalAlignment="Stretch" 
-                                           VerticalAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           IsChecked="{Binding Camera.ShowImage}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
-                                                     CommandParameter="{Binding IsChecked, ElementName=switch_camera}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </controls:ToggleSwitch>
-                    <controls:ToggleSwitch Header="Tracking"
-                                           Margin="4"
-                                           x:Name="switch_tracking"
-                                           HorizontalAlignment="Stretch" 
-                                           VerticalAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           IsChecked="{Binding Camera.Tracking}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
-                                                     CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </controls:ToggleSwitch>
-                    <controls:ToggleSwitch Header="Annotate"
-                                           Margin="4"
-                                           x:Name="switch_annotate"
-                                           HorizontalAlignment="Stretch" 
-                                           VerticalAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           IsChecked="{Binding Camera.Annotate}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
-                                                     CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </controls:ToggleSwitch>
-                    <controls:ToggleSwitch Header="Debug"
-                                           Margin="4"
-                                           x:Name="switch_debug"
-                                           HorizontalAlignment="Stretch" 
-                                           VerticalAlignment="Center"
-                                           HorizontalContentAlignment="Center"
-                                           IsChecked="{Binding Camera.Debug}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
-                                                     CommandParameter="{Binding IsChecked, ElementName=switch_debug}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </controls:ToggleSwitch>
-
-                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotX, 
-                                                            Mode=TwoWay, 
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
-                                            Maximum="360"
-                                            Interval="1"
-                                            Speedup="True"
-                                            />
-                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotY, 
-                                                            Mode=TwoWay, 
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
-                                            Maximum="360"
-                                            Interval="1"
-                                            Speedup="True"
-                                            />
-                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotZ, 
-                                                            Mode=TwoWay, 
-                                                            UpdateSourceTrigger=PropertyChanged}"
-                                            Minimum="0"
-                                            Maximum="360"
-                                            Interval="1"
-                                            Speedup="True"
-                                            />
-                    <Button Content="Calibrate"
-                            Margin="4"
-                            Command="{Binding CalibrateCameraCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
-                            />
-                </StackPanel>
-
                 <StackPanel Grid.Row="0" 
                             Grid.Column="1" 
                             Orientation="Vertical">
@@ -220,6 +149,109 @@
                                 x:Name="CancelSelectionButton"
                                 />
                     </UniformGrid>
+                    <controls:ToggleSwitch Header="Camera"
+                                           Margin="4"
+                                           x:Name="switch_camera"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.ShowImage}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_camera}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Tracking"
+                                           Margin="4"
+                                           x:Name="switch_tracking"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Tracking}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Annotate"
+                                           Margin="4"
+                                           x:Name="switch_annotate"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Annotate}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Visualization"
+                                           Margin="4"
+                                           x:Name="switch_visualization"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Visualization}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleVisualizationCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_visualization}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+                    <controls:ToggleSwitch Header="Debug"
+                                           Margin="4"
+                                           x:Name="switch_debug"
+                                           HorizontalAlignment="Stretch" 
+                                           VerticalAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           IsChecked="{Binding Camera.Debug}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
+                                                     CommandParameter="{Binding IsChecked, ElementName=switch_debug}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </controls:ToggleSwitch>
+
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotX, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            Margin="4"
+                                            />
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotY, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            Margin="4"
+                                            />
+                    <controls:NumericUpDown Value="{Binding Camera.Calibration.RotZ, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            Interval="1"
+                                            Speedup="True"
+                                            Margin="4"
+                                            />
+                    <Button Content="Calibrate"
+                            Margin="4"
+                            Command="{Binding CalibrateCameraCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                            />
                 </StackPanel>
             </Grid>
 

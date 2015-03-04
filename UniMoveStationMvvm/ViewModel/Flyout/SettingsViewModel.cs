@@ -124,7 +124,6 @@ namespace UniMoveStation.ViewModel.Flyout
             TextWriter writer = null;
             try
             {
-                
                 string json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
                 writer = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json", false);
                 writer.Write(json);
@@ -134,6 +133,9 @@ namespace UniMoveStation.ViewModel.Flyout
                 if (writer != null)
                     writer.Close();
             }
+
+            File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".psmoveapi\\moved_hosts.txt"), 
+                Settings.MovedHosts);
         }
 
         public void DoSaveCameras()
@@ -200,6 +202,10 @@ namespace UniMoveStation.ViewModel.Flyout
                     reader.Close();
                 }
             }
+
+            Settings.MovedHosts = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+                ".psmoveapi\\moved_hosts.txt")).ToList<string>();
+
         }
 
         public void LoadCalibration(SingleCameraModel camera)

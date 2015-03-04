@@ -276,7 +276,7 @@ namespace UniMoveStation.Service
             ArrowVisual3D axis = new ArrowVisual3D()
             {
                 Origin = new Point3D(0, 0, 0),
-                Direction = new Vector3D(250, 0, 0),
+                Direction = new Vector3D(100, 0, 0),
                 Diameter = 2,
                 Fill = new SolidColorBrush(Colors.Red)
             };
@@ -285,7 +285,7 @@ namespace UniMoveStation.Service
             axis = new ArrowVisual3D()
             {
                 Origin = new Point3D(0, 0, 0),
-                Direction = new Vector3D(0, 250, 0),
+                Direction = new Vector3D(0, 100, 0),
                 Diameter = 2,
                 Fill = new SolidColorBrush(Colors.Green)
             };
@@ -294,7 +294,7 @@ namespace UniMoveStation.Service
             axis = new ArrowVisual3D()
             {
                 Origin = new Point3D(0, 0, 0),
-                Direction = new Vector3D(0, 0, 250),
+                Direction = new Vector3D(0, 0, 100),
                 Diameter = 2,
                 Fill = new SolidColorBrush(Colors.Blue)
             };
