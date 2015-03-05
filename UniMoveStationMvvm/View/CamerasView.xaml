@@ -110,7 +110,8 @@
                                     <Setter Property="Content"
                                             Value="{Binding Name}"
                                             />
-                                    <Setter Property="IsChecked">
+                                    <!--TODO-->
+                                    <!--<Setter Property="IsChecked">
                                         <Setter.Value>
                                             <MultiBinding Converter="{StaticResource DictionaryTrackingToBoolConverter}" Mode="OneWay">
                                                 <Binding Path="Tracking"/>
@@ -119,7 +120,7 @@
                                                          />
                                             </MultiBinding>
                                         </Setter.Value>
-                                    </Setter>
+                                    </Setter>-->
                                 </Style>
                             </CheckBox.Style>
                         </CheckBox>

@@ -245,7 +245,7 @@
                                        HorizontalAlignment="Stretch" 
                                        VerticalAlignment="Center"
                                        HorizontalContentAlignment="Center"
-                                       IsChecked="{Binding MotionControllerService.Enabled}">
+                                       IsChecked="{Binding MotionControllerService.Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <mvvm:EventToCommand Command="{Binding ToggleConnectionCommand}"

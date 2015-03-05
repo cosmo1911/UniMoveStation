@@ -16,7 +16,7 @@
              DataContext="{Binding MotionControllers, Source={StaticResource ViewModelLocator}}"
              d:DesignWidth="856"
              d:DesignHeight="480"
-             Margin="4">
+             Margin="8">
 
     <UserControl.Resources>
         <helper:MatrixToStringConverter x:Key="MatrixToStringConverter"/>
@@ -217,14 +217,14 @@
         <StackPanel Grid.Row="0" 
                     Grid.Column="1" 
                     Orientation="Vertical">
-
+            <!--TODO: Binding IsChecked-->
             <controls:ToggleSwitch Header="Controllers"
                                    Margin="4"
                                    x:Name="switch_controllers"
                                    HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
-                                   IsChecked="{Binding ShowImage}">
+                                   IsChecked="False">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleControllersCommand}"

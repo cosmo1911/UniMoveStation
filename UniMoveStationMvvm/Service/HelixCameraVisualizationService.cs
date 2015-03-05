@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -69,13 +70,14 @@ namespace UniMoveStation.Service
             if (_updateTask != null && _updateTask.Status == TaskStatus.Running) return;
 
             _ctsUpdate = new CancellationTokenSource();
-            CancellationToken token = _ctsUpdate.Token;
             try
             {
-                _updateTask = Task.Run(() =>
+                _updateTask = Task.Factory.StartNew(() =>
                 {
-                    while (!token.IsCancellationRequested)
+                    Stopwatch sw = new Stopwatch();
+                    while (!_ctsUpdate.Token.IsCancellationRequested)
                     {
+                        sw.Restart();
                         foreach(MotionControllerModel mc in _camera.Controllers)
                         {
                             // update if the controller is selected for tracking
@@ -118,13 +120,16 @@ namespace UniMoveStation.Service
                             {
                                 if(_controllerObjects.ContainsKey(mc))
                                 {
-                                    _items.Remove(_controllerObjects[mc]);
+                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() => _items.Remove(_controllerObjects[mc])));
                                     _controllerObjects.Remove(mc);
                                 }
                             }
-                        }
-                    }
-                });
+                        } // foreach
+                        sw.Stop();
+                        // taking the processing time of the task itself into account, pause the thread to approximately reach the given FPS 
+                        Thread.Sleep((int)(Math.Max((1000.0 / (double)_camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
+                    } // while
+                }, _ctsUpdate.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 await _updateTask;
             }
             catch(OperationCanceledException ex)
@@ -136,6 +141,10 @@ namespace UniMoveStation.Service
             {
                 Console.WriteLine(ex.StackTrace);
                 Stop();
+            }
+            finally
+            {
+                // clean up
             }
         }
 

@@ -37,11 +37,7 @@ namespace UniMoveStation.Service
         {
             get
             {
-                if (_cameras == null)
-                {
-                    _cameras = new ObservableCollection<SingleCameraViewModel>();
-                }
-                return _cameras;
+                return _cameras ?? (_cameras = new ObservableCollection<SingleCameraViewModel>());
             }
             private set
             {

@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -51,14 +52,15 @@ namespace UniMoveStation.Service
             if (_updateTask != null && _updateTask.Status == TaskStatus.Running) return;
 
             _ctsUpdate = new CancellationTokenSource();
-            CancellationToken token = _ctsUpdate.Token;
             StartTracker();
             try
             {
-                _updateTask = Task.Run(() =>
+                _updateTask = Task.Factory.StartNew(() =>
                 {
-                    while (!token.IsCancellationRequested)
+                    Stopwatch sw = new Stopwatch();
+                    while (!_ctsUpdate.Token.IsCancellationRequested)
                     {
+                        sw.Restart();
                         foreach (MotionControllerModel mc in _camera.Controllers)
                         {
                             if(mc.Tracking[_camera])
@@ -78,8 +80,10 @@ namespace UniMoveStation.Service
                         }
                         UpdateTracker();
                         UpdateImage();
+                        sw.Stop();
+                        Thread.Sleep((int) (Math.Max((1000.0 / (double) _camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
                     }
-                });
+                }, _ctsUpdate.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 await _updateTask;
             }
             catch(OperationCanceledException ex)

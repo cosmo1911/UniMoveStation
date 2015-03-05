@@ -24,6 +24,7 @@ namespace UniMoveStation.Model
         private bool _tracking;
         private bool _debug;
         private bool _visualization;
+        private int _fps;
         private BitmapSource _imageSource;
         private IntPtr _handle;
         private IntPtr _fusion;
@@ -38,6 +39,7 @@ namespace UniMoveStation.Model
             Name = "Design " + TrackerId;
             GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
             Calibration = new CameraCalibrationModel();
+            FPS = 60;
         }
 #endif
 
@@ -52,6 +54,13 @@ namespace UniMoveStation.Model
         {
             get { return _guid; }
             set { Set(() => GUID, ref _guid, value); }
+        }
+
+        [JsonProperty]
+        public int FPS
+        {
+            get { return _fps; }
+            set { Set(() => FPS, ref _fps, value); }
         }
 
         [JsonProperty]

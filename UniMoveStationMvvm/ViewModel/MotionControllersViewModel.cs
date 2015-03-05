@@ -28,8 +28,7 @@ namespace UniMoveStation.ViewModel
     public class MotionControllersViewModel : ViewModelBase
     {
         private string _name;
-        private RelayCommand<MouseWheelEventArgs> _mouseWheelCommand;
-
+        private RelayCommand<bool> _toggleControllersCommand;
 
         public string Name
         {
@@ -115,11 +114,27 @@ namespace UniMoveStation.ViewModel
         }
 
         #region Commands
-        
+        /// <summary>
+        /// Gets the ToggleControllersCommand.
+        /// </summary>
+        public RelayCommand<bool> ToggleControllersCommand
+        {
+            get
+            {
+                return _toggleControllersCommand
+                    ?? (_toggleControllersCommand = new RelayCommand<bool>(DoToggleControllers));
+            }
+        }
         #endregion
 
         #region Command Exeuctions
-        
+        public void DoToggleControllers(bool enabled)
+        {
+            foreach(MotionControllerViewModel mcvw in Controllers)
+            {
+                mcvw.DoToggleConnection(enabled);
+            }
+        }
         #endregion
     } // CamerasViewModel
 } // namespace

@@ -219,7 +219,34 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </controls:ToggleSwitch>
-
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="FPS"
+                                   Margin="4"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   FontFamily="Segoe UI Semibold"
+                                   FontSize="16"
+                                   FontWeight="Normal"
+                                   Opacity="0.65"
+                                   Foreground="{DynamicResource BlackBrush}"
+                                   />
+                        <controls:NumericUpDown Value="{Binding Camera.FPS, 
+                                                            Mode=TwoWay, 
+                                                            UpdateSourceTrigger=PropertyChanged}"
+                                                Grid.Column="1"
+                                                Minimum="15"
+                                                Maximum="60"
+                                                Interval="1"
+                                                Speedup="True"
+                                                Margin="4"
+                                                />
+                    </Grid>
+                    
                     <controls:NumericUpDown Value="{Binding Camera.Calibration.RotX, 
                                                             Mode=TwoWay, 
                                                             UpdateSourceTrigger=PropertyChanged}"

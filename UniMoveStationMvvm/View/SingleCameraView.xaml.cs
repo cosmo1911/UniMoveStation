@@ -67,12 +67,12 @@ namespace UniMoveStation.View
         {
             if (e.OldValue != null && e.OldValue is SingleCameraViewModel)
             {
-                Console.WriteLine("old " + ((SingleCameraViewModel)e.OldValue).Camera.Name);
+                //Console.WriteLine("old " + ((SingleCameraViewModel)e.OldValue).Camera.Name);
 
             }
             if (e.NewValue != null && e.NewValue is SingleCameraViewModel)
             {
-                Console.WriteLine("new " + ((SingleCameraViewModel)e.NewValue).Camera.Name);
+                //Console.WriteLine("new " + ((SingleCameraViewModel)e.NewValue).Camera.Name);
                 _scvm = (SingleCameraViewModel) DataContext;
             }
         }
@@ -114,5 +114,5 @@ namespace UniMoveStation.View
                 _scvm.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
             }
         }
-    }
-}
+    } // SingleCameraView
+} // namespace
