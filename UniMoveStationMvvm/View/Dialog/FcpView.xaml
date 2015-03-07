@@ -8,7 +8,7 @@
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:CLEyeMulticam="clr-namespace:CLEyeMulticam" 
-                         xmlns:local="clr-namespace:UniMoveStation"
+                         xmlns:utils="clr-namespace:UniMoveStation.Utils;assembly=UniMoveStation.Utils"
                          xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
                          mc:Ignorable="d"
                          xmlns:service="clr-namespace:UniMoveStation.Service"
@@ -36,7 +36,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid d:DataContext="vm:SingleCameraViewModel"
+                        <Grid d:DataContext="vm:CameraViewModel"
                               Margin="4">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="30"/>
@@ -48,14 +48,14 @@
                                      Height="30"
                                      Background="{StaticResource AccentColorBrush2}"
                                      Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
-                                     x:Name="name"
+                                     x:Name="TextBox_Name"
                                      />
-                            <local:AspectRatioLayoutDecorator Grid.Column="0"
+                            <utils:AspectRatioLayoutDecorator Grid.Column="0"
 							                                  Grid.Row="1"
 							                                  AspectRatio="1.3333">
                                 <Grid MinWidth="180"
                                       MaxHeight="480"
-                                      Width="{Binding ActualWidth, ElementName=name}">
+                                      Width="{Binding ActualWidth, ElementName=TextBox_Name}">
                                       <Label VerticalContentAlignment="Center"
                   							 HorizontalContentAlignment="Center"
                   							 Background="{StaticResource AccentColorBrush}"
@@ -73,7 +73,7 @@
 									                                Source="{Binding Camera.ImageSource}"
                                                   />
                                 </Grid>
-                            </local:AspectRatioLayoutDecorator>
+                            </utils:AspectRatioLayoutDecorator>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -110,8 +110,7 @@
                     Style="{DynamicResource AccentedDialogSquareButton}"
                     Margin="4 0 4 0"
                     Command="{Binding CancelCommand}"
-                    DataContext="{Binding}">
-            </Button>
+                    DataContext="{Binding}" />
         </StackPanel>
     </Grid>
 </Dialogs:BaseMetroDialog>

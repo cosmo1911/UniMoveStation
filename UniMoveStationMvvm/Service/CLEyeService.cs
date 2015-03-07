@@ -1,11 +1,6 @@
 ﻿using CLEyeMulticam;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using UniMoveStation.Design;
 using UniMoveStation.Model;
 
@@ -13,7 +8,7 @@ namespace UniMoveStation.Service
 {
     public class CLEyeService : DependencyObject, ICameraService
     {
-        private SingleCameraModel _camera;
+        private CameraModel _camera;
 
         public IConsoleService ConsoleService
         {
@@ -33,7 +28,7 @@ namespace UniMoveStation.Service
         }
 
         #endregion
-        public void Initialize(SingleCameraModel camera)
+        public void Initialize(CameraModel camera)
         {
             _camera = camera;
             Device = new CLEyeCameraDevice();

@@ -7,17 +7,18 @@
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:m="clr-namespace:UniMoveStation.Model"
-             xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:helper="clr-namespace:UniMoveStation.Selector"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             xmlns:valueConverter="clr-namespace:UniMoveStation.Utils.ValueConverter;assembly=UniMoveStation.Utils"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:MotionControllerViewModel, IsDesignTimeCreatable=True}"
              Margin="8">
 
     <UserControl.Resources>
-        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
-        <helper:QuaternionToStringConverter x:Key="QuaternionToStringConverter"/> 
+        <valueConverter:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+        <valueConverter:QuaternionToStringConverter x:Key="QuaternionToStringConverter"/> 
     </UserControl.Resources>
     <Grid>
         <!-- Main Grid -->
@@ -71,12 +72,10 @@
                                   IsHitTestVisible="False" 
                                   Margin="0 0 0 4"
                                   IsChecked="{Binding MotionController.Circle}">
-                            <svgc:SvgViewbox Grid.Column="1" 
-                                         Grid.Row="0" 
-                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
-                                         Height="15" 
-                                         Width="18"
-                                         />
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                                             Height="15" 
+                                             Width="18"
+                                             />
                         </CheckBox>
                         <!--Cross-->
                         <CheckBox  Grid.Column="0"
@@ -84,12 +83,10 @@
                                    IsHitTestVisible="False"
                                    Margin="0 4 0 4"
                                    IsChecked="{Binding MotionController.Cross}">
-                            <svgc:SvgViewbox Grid.Column="1"
-                                         Grid.Row="1"
-                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
-                                         Height="15"
-                                         Width="18"
-                                         />
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
                         </CheckBox>
                         <!--Triangle-->
                         <CheckBox Grid.Column="0"
@@ -97,12 +94,10 @@
                                   IsHitTestVisible="False"
                                   Margin="0 4 0 4"
                                   IsChecked="{Binding MotionController.Triangle}">
-                            <svgc:SvgViewbox Grid.Column="1"
-                                         Grid.Row="2"
-                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
-                                         Height="15"
-                                         Width="18"
-                                         />
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
                         </CheckBox>
                         <!--Square-->
                         <CheckBox Grid.Column="0"
@@ -110,12 +105,10 @@
                                   IsHitTestVisible="False"
                                   Margin="0 4 0 4"
                                   IsChecked="{Binding MotionController.Square}">
-                            <svgc:SvgViewbox Grid.Column="1"
-                                         Grid.Row="3"
-                                         Source="/UniMoveStationMvvm;component/Resources/PlayStationSquare.svg"
-                                         Height="15"
-                                         Width="18"
-                                         />
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationSquare.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
                         </CheckBox>
                         
                         <!-- Left of Upper Left Grid -->
@@ -169,7 +162,7 @@
                     </Grid>
                     <!-- Upper Left Grid -->
                 </Grid>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="1">
                     <!-- Lower Left Grid -->
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -221,7 +214,7 @@
 
             <cw:ColorWheelControl Grid.Column="1"
                                   Margin="4"
-                                  x:Name="color_wheel"
+                                  x:Name="ColorWheel"
                                   Palette="{Binding Palette}"
                                   Height="100"
                                   Width="100"
@@ -231,7 +224,7 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ColorsUpdated">
                         <mvvm:EventToCommand Command="{Binding SelectColorCommand}"
-                                             CommandParameter="{Binding Palette, ElementName=color_wheel}"/>
+                                             CommandParameter="{Binding Palette, ElementName=ColorWheel}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
@@ -299,7 +292,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Serial-->
-                <TextBlock Grid.Row="1"
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Serial"
                            VerticalAlignment="Center"
@@ -312,7 +306,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Connect Status-->
-                <TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Connect Status"
                            VerticalAlignment="Center"
@@ -325,7 +320,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Connection Type-->
-                <TextBlock Grid.Row="3"
+                <TextBlock Grid.Row="3" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Connection Type"
                            VerticalAlignment="Center"
@@ -338,7 +334,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Host-->
-                <TextBlock Grid.Row="4"
+                <TextBlock Grid.Row="4" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Host Address"
                            VerticalAlignment="Center"
@@ -351,7 +348,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Gyroscope-->
-                <TextBlock Grid.Row="5"
+                <TextBlock Grid.Row="5" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Gyroscope"
                            VerticalAlignment="Center"
@@ -364,7 +362,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Accelerometer-->
-                <TextBlock Grid.Row="6"
+                <TextBlock Grid.Row="6" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Accelerometer"
                            VerticalAlignment="Center"
@@ -377,7 +376,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Magnetometer-->
-                <TextBlock Grid.Row="7"
+                <TextBlock Grid.Row="7" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Magnetometer"
                            VerticalAlignment="Center"
@@ -390,7 +390,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Orientation-->
-                <TextBlock Grid.Row="8"
+                <TextBlock Grid.Row="8" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Orientation"
                            VerticalAlignment="Center"
@@ -403,7 +404,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Raw Gyroscope-->
-                <TextBlock Grid.Row="9"
+                <TextBlock Grid.Row="9" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Raw Gyroscope"
                            VerticalAlignment="Center"
@@ -416,7 +418,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Raw Accelerometer-->
-                <TextBlock Grid.Row="10"
+                <TextBlock Grid.Row="10" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Raw Accelerometer"
                            VerticalAlignment="Center"
@@ -430,6 +433,7 @@
                          />
                 <!--Temperature-->
                 <TextBlock Grid.Row="11"
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Temperature"
                            VerticalAlignment="Center"
@@ -443,7 +447,8 @@
                          Margin="0 4 0 4"
                          />
                 <!--Raw Position-->
-                <TextBlock Grid.Row="12"
+                <TextBlock Grid.Row="12" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Raw Position"
                            VerticalAlignment="Center"
@@ -452,13 +457,12 @@
                              Grid.Column="1"
                              Columns="2">
 
-                    <ListBox Grid.Column="0"
-                             ItemsSource="{Binding MotionController.RawPosition.Keys}"
+                    <ListBox ItemsSource="{Binding MotionController.RawPosition.Keys}"
                              IsEnabled="False"
                              BorderThickness="1"
                              Margin="0 4 0 4">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                            <DataTemplate DataType="{x:Type m:CameraModel}">
                                 <TextBlock Text="{Binding Name}"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"
@@ -466,8 +470,7 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ListBox Grid.Column="1"
-                             ItemsSource="{Binding MotionController.RawPosition.Values}"
+                    <ListBox ItemsSource="{Binding MotionController.RawPosition.Values}"
                              IsEnabled="False"
                              BorderThickness="1"
                              Margin="0 4 0 4">
@@ -483,7 +486,8 @@
                 </UniformGrid>
 
                 <!--Fusion Position-->
-                <TextBlock Grid.Row="13"
+                <TextBlock Grid.Row="13" 
+                           Grid.Column="0"
                            Margin="0 4 0 4"
                            Text="Fusion Position"
                            VerticalAlignment="Center"
@@ -498,7 +502,7 @@
                              BorderThickness="1"
                              Margin="0 4 0 4">
                         <ListBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                            <DataTemplate DataType="{x:Type m:CameraModel}">
                                 <TextBlock Text="{Binding Name}"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"

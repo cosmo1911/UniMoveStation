@@ -2,10 +2,6 @@
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniMoveStation.SharpMove;
 using UniMoveStation.ViewModel;
 using UnityEngine;
@@ -55,14 +51,14 @@ namespace UniMoveStation.Model
         #endregion
 
         #region Tracker
-        private ObservableConcurrentDictionary<SingleCameraModel, bool> _tracking;
-        private ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> _trackerStatus;
-        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _rawPosition;
-        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _fusionPosition;
-        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _cameraPosition;
-        private ObservableConcurrentDictionary<SingleCameraModel, Vector3> _worldPosition;
-        private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _projectionMatrix;
-        private ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> _modelViewMatrix;
+        private ObservableConcurrentDictionary<CameraModel, bool> _tracking;
+        private ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus> _trackerStatus;
+        private ObservableConcurrentDictionary<CameraModel, Vector3> _rawPosition;
+        private ObservableConcurrentDictionary<CameraModel, Vector3> _fusionPosition;
+        private ObservableConcurrentDictionary<CameraModel, Vector3> _cameraPosition;
+        private ObservableConcurrentDictionary<CameraModel, Vector3> _worldPosition;
+        private ObservableConcurrentDictionary<CameraModel, Matrix4x4> _projectionMatrix;
+        private ObservableConcurrentDictionary<CameraModel, Matrix4x4> _modelViewMatrix;
         #endregion
 
 #if DEBUG
@@ -85,18 +81,18 @@ namespace UniMoveStation.Model
             Trigger = random.Next(256);
             Orientation = new Quaternion();
 
-            Color = UnityEngine.Color.blue;
+            Color = Color.blue;
         }
 #endif
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> ProjectionMatrix
+        public ObservableConcurrentDictionary<CameraModel, Matrix4x4> ProjectionMatrix
         {
             get
             {
                 if (_projectionMatrix == null)
                 {
-                    _projectionMatrix = new ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _projectionMatrix = new ObservableConcurrentDictionary<CameraModel, Matrix4x4>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _projectionMatrix.Add(scvm.Camera, new Matrix4x4());
                     }
@@ -106,14 +102,14 @@ namespace UniMoveStation.Model
             set { Set(() => ProjectionMatrix, ref _projectionMatrix, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4> ModelViewMatrix
+        public ObservableConcurrentDictionary<CameraModel, Matrix4x4> ModelViewMatrix
         {
             get
             {
                 if (_modelViewMatrix == null)
                 {
-                    _modelViewMatrix = new ObservableConcurrentDictionary<SingleCameraModel, Matrix4x4>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _modelViewMatrix = new ObservableConcurrentDictionary<CameraModel, Matrix4x4>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _modelViewMatrix.Add(scvm.Camera, new Matrix4x4());
                     }
@@ -123,14 +119,14 @@ namespace UniMoveStation.Model
             set { Set(() => ModelViewMatrix, ref _modelViewMatrix, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> RawPosition
+        public ObservableConcurrentDictionary<CameraModel, Vector3> RawPosition
         {
             get 
             { 
                 if(_rawPosition == null)
                 {
-                    _rawPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
-                    foreach(SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _rawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
+                    foreach(CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _rawPosition.Add(scvm.Camera, Vector3.zero);
                     }
@@ -140,14 +136,14 @@ namespace UniMoveStation.Model
             set { Set(() => RawPosition, ref _rawPosition, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> FusionPosition
+        public ObservableConcurrentDictionary<CameraModel, Vector3> FusionPosition
         {
             get
             {
                 if (_fusionPosition == null)
                 {
-                    _fusionPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _fusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _fusionPosition.Add(scvm.Camera, Vector3.zero);
                     }
@@ -157,14 +153,14 @@ namespace UniMoveStation.Model
             set { Set(() => FusionPosition, ref _fusionPosition, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> CameraPosition
+        public ObservableConcurrentDictionary<CameraModel, Vector3> CameraPosition
         {
             get
             {
                 if (_cameraPosition == null)
                 {
-                    _cameraPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _cameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _cameraPosition.Add(scvm.Camera, Vector3.zero);
                     }
@@ -174,14 +170,14 @@ namespace UniMoveStation.Model
             set { Set(() => CameraPosition, ref _cameraPosition, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, Vector3> WorldPosition
+        public ObservableConcurrentDictionary<CameraModel, Vector3> WorldPosition
         {
             get
             {
                 if (_worldPosition == null)
                 {
-                    _worldPosition = new ObservableConcurrentDictionary<SingleCameraModel, Vector3>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _worldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _worldPosition.Add(scvm.Camera, Vector3.zero);
                     }
@@ -191,14 +187,14 @@ namespace UniMoveStation.Model
             set { Set(() => WorldPosition, ref _worldPosition, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, bool> Tracking
+        public ObservableConcurrentDictionary<CameraModel, bool> Tracking
         {
             get
             {
                 if (_tracking == null)
                 {
-                    _tracking = new ObservableConcurrentDictionary<SingleCameraModel, bool>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                    _tracking = new ObservableConcurrentDictionary<CameraModel, bool>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                     {
                         _tracking.Add(scvm.Camera, false);
                     }
@@ -208,14 +204,14 @@ namespace UniMoveStation.Model
             set { Set(() => Tracking, ref _tracking, value); }
         }
 
-        public ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus> TrackerStatus
+        public ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus> TrackerStatus
         {
             get
             {
                 if (_trackerStatus == null)
                 {
-                    _trackerStatus = new ObservableConcurrentDictionary<SingleCameraModel, PSMoveTrackerStatus>();
-                    foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllInstances<SingleCameraViewModel>())
+                    _trackerStatus = new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>();
+                    foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllInstances<CameraViewModel>())
                     {
                         _trackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
                     }

@@ -4,8 +4,6 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
@@ -13,9 +11,8 @@ using UniMoveStation.View;
 using GalaSoft.MvvmLight.CommandWpf;
 using UniMoveStation.Model;
 using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight.Threading;
-using UniMoveStation.Helper;
 using UniMoveStation.ViewModel;
+using UniMoveStation.Utils;
 
 namespace UniMoveStation.Service
 {
@@ -31,7 +28,7 @@ namespace UniMoveStation.Service
         private RelayCommand _saveCommand;
         private CancellationTokenSource _ctsCameraCalibration;
 
-        public SingleCameraModel Camera
+        public CameraModel Camera
         {
             get;
             private set;
@@ -48,7 +45,7 @@ namespace UniMoveStation.Service
         Bgr[] line_colour_array = new Bgr[width * height]; // just for displaying coloured lines of detected chessboard
 
         static Image<Gray, Byte>[] Frame_array_buffer = new Image<Gray, byte>[100]; //number of images to calibrate camera over
-        int frame_buffer_savepoint = 0;
+        int frame_buffer_savepoint;
         #endregion
 
         #region Getting the camera calibration
@@ -58,7 +55,7 @@ namespace UniMoveStation.Service
         #endregion
 
         #region Constructor
-        public CameraCalibrationService(SingleCameraModel camera)
+        public CameraCalibrationService(CameraModel camera)
         {
             Camera = camera;
             //fill line colour array
@@ -141,7 +138,7 @@ namespace UniMoveStation.Service
                         frame_buffer_savepoint++;//increase buffer positon
 
                         //check the state of buffer
-                        if (frame_buffer_savepoint == Frame_array_buffer.Length) Camera.Calibration.CurrentMode = CameraCalibrationMode.Calculating_Intrinsics; //buffer full
+                        if (frame_buffer_savepoint == Frame_array_buffer.Length) Camera.Calibration.CurrentMode = CameraCalibrationMode.CalculatingIntrinsics; //buffer full
                     }
 
                     //draw the results
@@ -157,7 +154,7 @@ namespace UniMoveStation.Service
                 }
                 corners = null;
             }
-            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calculating_Intrinsics)
+            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.CalculatingIntrinsics)
             {
                 //we can do this in the loop above to increase speed
                 for (int k = 0; k < Frame_array_buffer.Length; k++)
@@ -193,7 +190,7 @@ namespace UniMoveStation.Service
 
                 //If Emgu.CV.CvEnum.CALIB_TYPE == CV_CALIB_USE_INTRINSIC_GUESS and/or CV_CALIB_FIX_ASPECT_RATIO are specified, some or all of fx, fy, cx, cy must be initialized before calling the function
                 //if you use FIX_ASPECT_RATIO and FIX_FOCAL_LEGNTH options, these values needs to be set in the intrinsic parameters before the CalibrateCamera function is called. Otherwise 0 values are used as default.
-                Console.WriteLine("Intrinsic Calculation Error: " + Camera.Calibration.Error.ToString()); //display the results to the user
+                Console.WriteLine("Intrinsic Calculation Error: " + Camera.Calibration.Error); //display the results to the user
                 Camera.Calibration.CurrentMode = CameraCalibrationMode.Calibrated;
             }
             if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
@@ -217,7 +214,7 @@ namespace UniMoveStation.Service
             }
             if(!_ctsCameraCalibration.IsCancellationRequested)
             {
-                BitmapSource bitmapSource = Emgu.CV.WPF.BitmapSourceConvert.ToBitmapSource(img);
+                BitmapSource bitmapSource = BitmapHelper.ToBitmapSource(img);
                 bitmapSource.Freeze();
                 Camera.ImageSource = bitmapSource;
             }

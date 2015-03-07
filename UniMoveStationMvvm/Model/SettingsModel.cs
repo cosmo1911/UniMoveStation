@@ -1,15 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using UniMoveStation.ViewModel;
 
 namespace UniMoveStation.Model
 {
@@ -34,7 +27,7 @@ namespace UniMoveStation.Model
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
             Debug = false;
-            _movedHosts = new List<string>()
+            _movedHosts = new List<string>
             {
                 "127.0.0.1"
             };
@@ -108,11 +101,11 @@ namespace UniMoveStation.Model
                         {
                             return "Enter a valid value.";
                         }
-                        else if (Width > SystemParameters.VirtualScreenWidth)
+                        if (Width > SystemParameters.VirtualScreenWidth)
                         {
                             return "Given width is too large.";
                         }
-                        else if (Width < 480)
+                        if (Width < 480)
                         {
                             return "Width needs to be at least 480px";
                         }

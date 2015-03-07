@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UniMoveStation.SharpMove;
 using UniMoveStation.Model;
 using UnityEngine;
-using GalaSoft.MvvmLight.Ioc;
-using UniMoveStation.ViewModel;
-using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System.Windows;
@@ -138,7 +132,7 @@ namespace UniMoveStation.Service
                             float r = (color.r / 100) * percentage;
                             float g = (color.g / 100) * percentage;
                             float b = (color.b / 100) * percentage;
-                            SetLED(new UnityEngine.Color(r, g, b));
+                            SetLED(new Color(r, g, b));
                             PsMoveApi.psmove_update_leds(_motionController.Handle);
 
                             if (controller.IsCanceled)
@@ -310,7 +304,7 @@ namespace UniMoveStation.Service
             // can be set independently of the controllers' update rate.
 
             if (timeElapsed < _motionController.UpdateRate) return;
-            else timeElapsed = 0.0f;
+            timeElapsed = 0.0f;
             UpdateController();
         }
 

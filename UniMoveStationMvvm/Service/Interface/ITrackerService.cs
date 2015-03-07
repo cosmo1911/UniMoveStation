@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniMoveStation.Model;
+﻿using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
 {
@@ -17,7 +12,7 @@ namespace UniMoveStation.Service
 
         void UpdateImage();
 
-        void Initialize(SingleCameraModel camera);
+        void Initialize(CameraModel camera);
 
         bool Start();
 

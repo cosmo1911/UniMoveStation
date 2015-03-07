@@ -85,7 +85,7 @@ namespace UniMoveStation.Nito
                     Console.WriteLine("Client connecting");
                     break;
                 case SocketState.Connected:
-                    Console.WriteLine("Client connected to " + ClientSocket.RemoteEndPoint.ToString());
+                    Console.WriteLine("Client connected to " + ClientSocket.RemoteEndPoint);
                     break;
                 case SocketState.Disconnecting:
                     Console.WriteLine("Client disconnecting");
@@ -109,7 +109,7 @@ namespace UniMoveStation.Nito
                 ClientSocketState = SocketState.Connected;
 
                 // Display the connection information
-                Console.WriteLine("Connection established to " + ClientSocket.RemoteEndPoint.ToString());
+                Console.WriteLine("Connection established to " + ClientSocket.RemoteEndPoint);
             }
             catch (Exception ex)
             {
@@ -189,7 +189,7 @@ namespace UniMoveStation.Nito
                     // At this point, we know we actually got a message.
 
                     // Deserialize the message
-                    object message = UniMoveStation.Messages.Util.Deserialize(e.Result);
+                    object message = Utils.SerializationHelper.Deserialize(e.Result);
 
                     if(handleMessages(message) == false)
                     {
@@ -211,7 +211,7 @@ namespace UniMoveStation.Nito
         protected virtual bool handleMessages(object message)
         {
             // Handle the message
-            UniMoveStation.Messages.StringMessage stringMessage = message as UniMoveStation.Messages.StringMessage;
+            NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
             if (stringMessage != null)
             {
                 Console.WriteLine("Socket read got a string message: " + stringMessage.Message);
@@ -222,11 +222,11 @@ namespace UniMoveStation.Nito
                 return true;
             }
 
-            UniMoveStation.Messages.ComplexMessage complexMessage = message as UniMoveStation.Messages.ComplexMessage;
+            NitoMessages.ComplexMessage complexMessage = message as NitoMessages.ComplexMessage;
             if (complexMessage != null)
             {
-                Console.WriteLine("Socket read got a complex message: (UniqueID = " + complexMessage.UniqueID.ToString() +
-                    ", Time = " + complexMessage.Time.ToString() + ", Message = " + complexMessage.Message + ")");
+                Console.WriteLine("Socket read got a complex message: (UniqueID = " + complexMessage.UniqueID +
+                    ", Time = " + complexMessage.Time + ", Message = " + complexMessage.Message + ")");
                 return true;
             }
 
@@ -249,11 +249,11 @@ namespace UniMoveStation.Nito
                 ClientSocket = new SimpleClientTcpSocket();
                 ClientSocket.ConnectCompleted += ClientSocket_ConnectCompleted;
                 ClientSocket.PacketArrived += ClientSocket_PacketArrived;
-                ClientSocket.WriteCompleted += (args) => ClientSocket_WriteCompleted(ClientSocket, args);
+                ClientSocket.WriteCompleted += args => ClientSocket_WriteCompleted(ClientSocket, args);
                 ClientSocket.ShutdownCompleted += ClientSocket_ShutdownCompleted;
                 ClientSocket.ConnectAsync(serverIPAddress, port);
                 ClientSocketState = SocketState.Connecting;
-                Console.WriteLine("Connecting socket to " + (new IPEndPoint(serverIPAddress, port)).ToString());
+                Console.WriteLine("Connecting socket to " + (new IPEndPoint(serverIPAddress, port)));
             }
             catch (Exception ex)
             {
@@ -310,11 +310,11 @@ namespace UniMoveStation.Nito
             try
             {
                 // Create the message to send
-                UniMoveStation.Messages.StringMessage msg = new UniMoveStation.Messages.StringMessage();
+                NitoMessages.StringMessage msg = new NitoMessages.StringMessage();
                 msg.Message = message;
 
                 // Serialize the message to a binary array
-                byte[] binaryMessage = UniMoveStation.Messages.Util.Serialize(msg);
+                byte[] binaryMessage = Utils.SerializationHelper.Serialize(msg);
 
                 // Send the message; the state is used by ClientSocket_WriteCompleted to display an output to the log
                 string description = "<string message: " + msg.Message + ">";
@@ -338,13 +338,13 @@ namespace UniMoveStation.Nito
             try
             {
                 // Create the message to send
-                UniMoveStation.Messages.ComplexMessage msg = new UniMoveStation.Messages.ComplexMessage();
+                NitoMessages.ComplexMessage msg = new NitoMessages.ComplexMessage();
                 msg.UniqueID = Guid.NewGuid();
                 msg.Time = DateTimeOffset.Now;
                 msg.Message = message;
 
                 // Serialize the message to a binary array
-                byte[] binaryMessage = UniMoveStation.Messages.Util.Serialize(msg);
+                byte[] binaryMessage = Utils.SerializationHelper.Serialize(msg);
 
                 // Send the message; the state is used by ClientSocket_WriteCompleted to display an output to the log
                 string description = "<complex message: " + msg.UniqueID + ">";
@@ -388,7 +388,7 @@ namespace UniMoveStation.Nito
                     if (IPAddress.IsLoopback(address.Address))
                         continue;
 
-                    sb.AppendLine(address.Address.ToString() + " (" + network.Name + ")");
+                    sb.AppendLine(address.Address + " (" + network.Name + ")");
                 }
             }
 

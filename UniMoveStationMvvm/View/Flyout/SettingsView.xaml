@@ -7,7 +7,7 @@
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:m="clr-namespace:UniMoveStation.Model"
-             xmlns:utils="clr-namespace:UniMoveStation.Utilities"
+             xmlns:utils="clr-namespace:UniMoveStation.Utils;assembly=UniMoveStation.Utils"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              d:DataContext="{Binding Settings, Source={StaticResource ViewModelLocator}}">
@@ -38,7 +38,8 @@
                                Margin="0 0 0 2"
                                Text="Window Position"
                                />
-                    <TextBlock Grid.Row="1"
+                    <TextBlock Grid.Row="1" 
+                               Grid.Column="0"
                                Text="X"
                                Margin="0 4 4 4"
                                VerticalAlignment="Center"
@@ -76,7 +77,8 @@
                                Margin="0 4 0 2"
                                Text="Window Size"
                                />
-                    <TextBlock Grid.Row="1"
+                    <TextBlock Grid.Row="1" 
+                               Grid.Column="0"
                                Text="X"
                                Margin="0 4 4 4"
                                VerticalAlignment="Center"
@@ -117,14 +119,16 @@
                                Text="Load Controllers on Start Up"
                                Margin="0 4 2 4"
                                />
-                    <CheckBox Grid.Column="1"
+                    <CheckBox Grid.Row="0" 
+                              Grid.Column="1"
             	              IsChecked="{Binding Settings.LoadControllersOnStartUp, UpdateSourceTrigger=PropertyChanged}"
                               HorizontalAlignment="Center"
             	              VerticalAlignment="Center" 
                               Margin="2 4 0 4"
                               />
                     <!--Load Cameras on Start Up-->
-                    <TextBlock Grid.Row="1"
+                    <TextBlock Grid.Row="1" 
+                               Grid.Column="0"
                                VerticalAlignment="Center"
                                Text="Load Cameras on Start Up"
                                Margin="0 4 2 4"
@@ -136,7 +140,8 @@
             	              VerticalAlignment="Center" 
                               Margin="2 4 0 4"
                               />
-                    <TextBlock Grid.Row="2"
+                    <TextBlock Grid.Row="2" 
+                               Grid.Column="0"
                                VerticalAlignment="Center"
                                Text="Debug"
                                Margin="0 4 2 4"

@@ -11,7 +11,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:ignore="http://www.ignore.com"
-             xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:vc="clr-namespace:UniMoveStation.Utils.ValueConverter;assembly=UniMoveStation.Utils"
              mc:Ignorable="d ignore"
              DataContext="{Binding MotionControllers, Source={StaticResource ViewModelLocator}}"
              d:DesignWidth="856"
@@ -19,8 +19,8 @@
              Margin="8">
 
     <UserControl.Resources>
-        <helper:MatrixToStringConverter x:Key="MatrixToStringConverter"/>
-        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/> 
+        <vc:MatrixToStringConverter x:Key="MatrixToStringConverter"/>
+        <vc:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/> 
     </UserControl.Resources>
 
     <Grid>
@@ -220,7 +220,7 @@
             <!--TODO: Binding IsChecked-->
             <controls:ToggleSwitch Header="Controllers"
                                    Margin="4"
-                                   x:Name="switch_controllers"
+                                   x:Name="SwitchControllers"
                                    HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -228,7 +228,7 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleControllersCommand}"
-                                             CommandParameter="{Binding IsChecked, ElementName=switch_controllers}"/>
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchControllers}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>

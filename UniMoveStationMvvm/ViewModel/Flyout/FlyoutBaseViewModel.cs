@@ -4,14 +4,11 @@ using MahApps.Metro.Controls;
 namespace UniMoveStation.ViewModel.Flyout
 {
     /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
+    /// https://github.com/MahApps/MahApps.Metro/blob/master/samples/Caliburn.Metro.Demo/ViewModels/FlyoutBaseViewModel.cs
     /// </summary>
     public class FlyoutBaseViewModel : ViewModelBase
     {
-        private bool _isOpen = false;
+        private bool _isOpen;
         private string _header = "None";
         private Position _position = Position.Right;
 

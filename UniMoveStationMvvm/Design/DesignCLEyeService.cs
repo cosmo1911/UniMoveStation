@@ -1,22 +1,16 @@
 ﻿using CLEyeMulticam;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 
 namespace UniMoveStation.Design
 {
-    public class DesignCLEyeService : DependencyObject, ICameraService
+    public class DesignClEyeService : DependencyObject, ICameraService
     {
-        private SingleCameraModel _camera;
+        private CameraModel _camera;
 
-        public void Initialize(SingleCameraModel camera)
+        public void Initialize(CameraModel camera)
         {
             _camera = camera;
             _camera.GUID = _camera.TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";

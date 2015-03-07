@@ -1,13 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Ioc;
-using MahApps.Metro;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media;
-using UniMoveStation.Properties;
 using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel

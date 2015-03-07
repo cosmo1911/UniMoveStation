@@ -82,9 +82,6 @@
     <Reference Include="ColorWheel.Core">
       <HintPath>..\packages\ColorWheel.Controls.1.7.14.51712\lib\net40\ColorWheel.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DynamicDataDisplay">
-      <HintPath>..\packages\DynamicDataDisplay.0.3.0.1\lib\net45\DynamicDataDisplay.dll</HintPath>
-    </Reference>
     <Reference Include="Emgu.CV">
       <HintPath>plugins\ref\Emgu.CV.dll</HintPath>
     </Reference>
@@ -99,9 +96,6 @@
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Platform">
       <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="HelixToolkit">
-      <HintPath>..\packages\HelixToolkit.2015.1.474\lib\portable-net4+sl4+wp71+win8\HelixToolkit.dll</HintPath>
     </Reference>
     <Reference Include="HelixToolkit.Wpf">
       <HintPath>..\packages\HelixToolkit.Wpf.2015.1.474\lib\net45\HelixToolkit.Wpf.dll</HintPath>
@@ -128,111 +122,53 @@
       <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Converters.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SharpVectors.Core, Version=0.3.1.1588, Culture=neutral, PublicKeyToken=7407205e337c98ef, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Core.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Css, Version=0.3.1.1590, Culture=neutral, PublicKeyToken=7a46e3f532fdb787, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Css.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Dom, Version=0.3.1.1589, Culture=neutral, PublicKeyToken=517340b6277b1a7a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Dom.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Model, Version=0.3.1.1592, Culture=neutral, PublicKeyToken=2236cfc76b505845, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Model.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Rendering.Gdi, Version=0.3.1.1595, Culture=neutral, PublicKeyToken=03902092284347e3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Rendering.Gdi.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Rendering.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d0902381100df30e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Rendering.Wpf.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="SharpVectors.Runtime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d16e717f0a981fb9, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SharpVectors.1.0\lib\net20\SharpVectors.Runtime.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="system.windows.controls.datavisualization.toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UIAutomationProvider" />
     <Reference Include="UnityEngine">
       <HintPath>plugins\ref\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CLEye\CLEyeCameraDevice.cs" />
-    <Compile Include="CLEye\CLEyeCameraImage.cs" />
+    <Compile Include="CLEyeMulticam\CLEyeCameraDevice.cs" />
+    <Compile Include="CLEyeMulticam\CLEyeCameraImage.cs" />
     <Compile Include="Design\DesignCLEyeService.cs" />
     <Compile Include="Design\DesignConsoleService.cs" />
     <Compile Include="Design\DesignServerService.cs" />
     <Compile Include="Design\DesignTrackerService.cs" />
     <Compile Include="Design\DesignMotionControllerService.cs" />
-    <Compile Include="Helper\BitmapSourceConverter.cs" />
-    <Compile Include="Helper\CameraCalibrationMode.cs" />
-    <Compile Include="Helper\Converter\MultiValueConverter.cs" />
-    <Compile Include="Helper\Converter\MatrixToStringConverter.cs" />
-    <Compile Include="Helper\Converter\QuaternionToStringConverter.cs" />
-    <Compile Include="Helper\Json\JsonExtrinsicCameraParametersConverter.cs" />
-    <Compile Include="Helper\Json\JsonPointFConverter.cs" />
-    <Compile Include="Helper\Json\JsonMatrixConverter.cs" />
-    <Compile Include="Helper\Json\JsonCameraCalibrationConverter.cs" />
-    <Compile Include="Helper\Json\JsonCameraConverter.cs" />
-    <Compile Include="Helper\Json\JsonCreationConverter.cs" />
-    <Compile Include="Helper\Json\JsonIntrinsicCameraParametersConverter.cs" />
-    <Compile Include="Helper\Message\RemoveCameraMessage.cs" />
-    <Compile Include="Helper\Message\AddCameraMessage.cs" />
-    <Compile Include="Helper\Message\RemoveMotionControllerMessage.cs" />
-    <Compile Include="Helper\Message\AddMotionControllerMessage.cs" />
-    <Compile Include="Helper\Converter\DictionaryTrackingToBoolConverter.cs" />
-    <Compile Include="Helper\Converter\Vector3ToStringConverter.cs" />
-    <Compile Include="Helper\Converter\GreaterThanZeroConverter.cs" />
-    <Compile Include="Helper\Selector\MyFlyoutStyleSelector.cs" />
-    <Compile Include="Helper\Selector\MyTabContainerStyleSelector.cs" />
-    <Compile Include="Helper\Selector\MyTabItemTemplateSelector .cs" />
-    <Compile Include="Helper\Selector\MyTabContentTemplateSelector.cs" />
+    <Compile Include="Utils\JsonConverter\JsonCameraCalibrationConverter.cs" />
+    <Compile Include="Utils\JsonConverter\JsonCameraConverter.cs" />
+    <Compile Include="Utils\MessengerMessage\AddCameraMessage.cs" />
+    <Compile Include="Utils\MessengerMessage\AddMotionControllerMessage.cs" />
+    <Compile Include="Utils\MessengerMessage\RemoveCameraMessage.cs" />
+    <Compile Include="Utils\MessengerMessage\RemoveMotionControllerMessage.cs" />
+    <Compile Include="Utils\ObservableConcurrentDictionary.cs" />
+    <Compile Include="Selector\MyFlyoutStyleSelector.cs" />
+    <Compile Include="Selector\MyTabContainerStyleSelector.cs" />
+    <Compile Include="Selector\MyTabItemTemplateSelector .cs" />
+    <Compile Include="Selector\MyTabContentTemplateSelector.cs" />
     <Compile Include="Model\CameraCalibrationModel.cs" />
     <Compile Include="Model\SettingsModel.cs" />
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\UmsClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
-    <Compile Include="Model\SingleCameraModel.cs" />
+    <Compile Include="Model\CameraModel.cs" />
     <Compile Include="Service\CameraPositioningCalibrationService.cs" />
     <Compile Include="Service\CameraCalibrationService.cs" />
     <Compile Include="Service\CLEyeService.cs" />
@@ -249,17 +185,14 @@
     <Compile Include="Service\TrackerService.cs" />
     <Compile Include="SharpMove\PsMoveApi.cs" />
     <Compile Include="SharpMove\SharpMoveHelper.cs" />
-    <Compile Include="Utilities\AspectRatioLayoutDecorator.cs" />
-    <Compile Include="Utilities\InputBindingsManager.cs" />
-    <Compile Include="Utilities\ObservableConcurrentDictionary.cs" />
-    <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="Utils\ValueConverter\DictionaryTrackingToBoolConverter.cs" />
     <Compile Include="ViewModel\MotionControllersViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
     <Compile Include="ViewModel\Flyout\SettingsViewModel.cs" />
-    <Compile Include="ViewModel\SingleCameraViewModel.cs" />
+    <Compile Include="ViewModel\CameraViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MotionControllerViewModel.cs" />
     <Compile Include="ViewModel\NavigationViewModel.cs" />
@@ -298,8 +231,8 @@
     <Compile Include="View\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\SingleCameraView.xaml.cs">
-      <DependentUpon>SingleCameraView.xaml</DependentUpon>
+    <Compile Include="View\CameraView.xaml.cs">
+      <DependentUpon>CameraView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -363,7 +296,7 @@
       <SubType>Form</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\SingleCameraView.xaml">
+    <Page Include="View\CameraView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -434,9 +367,13 @@
     <Resource Include="Resources\PlayStationX.svg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messages\Messages.csproj">
+    <ProjectReference Include="..\Messages\UniMoveStation.NitoMessages.csproj">
       <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
-      <Name>Messages</Name>
+      <Name>UniMoveStation.NitoMessages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\UniMoveStation.Utils.csproj">
+      <Project>{408e4fbb-2d54-456c-a91e-69cad02f7199}</Project>
+      <Name>UniMoveStation.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

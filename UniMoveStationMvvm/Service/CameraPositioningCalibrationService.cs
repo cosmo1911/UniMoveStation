@@ -1,19 +1,9 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.View;
 using GalaSoft.MvvmLight.CommandWpf;
 using UniMoveStation.Model;
-using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight.Threading;
-using UniMoveStation.Helper;
 using UniMoveStation.ViewModel;
 using System.Collections.ObjectModel;
 using HelixToolkit.Wpf;
@@ -31,13 +21,13 @@ namespace UniMoveStation.Service
         private RelayCommand _saveCommand;
 
         private ObservableCollection<Visual3D> _helixItems;
-        private ObservableCollection<SingleCameraViewModel> _cameras;
+        private ObservableCollection<CameraViewModel> _cameras;
 
-        public ObservableCollection<SingleCameraViewModel> Cameras
+        public ObservableCollection<CameraViewModel> Cameras
         {
             get
             {
-                return _cameras ?? (_cameras = new ObservableCollection<SingleCameraViewModel>());
+                return _cameras ?? (_cameras = new ObservableCollection<CameraViewModel>());
             }
             private set
             {
@@ -66,7 +56,7 @@ namespace UniMoveStation.Service
         }
 
         #region Constructor
-        public CameraPositioningCalibrationService(ObservableCollection<SingleCameraViewModel> cameras)
+        public CameraPositioningCalibrationService(ObservableCollection<CameraViewModel> cameras)
         {
             Cameras = cameras;
         }
@@ -139,10 +129,10 @@ namespace UniMoveStation.Service
                     GetCamera(2).Calibration.YAngle = (float)(-180 + alpha);
                     GetCamera(3).Calibration.YAngle = (float)(180 - alpha);
 
-                    GetCamera(0).Calibration.RotationMatrix = Utilities.Utils.GetYRotationMatrix(GetCamera(0).Calibration.YAngle);
-                    GetCamera(1).Calibration.RotationMatrix = Utilities.Utils.GetYRotationMatrix(GetCamera(1).Calibration.YAngle);
-                    GetCamera(2).Calibration.RotationMatrix = Utilities.Utils.GetYRotationMatrix(GetCamera(2).Calibration.YAngle);
-                    GetCamera(3).Calibration.RotationMatrix = Utilities.Utils.GetYRotationMatrix(GetCamera(3).Calibration.YAngle);
+                    GetCamera(0).Calibration.RotationMatrix = Utils.CvHelper.GetYRotationMatrix(GetCamera(0).Calibration.YAngle);
+                    GetCamera(1).Calibration.RotationMatrix = Utils.CvHelper.GetYRotationMatrix(GetCamera(1).Calibration.YAngle);
+                    GetCamera(2).Calibration.RotationMatrix = Utils.CvHelper.GetYRotationMatrix(GetCamera(2).Calibration.YAngle);
+                    GetCamera(3).Calibration.RotationMatrix = Utils.CvHelper.GetYRotationMatrix(GetCamera(3).Calibration.YAngle);
                 }
                 {
                     double a = GetCamera(0).Calibration.TranslationVector[1, 0] - GetCamera(2).Calibration.TranslationVector[1, 0];
@@ -192,9 +182,9 @@ namespace UniMoveStation.Service
             }
         }
 
-        private SingleCameraModel GetCamera(int position)
+        private CameraModel GetCamera(int position)
         {
-            foreach(SingleCameraViewModel scvm in Cameras)
+            foreach(CameraViewModel scvm in Cameras)
             {
                 if (scvm.Camera.Calibration.Position == position) return scvm.Camera;
             }
@@ -203,7 +193,7 @@ namespace UniMoveStation.Service
 
         public void DoSave()
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 ViewModelLocator.Instance.Settings.DoSaveCalibration(scvm.Camera);
             }
@@ -222,15 +212,15 @@ namespace UniMoveStation.Service
 
         private void InitializeHelix()
         {
-            _helixItems.Add(new HelixToolkit.Wpf.SunLight());
-            _helixItems.Add(new HelixToolkit.Wpf.GridLinesVisual3D()
+            _helixItems.Add(new SunLight());
+            _helixItems.Add(new GridLinesVisual3D
             {
                 Width = 500,
                 Length = 500
             });
             RectangleVisual3D rec = new RectangleVisual3D();
 
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 CubeVisual3D cube = new CubeVisual3D();
                 cube.SideLength = 10;
@@ -241,7 +231,7 @@ namespace UniMoveStation.Service
                 _helixItems.Add(cube);
             }
 
-            ArrowVisual3D arrow = new ArrowVisual3D()
+            ArrowVisual3D arrow = new ArrowVisual3D
             {
                 Point1 = new Point3D(
                     GetCamera(0).Calibration.TranslationVector[0, 0],
@@ -255,7 +245,7 @@ namespace UniMoveStation.Service
             };
             _helixItems.Add(arrow);
 
-            arrow = new ArrowVisual3D()
+            arrow = new ArrowVisual3D
             {
                 Point1 = new Point3D(
                     GetCamera(1).Calibration.TranslationVector[0, 0],
@@ -269,7 +259,7 @@ namespace UniMoveStation.Service
             };
             _helixItems.Add(arrow);
 
-            ArrowVisual3D axis = new ArrowVisual3D()
+            ArrowVisual3D axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(100, 0, 0),
@@ -278,7 +268,7 @@ namespace UniMoveStation.Service
             };
             _helixItems.Add(axis);
 
-            axis = new ArrowVisual3D()
+            axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(0, 100, 0),
@@ -287,7 +277,7 @@ namespace UniMoveStation.Service
             };
             _helixItems.Add(axis);
 
-            axis = new ArrowVisual3D()
+            axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(0, 0, 100),

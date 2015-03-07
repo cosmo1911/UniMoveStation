@@ -1,23 +1,21 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
 using System.Collections.ObjectModel;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
-using UniMoveStation.SharpMove;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
     public class AddCameraViewModel : FlyoutBaseViewModel
     {
-        private SingleCameraModel _newCamera;
+        private CameraModel _newCamera;
         private bool _newCamerasDetected;
         private RelayCommand _cancelCommand;
         private RelayCommand _createCommand;
         private RelayCommand _refreshCommand;
         private RelayCommand<object> _selectItemCommand;
-        private ObservableCollection<SingleCameraModel> _availableCameras;
+        private ObservableCollection<CameraModel> _availableCameras;
 
         /// <summary>
         /// Initializes a new instance of the AddCameraViewModel class.
@@ -26,16 +24,16 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             Position = Position.Right;
             Header = "Add Camera";
-            AvailableCameras = new ObservableCollection<SingleCameraModel>();
+            AvailableCameras = new ObservableCollection<CameraModel>();
         }
 
         #region Properties
-        public ObservableCollection<SingleCameraModel> AvailableCameras
+        public ObservableCollection<CameraModel> AvailableCameras
         {
             get { return _availableCameras; }
             set { Set(() => AvailableCameras, ref _availableCameras, value); }
         }
-        public SingleCameraModel NewCamera
+        public CameraModel NewCamera
         {
             get { return _newCamera; }
             private set { Set(() => NewCamera, ref _newCamera, value); }
@@ -101,7 +99,7 @@ namespace UniMoveStation.ViewModel.Flyout
         #region Command Executions
         public void DoCancelCommand()
         {
-            NewCamera = new SingleCameraModel();
+            NewCamera = new CameraModel();
             IsOpen = false;
         }
 
@@ -109,15 +107,15 @@ namespace UniMoveStation.ViewModel.Flyout
         {
             if (NewCamera != null)
             {
-                SingleCameraViewModel scvw;
+                CameraViewModel scvw;
                 if (!NewCamera.GUID.Contains("9ABC-DEFG-HIJK-LMNOPQRSTUVW"))
                 {
                     IConsoleService consoleService = new ConsoleService();
-                    scvw = new SingleCameraViewModel(NewCamera, new TrackerService(consoleService), new CLEyeService(consoleService), consoleService);
+                    scvw = new CameraViewModel(NewCamera, new TrackerService(consoleService), new CLEyeService(consoleService), consoleService);
                 }
                 else 
                 {
-                    scvw = new SingleCameraViewModel();
+                    scvw = new CameraViewModel();
                 }
                 IsOpen = false;
             }
@@ -128,16 +126,16 @@ namespace UniMoveStation.ViewModel.Flyout
             if (item != null)
             {
                 string tmp = NewCamera.Name;
-                NewCamera = (SingleCameraModel) item;
+                NewCamera = (CameraModel) item;
                 NewCamera.Name = tmp;
             }
         }
 
         public void DoRefresh()
         {
-            ObservableCollection<SingleCameraModel> existingCameras = new ObservableCollection<SingleCameraModel>();
+            ObservableCollection<CameraModel> existingCameras = new ObservableCollection<CameraModel>();
             AvailableCameras.Clear();
-            NewCamera = new SingleCameraModel()
+            NewCamera = new CameraModel
             {
                 Name = null
             };
@@ -147,19 +145,19 @@ namespace UniMoveStation.ViewModel.Flyout
             int connectedCount = cameraService.GetConnectedCount();
             if (connectedCount > 0)
             {
-                foreach (SingleCameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                foreach (CameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                 {
                     existingCameras.Add(scvw.Camera);
                 }
                 for (int i = 0; i < connectedCount; i++)
                 {
-                    SingleCameraModel tmp = new SingleCameraModel();
+                    CameraModel tmp = new CameraModel();
                     tmp.TrackerId = i;
                     cameraService.Initialize(tmp);
                     if(existingCameras.Count > 0)
                     {
                         bool duplicate = false;
-                        foreach (SingleCameraModel sc in existingCameras)
+                        foreach (CameraModel sc in existingCameras)
                         {
                             if (tmp.GUID.Equals(sc.GUID))
                             {

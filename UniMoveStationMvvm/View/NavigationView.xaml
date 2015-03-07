@@ -12,7 +12,7 @@
              xmlns:model="clr-namespace:UniMoveStation.Model"
              xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
              xmlns:v="clr-namespace:UniMoveStation.View"
-             xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:helper="clr-namespace:UniMoveStation.Selector"
              xmlns:ignore="http://www.ignore.com"
              mc:Ignorable="d ignore"
              DataContext="{Binding Navigation, Source={StaticResource ViewModelLocator}}">
@@ -138,7 +138,7 @@
         </DataTemplate>
 
         <!--Single Camera Tab Item Template-->
-        <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
+        <DataTemplate DataType="{x:Type vm:CameraViewModel}"
                       x:Key="SingleCameraTabItemTemplate">
             <StackPanel Orientation="Horizontal">
                 <!--Camera Icon-->
@@ -157,9 +157,9 @@
         </DataTemplate>
 
         <!--Single Camera Tab Data Template-->
-        <DataTemplate DataType="{x:Type vm:SingleCameraViewModel}"
+        <DataTemplate DataType="{x:Type vm:CameraViewModel}"
                       x:Key="SingleCameraTabContentTemplate">
-            <v:SingleCameraView/>
+            <v:CameraView/>
         </DataTemplate>
         
         <!--All Cameras Tab Item Template-->

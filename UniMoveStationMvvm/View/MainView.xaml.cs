@@ -19,7 +19,7 @@ namespace UniMoveStation.View
 
             Loaded += (s, e) =>
             {
-                Window.GetWindow(this).Closing +=
+                GetWindow(this).Closing +=
                     (s1, e1) =>
                     {
                         ViewModelLocator.Cleanup();

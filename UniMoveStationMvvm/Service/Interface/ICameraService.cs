@@ -1,17 +1,11 @@
 ﻿using CLEyeMulticam;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using UniMoveStation.Model;
 
 namespace UniMoveStation.Service
 {
     public interface ICameraService
     {
-        void Initialize(SingleCameraModel camera);
+        void Initialize(CameraModel camera);
 
         bool Start();
 

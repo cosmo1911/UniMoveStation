@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UniMoveStation.Messages;
+using UniMoveStation.NitoMessages;
 
 
 namespace UniMoveStation.IO
@@ -44,7 +44,7 @@ namespace UniMoveStation.IO
 
         protected override bool handleMessages(object message)
         {
-            UniMoveStation.Messages.PositionMessage positionMessage = message as UniMoveStation.Messages.PositionMessage;
+            UniMoveStation.NitoMessages.PositionMessage positionMessage = message as UniMoveStation.NitoMessages.PositionMessage;
             if (positionMessage != null)
             {
                 Debug.Log("Socket read got a string message: " + positionMessage.Message + ", Ticks=" + (System.DateTimeOffset.Now.Ticks - positionMessage.StartTick) / TimeSpan.TicksPerMillisecond + Environment.NewLine);

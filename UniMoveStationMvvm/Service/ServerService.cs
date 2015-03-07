@@ -2,9 +2,6 @@
 using Nito.Async.Sockets;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniMoveStation.Model;
 using UniMoveStation.Nito;
 using UniMoveStation.ViewModel;
@@ -48,10 +45,10 @@ namespace UniMoveStation.Service
             ChildSockets.TryGetValue(socket, out socketState);
             KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket = new KeyValuePair<SimpleServerChildTcpSocket,ChildSocketState>(socket, socketState);
 
-            UniMoveStation.Messages.StringMessage stringMessage = message as UniMoveStation.Messages.StringMessage;
+            NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
             if (stringMessage != null)
             {
-                ConsoleService.WriteLine("Socket read got a string message from " + socket.RemoteEndPoint.ToString() + ": " + stringMessage.Message);
+                ConsoleService.WriteLine("Socket read got a string message from " + socket.RemoteEndPoint + ": " + stringMessage.Message);
                 if (stringMessage.Message.Contains("getFusionPosition"))
                 {
                     String[] splitMessage = null;
@@ -68,12 +65,12 @@ namespace UniMoveStation.Service
                 return true;
             }
 
-            UniMoveStation.Messages.ComplexMessage complexMessage = message as UniMoveStation.Messages.ComplexMessage;
+            NitoMessages.ComplexMessage complexMessage = message as NitoMessages.ComplexMessage;
             if (complexMessage != null)
             {
-                ConsoleService.WriteLine("Socket read got a complex message from " + socket.RemoteEndPoint.ToString() + ": (UniqueID = " + complexMessage.UniqueID.ToString() +
-                    ", Time = " + complexMessage.Time.ToString() + ", Message = " + complexMessage.Message + ")");
-                ConsoleService.WriteLine(System.DateTime.Now.Millisecond.ToString());
+                ConsoleService.WriteLine("Socket read got a complex message from " + socket.RemoteEndPoint + ": (UniqueID = " + complexMessage.UniqueID +
+                    ", Time = " + complexMessage.Time + ", Message = " + complexMessage.Message + ")");
+                ConsoleService.WriteLine(DateTime.Now.Millisecond.ToString());
                 return true;
             }
 
@@ -82,9 +79,9 @@ namespace UniMoveStation.Service
 
         public void SendPositionMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, Vector3 position, int trackerIndex, int moveIndex)
         {
-            UniMoveStation.Messages.PositionMessage msg = new UniMoveStation.Messages.PositionMessage();
+            NitoMessages.PositionMessage msg = new NitoMessages.PositionMessage();
             msg.Message = position;
-            msg.StartTick = System.DateTimeOffset.Now.Ticks;
+            msg.StartTick = DateTimeOffset.Now.Ticks;
             msg.TrackerIndex = trackerIndex;
             msg.MoveIndex = moveIndex;
 
@@ -92,58 +89,52 @@ namespace UniMoveStation.Service
                 msg.Message.GetType(), msg.Message, msg.StartTick, msg.TrackerIndex, msg.MoveIndex);
 
             // Serialize it to a binary array
-            byte[] binaryObject = UniMoveStation.Messages.Util.Serialize(msg);
+            byte[] binaryObject = Utils.SerializationHelper.Serialize(msg);
 
-            base.SendSerializedMessage(childSocket, binaryObject, description);
+            SendSerializedMessage(childSocket, binaryObject, description);
         }
 
         private Vector3 getFusionPosition(int trackerIndex, int moveIndex)
         {
             Vector3 position = Vector3.zero;
-            SingleCameraModel camera = GetCamera(trackerIndex);
+            CameraModel camera = GetCamera(trackerIndex);
             MotionControllerModel mc = GetMotionController(moveIndex);
 
             if(mc == null)
             {
-                Console.WriteLine(string.Format("[Server] Controller {0} not available.", moveIndex));
+                Console.WriteLine("[Server] Controller {0} not available.", moveIndex);
                 return Vector3.zero;
             }
-            else if(camera == null)
+            if(camera == null)
             {
-                Console.WriteLine(string.Format("[Server] Tracker {0} not available.", trackerIndex));
+                Console.WriteLine("[Server] Tracker {0} not available.", trackerIndex);
                 return Vector3.zero;
             }
-            else
-            {
-                return mc.RawPosition[camera];
-            }
+            return mc.RawPosition[camera];
         }
 
         private Vector3 getFusionPosition(string trackerName, string moveName)
         {
             Vector3 position = Vector3.zero;
-            SingleCameraModel camera = GetCamera(trackerName);
+            CameraModel camera = GetCamera(trackerName);
             MotionControllerModel mc = GetMotionController(moveName);
 
             if (mc == null)
             {
-                Console.WriteLine(string.Format("[Server] Controller \"{0}\" not available.", moveName));
+                Console.WriteLine("[Server] Controller \"{0}\" not available.", moveName);
                 return Vector3.zero;
             }
-            else if (camera == null)
+            if (camera == null)
             {
-                Console.WriteLine(string.Format("[Server] Tracker \"{0}\" not available.", trackerName));
+                Console.WriteLine("[Server] Tracker \"{0}\" not available.", trackerName);
                 return Vector3.zero;
             }
-            else
-            {
-                return mc.RawPosition[camera];
-            }
+            return mc.RawPosition[camera];
         }
 
-        private SingleCameraModel GetCamera(int index)
+        private CameraModel GetCamera(int index)
         {
-            foreach (SingleCameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            foreach (CameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
                 if (scvw.Camera.TrackerId == index)
                 {
@@ -153,9 +144,9 @@ namespace UniMoveStation.Service
             return null;
         }
 
-        private SingleCameraModel GetCamera(string name)
+        private CameraModel GetCamera(string name)
         {
-            foreach (SingleCameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            foreach (CameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
                 if (scvw.Camera.Name.Equals(name))
                 {

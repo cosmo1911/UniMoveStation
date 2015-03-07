@@ -1,27 +1,13 @@
-﻿using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
+﻿using System;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
-using UniMoveStation.Utilities;
 
 namespace UniMoveStation.Design
 {
     public class DesignTrackerService : ITrackerService
     {
         #region Member
-        private SingleCameraModel _camera;
+        private CameraModel _camera;
         #endregion
 
         #region Interface Implementation
@@ -31,7 +17,7 @@ namespace UniMoveStation.Design
             set { Console.WriteLine(value); }
         }
 
-        public void Initialize(SingleCameraModel camera) { _camera = camera; }
+        public void Initialize(CameraModel camera) { _camera = camera; }
 
         public bool Start() { return Enabled = true; }
 

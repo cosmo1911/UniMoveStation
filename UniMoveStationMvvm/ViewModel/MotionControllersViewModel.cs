@@ -2,19 +2,11 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
-using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using UniMoveStation.SharpMove;
+using UniMoveStation.Utils.MessengerMessage;
 using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel

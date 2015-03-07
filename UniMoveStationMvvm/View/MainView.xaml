@@ -3,7 +3,7 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:local="clr-namespace:UniMoveStation"
                       xmlns:v="clr-namespace:UniMoveStation.View"
-                      xmlns:helper="clr-namespace:UniMoveStation.Helper"
+                      xmlns:helper="clr-namespace:UniMoveStation.Selector"
                       xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
                       xmlns:fv="clr-namespace:UniMoveStation.View.Flyout"
                       xmlns:fvm="clr-namespace:UniMoveStation.ViewModel.Flyout"

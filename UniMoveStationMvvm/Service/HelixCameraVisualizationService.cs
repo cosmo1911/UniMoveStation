@@ -1,33 +1,15 @@
-﻿using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Features2D;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Threading;
+﻿using GalaSoft.MvvmLight.Threading;
 using HelixToolkit.Wpf;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using UniMoveStation.Model;
-using UniMoveStation.SharpMove;
-using UniMoveStation.Utilities;
-using UniMoveStation.ViewModel;
-using UnityEngine;
 
 namespace UniMoveStation.Service
 {
@@ -37,7 +19,7 @@ namespace UniMoveStation.Service
         private ObservableCollection<Visual3D> _items;
         private ObservableConcurrentDictionary<MotionControllerModel, SphereVisual3D> _controllerObjects;
         private CancellationTokenSource _ctsUpdate;
-        private SingleCameraModel _camera;
+        private CameraModel _camera;
         private Task _updateTask;
         #endregion
 
@@ -58,7 +40,7 @@ namespace UniMoveStation.Service
         #endregion
 
         #region Constructor
-        public HelixCameraVisualizationService(SingleCameraModel camera = null)
+        public HelixCameraVisualizationService(CameraModel camera = null)
         {
             _controllerObjects = new ObservableConcurrentDictionary<MotionControllerModel, SphereVisual3D>();
         }
@@ -86,7 +68,7 @@ namespace UniMoveStation.Service
                                 // add if missing
                                 if (!_controllerObjects.ContainsKey(mc))
                                 {
-                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() =>
+                                    DispatcherHelper.UIDispatcher.Invoke(() =>
                                     {
                                         // convert color
                                         byte r = (byte)(mc.Color.r * 255 + 0.5);
@@ -94,7 +76,7 @@ namespace UniMoveStation.Service
                                         byte b = (byte)(mc.Color.b * 255 + 0.5);
                                         System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(r, g, b);
 
-                                        SphereVisual3D sphere = new SphereVisual3D()
+                                        SphereVisual3D sphere = new SphereVisual3D
                                         {
                                             Center = new Point3D(mc.WorldPosition[_camera].x,
                                                 mc.WorldPosition[_camera].z,
@@ -104,7 +86,7 @@ namespace UniMoveStation.Service
                                         };
                                         _controllerObjects.Add(mc, sphere);
                                         _items.Add(sphere);
-                                    }));
+                                    });
                                 }
                                 // update position
                                 if (mc.WorldPosition.ContainsKey(_camera))
@@ -127,7 +109,7 @@ namespace UniMoveStation.Service
                         } // foreach
                         sw.Stop();
                         // taking the processing time of the task itself into account, pause the thread to approximately reach the given FPS 
-                        Thread.Sleep((int)(Math.Max((1000.0 / (double)_camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
+                        Thread.Sleep((int)(Math.Max((1000.0 / _camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
                     } // while
                 }, _ctsUpdate.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 await _updateTask;
@@ -159,7 +141,7 @@ namespace UniMoveStation.Service
         #endregion
 
         #region Interface Implementation
-        public void Initialize(SingleCameraModel camera)
+        public void Initialize(CameraModel camera)
         {
             _camera = camera;
         }
@@ -181,8 +163,8 @@ namespace UniMoveStation.Service
             _items.Clear();
             _controllerObjects = new ObservableConcurrentDictionary<MotionControllerModel, SphereVisual3D>();
 
-            _items.Add(new HelixToolkit.Wpf.SunLight());
-            _items.Add(new HelixToolkit.Wpf.GridLinesVisual3D()
+            _items.Add(new SunLight());
+            _items.Add(new GridLinesVisual3D
             {
                 Width = 500,
                 Length = 500
@@ -197,7 +179,7 @@ namespace UniMoveStation.Service
                 _camera.Calibration.TranslationVector[1, 0]);
             _items.Add(camera);
 
-            ArrowVisual3D axis = new ArrowVisual3D()
+            ArrowVisual3D axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(100, 0, 0),
@@ -206,7 +188,7 @@ namespace UniMoveStation.Service
             };
             _items.Add(axis);
 
-            axis = new ArrowVisual3D()
+            axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(0, 100, 0),
@@ -215,7 +197,7 @@ namespace UniMoveStation.Service
             };
             _items.Add(axis);
 
-            axis = new ArrowVisual3D()
+            axis = new ArrowVisual3D
             {
                 Origin = new Point3D(0, 0, 0),
                 Direction = new Vector3D(0, 0, 100),

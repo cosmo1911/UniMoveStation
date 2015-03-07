@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using UniMoveStation.Helper;
+using UniMoveStation.Utils;
 using UnityEngine;
 
 namespace UniMoveStation.Model
@@ -31,9 +31,9 @@ namespace UniMoveStation.Model
         private int _rotZ;
 
         private List<PointF> _correspondingPoints;
-        private MCvPoint3D32f[] _objectPoints2d;
+        private MCvPoint3D32f[] _objectPoints2D;
         private PointF[] _objectPointsProjected;
-        private MCvPoint3D32f[] _objectPoints3d;
+        private MCvPoint3D32f[] _objectPoints3D;
 
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationModel class.
@@ -71,16 +71,16 @@ namespace UniMoveStation.Model
         {
             get
             {
-                if (_objectPoints2d == null)
+                if (_objectPoints2D == null)
                 {
-                    float radiusCm = (float)((int)((14.0 / Math.PI) * 100)) / 200f;
-                    float diameterCm = (float)((int)((14.0 / Math.PI) * 100)) / 100f;
+                    const float radiusCm = (int)((14.0 / Math.PI) * 100) / 200f;
+                    const float diameterCm = (int)((14.0 / Math.PI) * 100) / 100f;
 
-                    _objectPoints2d = new MCvPoint3D32f[4];
-                    _objectPoints2d[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, 0);
-                    _objectPoints2d[1] = new MCvPoint3D32f(radiusCm, -radiusCm, 0);
-                    _objectPoints2d[2] = new MCvPoint3D32f(radiusCm, radiusCm, 0);
-                    _objectPoints2d[3] = new MCvPoint3D32f(-radiusCm, radiusCm, 0);
+                    _objectPoints2D = new MCvPoint3D32f[4];
+                    _objectPoints2D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, 0);
+                    _objectPoints2D[1] = new MCvPoint3D32f(radiusCm, -radiusCm, 0);
+                    _objectPoints2D[2] = new MCvPoint3D32f(radiusCm, radiusCm, 0);
+                    _objectPoints2D[3] = new MCvPoint3D32f(-radiusCm, radiusCm, 0);
 
                     //_objectPoints2d[0] = new MCvPoint3D32f(-radiusCm, 0, -radiusCm);
                     //_objectPoints2d[1] = new MCvPoint3D32f(radiusCm, 0, -radiusCm);
@@ -92,35 +92,32 @@ namespace UniMoveStation.Model
                     //_objectPoints2d[2] = new MCvPoint3D32f(diameterCm, diameterCm, 0);
                     //_objectPoints2d[3] = new MCvPoint3D32f(0, diameterCm, 0);
 
-                    return _objectPoints2d;
+                    return _objectPoints2D;
                 }
-                else
-                {
-                    return _objectPoints2d;
-                }
+                return _objectPoints2D;
             }
-            set { Set(() => ObjectPoints2D, ref _objectPoints2d, value); }
+            set { Set(() => ObjectPoints2D, ref _objectPoints2D, value); }
         }
 
         public MCvPoint3D32f[] ObjectPoints3D
         {
             get
             {
-                if (_objectPoints3d == null)
+                if (_objectPoints3D == null)
                 {
-                    float radiusCm = (float)((int)((14.0 / Math.PI) * 100)) / 200f;
-                    float diameterCm = (float)((int)((14.0 / Math.PI) * 100)) / 100f;
+                    const float radiusCm = (int)((14.0 / Math.PI) * 100) / 200f;
+                    const float diameterCm = (int)((14.0 / Math.PI) * 100) / 100f;
 
-                    _objectPoints3d = new MCvPoint3D32f[8];
-                    _objectPoints3d[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);
-                    _objectPoints3d[1] = new MCvPoint3D32f(radiusCm, -radiusCm, -radiusCm);
-                    _objectPoints3d[2] = new MCvPoint3D32f(radiusCm, radiusCm, -radiusCm);
-                    _objectPoints3d[3] = new MCvPoint3D32f(-radiusCm, radiusCm, -radiusCm);
+                    _objectPoints3D = new MCvPoint3D32f[8];
+                    _objectPoints3D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);
+                    _objectPoints3D[1] = new MCvPoint3D32f(radiusCm, -radiusCm, -radiusCm);
+                    _objectPoints3D[2] = new MCvPoint3D32f(radiusCm, radiusCm, -radiusCm);
+                    _objectPoints3D[3] = new MCvPoint3D32f(-radiusCm, radiusCm, -radiusCm);
 
-                    _objectPoints3d[4] = new MCvPoint3D32f(-radiusCm, radiusCm, radiusCm);
-                    _objectPoints3d[5] = new MCvPoint3D32f(radiusCm, radiusCm, radiusCm);
-                    _objectPoints3d[6] = new MCvPoint3D32f(radiusCm, -radiusCm, radiusCm);
-                    _objectPoints3d[7] = new MCvPoint3D32f(-radiusCm, -radiusCm, radiusCm);
+                    _objectPoints3D[4] = new MCvPoint3D32f(-radiusCm, radiusCm, radiusCm);
+                    _objectPoints3D[5] = new MCvPoint3D32f(radiusCm, radiusCm, radiusCm);
+                    _objectPoints3D[6] = new MCvPoint3D32f(radiusCm, -radiusCm, radiusCm);
+                    _objectPoints3D[7] = new MCvPoint3D32f(-radiusCm, -radiusCm, radiusCm);
 
                     //_objectPoints3d[0] = new MCvPoint3D32f(0, 0, 0);
                     //_objectPoints3d[1] = new MCvPoint3D32f(diameterCm, 0, 0);
@@ -132,14 +129,11 @@ namespace UniMoveStation.Model
                     //_objectPoints3d[6] = new MCvPoint3D32f(diameterCm, 0, diameterCm);
                     //_objectPoints3d[7] = new MCvPoint3D32f(0, 0, diameterCm);
 
-                    return _objectPoints3d;
+                    return _objectPoints3D;
                 }
-                else
-                {
-                    return _objectPoints3d;
-                }
+                return _objectPoints3D;
             }
-            set { Set(() => ObjectPoints3D, ref _objectPoints3d, value); }
+            set { Set(() => ObjectPoints3D, ref _objectPoints3D, value); }
         }
 
         public PointF[] ObjectPointsProjected

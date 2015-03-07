@@ -6,14 +6,15 @@
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:helper="clr-namespace:UniMoveStation.Selector"
              xmlns:ignore="http://www.ignore.com"
+             xmlns:valueConverter="clr-namespace:UniMoveStation.Utils.ValueConverter;assembly=UniMoveStation.Utils"
              mc:Ignorable="d ignore"
              DataContext="{Binding Server, Source={StaticResource ViewModelLocator}}"
              Margin="8">
     <UserControl.Resources>
-        <helper:MultiValueConverter x:Key="MultiValueConverter"/>
-        <helper:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
+        <valueConverter:MultiValueConverter x:Key="MultiValueConverter"/>
+        <valueConverter:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,7 +43,7 @@
                                    Margin="0 0 4 4"
                                    OnLabel="Enabled"
                                    OffLabel="Disabled"
-                                   x:Name="toggle_server"
+                                   x:Name="ToggleServer"
                                    HorizontalAlignment="Stretch" 
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -52,9 +53,9 @@
                         <mvvm:EventToCommand Command="{Binding ToggleServerCommand}">
                             <mvvm:EventToCommand.CommandParameter>
                                 <MultiBinding Converter="{StaticResource MultiValueConverter}" Mode="OneWay">
-                                    <Binding Path="IsChecked" ElementName="toggle_server"/>
+                                    <Binding Path="IsChecked" ElementName="ToggleServer"/>
                                     <Binding Path="Text"
-                                             ElementName="textBox_port"
+                                             ElementName="TextBoxPort"
                                              />
                                 </MultiBinding>
                             </mvvm:EventToCommand.CommandParameter>
@@ -63,17 +64,19 @@
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
             <!--Port-->
-            <TextBlock Grid.Column="1"
+            <TextBlock Grid.Row="0" 
+                       Grid.Column="1"
                        Text="Port"
                        Margin="4 0 4 4"
                        VerticalAlignment="Center"
                        />
-            <TextBox Grid.Column="2"
+            <TextBox Grid.Row="0" 
+                     Grid.Column="2"
                      Margin="4 0 0 4"
                      controls:TextboxHelper.Watermark="default: 3000"
                      BorderThickness="1"
                      BorderBrush="{DynamicResource AccentColorBrush}"
-                     x:Name="textBox_port"
+                     x:Name="TextBoxPort"
                      />
 
             <!--Disconnect-->
@@ -82,14 +85,14 @@
                     Margin="0 4 4 4"
                     Content="disconnect clients"
                     Command="{Binding DisconnectClientsCommand}"
-                    CommandParameter="{Binding IsChecked, ElementName=checkBox_abortivelyDisconnectClients}"
+                    CommandParameter="{Binding IsChecked, ElementName=CheckBoxAbortivelyDisconnectClients}"
                     />
             <!--Disconnect Abortively-->
             <CheckBox Grid.Row="1" 
                       Grid.Column="1"
                       Margin="4"
                       Content="Abortively"
-                      x:Name="checkBox_abortivelyDisconnectClients"
+                      x:Name="CheckBoxAbortivelyDisconnectClients"
                       />
             <!--Send Message-->
             <Button Grid.Row="2"
@@ -101,10 +104,10 @@
                     <MultiBinding Converter="{StaticResource MultiValueConverter}" 
                                   Mode="OneWay">
                         <Binding Path="IsChecked" 
-                                 ElementName="checkBox_complexMessage"
+                                 ElementName="CheckBoxComplexMessage"
                                  />
                         <Binding Path="Text"
-                                 ElementName="textBox_message"
+                                 ElementName="TextBoxMessage"
                                  />
                     </MultiBinding>
                 </Button.CommandParameter>
@@ -114,7 +117,7 @@
                       Grid.Column="1"
                       Margin="4"
                       Content="Complex"
-                      x:Name="checkBox_complexMessage"
+                      x:Name="CheckBoxComplexMessage"
                       />
             <!--Message-->
             <TextBox Grid.Row="2"
@@ -123,7 +126,7 @@
                      controls:TextboxHelper.Watermark="Message" 
                      BorderThickness="1"
                      BorderBrush="{DynamicResource AccentColorBrush}"
-                     x:Name="textBox_message"
+                     x:Name="TextBoxMessage"
                      />
         </Grid>
 

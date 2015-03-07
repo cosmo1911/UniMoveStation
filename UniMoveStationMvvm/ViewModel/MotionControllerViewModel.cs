@@ -4,15 +4,11 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Practices.ServiceLocation;
-using System.ComponentModel;
-using System.Windows;
 using UniMoveStation.Design;
-using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using UniMoveStation.SharpMove;
+using UniMoveStation.Utils.MessengerMessage;
 using UnityEngine;
 
 namespace UniMoveStation.ViewModel
@@ -86,7 +82,7 @@ namespace UniMoveStation.ViewModel
             
             if (mc.Serial != null)
             {
-                SimpleIoc.Default.Register<MotionControllerViewModel>(() => this, mc.Serial, true);
+                SimpleIoc.Default.Register(() => this, mc.Serial, true);
                 Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
             }           
         }
@@ -162,9 +158,9 @@ namespace UniMoveStation.ViewModel
         {
             System.Windows.Media.Color color = palette.Colors[0].RgbColor;
 
-            float r = ((byte)color.R) / 51f;
-            float g = ((byte)color.G) / 51f;
-            float b = ((byte)color.B) / 51f;
+            float r = color.R / 51f;
+            float g = color.G / 51f;
+            float b = color.B / 51f;
 
             _motionControllerService.SetColor(new Color(r, g, b));
         }
@@ -184,7 +180,7 @@ namespace UniMoveStation.ViewModel
         public override void Cleanup()
         {
             MotionControllerService.Stop();
-            Messenger.Default.Send<RemoveMotionControllerMessage>(new RemoveMotionControllerMessage(_motionController));
+            Messenger.Default.Send(new RemoveMotionControllerMessage(_motionController));
             SimpleIoc.Default.Unregister<MotionControllerViewModel>(_motionController.Serial);
             base.Cleanup();
         }

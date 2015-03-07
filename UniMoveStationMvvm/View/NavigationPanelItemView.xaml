@@ -11,7 +11,7 @@
           xmlns:model="clr-namespace:UniMoveStation.Model"
           xmlns:vm="clr-namespace:UniMoveStation.ViewModel"
           xmlns:v="clr-namespace:UniMoveStation.View"
-          xmlns:helper="clr-namespace:UniMoveStation.Helper"
+          xmlns:helper="clr-namespace:UniMoveStation.Selector"
           xmlns:ignore="http://www.ignore.com"
           mc:Ignorable="d ignore"
           FlowDirection="RightToLeft"
@@ -67,9 +67,7 @@
             </DataTemplate>
         </controls:MetroTabControl.ItemTemplate>
         <controls:MetroTabControl.ContentTemplate>
-            <DataTemplate>
-
-            </DataTemplate>
+            <DataTemplate />
         </controls:MetroTabControl.ContentTemplate>
 
     </controls:MetroTabControl>

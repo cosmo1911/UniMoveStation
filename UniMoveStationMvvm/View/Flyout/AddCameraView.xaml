@@ -45,6 +45,7 @@
                          Margin="0 4 0 4"
                          />
                 <TextBlock Grid.Row="1" 
+                           Grid.Column="0"
                            Text="GUID"
             	           VerticalAlignment="Center"
                            Margin="0 4 0 4"
@@ -56,9 +57,7 @@
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
                             <Grid>
-                                <ComboBox Grid.Row="1"
-                                          Grid.Column="1"
-            	                          ItemsSource="{Binding}"
+                                <ComboBox ItemsSource="{Binding}"
             	                          SelectedIndex="-1"
                                           Margin="0 4 0 4"
                                           x:Name="combo_box_guid"
@@ -72,10 +71,9 @@
                                     </i:Interaction.Triggers>
                                     <ComboBox.ItemTemplate>
                                         
-                                        <DataTemplate DataType="{x:Type m:SingleCameraModel}">
+                                        <DataTemplate DataType="{x:Type m:CameraModel}">
                                             <TextBlock Text="{Binding GUID}"
-                                                       HorizontalAlignment="Center">
-                                            </TextBlock>
+                                                       HorizontalAlignment="Center" />
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>

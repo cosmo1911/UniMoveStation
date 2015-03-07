@@ -11,7 +11,9 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
              xmlns:ignore="http://www.ignore.com"
-             xmlns:helper="clr-namespace:UniMoveStation.Helper"
+             xmlns:utils="clr-namespace:UniMoveStation.Utils;assembly=UniMoveStation.Utils"
+             xmlns:vc="clr-namespace:UniMoveStation.Utils.ValueConverter;assembly=UniMoveStation.Utils"
+             xmlns:vclocal="clr-namespace:UniMoveStation.Utils.ValueConverter"
              mc:Ignorable="d ignore"
              DataContext="{Binding Cameras, Source={StaticResource ViewModelLocator}}"
              d:DesignWidth="1280"
@@ -19,8 +21,8 @@
              Margin="4">
 
     <UserControl.Resources>
-        <helper:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
-        <helper:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+        <vclocal:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
+        <vc:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -43,7 +45,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid d:DataContext="vm:SingleCameraViewModel"
+                        <Grid d:DataContext="vm:CameraViewModel"
                               Margin="4">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="30"/>
@@ -55,13 +57,13 @@
                                      Height="30"
                                      Background="{StaticResource AccentColorBrush2}"
                                      Text="{Binding Camera.Name, UpdateSourceTrigger=PropertyChanged}"
-                                     x:Name="name"
+                                     x:Name="TextBox_Name"
                                      />
-                            <local:AspectRatioLayoutDecorator Grid.Column="0"
+                            <utils:AspectRatioLayoutDecorator Grid.Column="0"
 							                                  Grid.Row="1"
 							                                  AspectRatio="1.3333">
                                 <Grid MinWidth="180"
-                                      Width="{Binding ActualWidth, ElementName=name}">
+                                      Width="{Binding ActualWidth, ElementName=TextBox_Name}">
                                     <Label VerticalContentAlignment="Center"
                   									       HorizontalContentAlignment="Center"
                   									       Background="{StaticResource AccentColorBrush}"
@@ -79,7 +81,7 @@
 									                                Source="{Binding Camera.ImageSource}"
                                                   />
                                 </Grid>
-                            </local:AspectRatioLayoutDecorator>
+                            </utils:AspectRatioLayoutDecorator>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -142,7 +144,7 @@
 
             <controls:ToggleSwitch Header="Cameras"
                                    Margin="4"
-                                   x:Name="switch_cameras"
+                                   x:Name="SwitchCameras"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -150,13 +152,13 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
-                                             CommandParameter="{Binding IsChecked, ElementName=switch_cameras}"/>
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchCameras}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
             <controls:ToggleSwitch Header="Tracking"
                                    Margin="4"
-                                   x:Name="switch_tracking"
+                                   x:Name="SwitchTracking"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -164,14 +166,14 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
-                                                CommandParameter="{Binding IsChecked, ElementName=switch_tracking}"
+                                                CommandParameter="{Binding IsChecked, ElementName=SwitchTracking}"
                                                 />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
             <controls:ToggleSwitch Header="Annotate"
                                    Margin="4"
-                                   x:Name="switch_annotate"
+                                   x:Name="SwitchAnnotate"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -179,14 +181,14 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
-                                             CommandParameter="{Binding IsChecked, ElementName=switch_annotate}"
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchAnnotate}"
                                              />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
             <controls:ToggleSwitch Header="Debug"
                                    Margin="4"
-                                   x:Name="switch_debug"
+                                   x:Name="SwitchDebug"
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
@@ -194,7 +196,7 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
-                                             CommandParameter="{Binding IsChecked, ElementName=switch_debug}"
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchDebug}"
                                              />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>

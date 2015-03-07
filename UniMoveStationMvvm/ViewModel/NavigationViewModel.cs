@@ -5,22 +5,19 @@ using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
-using UniMoveStation.Helper;
-using UniMoveStation.Model;
 using UniMoveStation.Nito;
+using UniMoveStation.Utils.MessengerMessage;
 using UniMoveStation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
     public class NavigationViewModel : ViewModelBase
     {
-        private int _lastSelectedIndex = 0;
-        private int _motionControllerCount = 0;
-        private int _cameraCount = 0;
+        private int _lastSelectedIndex;
+        private int _motionControllerCount;
+        private int _cameraCount;
         private RelayCommand<TabControl> _tabSelectedCommand;
         private RelayCommand<Object> _addCommand;
 
@@ -59,13 +56,13 @@ namespace UniMoveStation.ViewModel
             Messenger.Default.Register<AddCameraMessage>(this,
                 message =>
                 {
-                    CameraTabs.Add(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                    CameraTabs.Add(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
                 });
 
             Messenger.Default.Register<RemoveCameraMessage>(this,
                 message =>
                 {
-                    CameraTabs.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                    CameraTabs.Remove(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
                 });
 
             Refresh();
@@ -184,9 +181,9 @@ namespace UniMoveStation.ViewModel
                 MotionControllerViewModel mcvw = (MotionControllerViewModel) obj;
                 mcvw.Cleanup();
             }
-            else if (obj is SingleCameraViewModel)
+            else if (obj is CameraViewModel)
             {
-                SingleCameraViewModel scvw = (SingleCameraViewModel) obj;
+                CameraViewModel scvw = (CameraViewModel) obj;
                 scvw.Cleanup();
             }
         }
@@ -197,7 +194,7 @@ namespace UniMoveStation.ViewModel
             {
                 CameraTabs.Clear();
                 CameraTabs.Add(SimpleIoc.Default.GetInstance<CamerasViewModel>());
-                foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+                foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
                 {
                     CameraTabs.Add(scvm);
                 }

@@ -9,7 +9,7 @@ namespace UniMoveStation.View
     /// <summary>
     /// Description for CameraCalibrationView.
     /// </summary>
-    public partial class CameraCalibrationView : MahApps.Metro.Controls.Dialogs.BaseMetroDialog
+    public partial class CameraCalibrationView : BaseMetroDialog
     {
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationView class.

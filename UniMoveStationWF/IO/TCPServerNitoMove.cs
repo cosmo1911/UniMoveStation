@@ -94,7 +94,7 @@ namespace UniMoveStation.IO
             KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket = new KeyValuePair<SimpleServerChildTcpSocket,ChildSocketState>(socket, socketState);
 
             // handle string message
-            UniMoveStation.Messages.StringMessage stringMessage = message as UniMoveStation.Messages.StringMessage;
+            UniMoveStation.NitoMessages.StringMessage stringMessage = message as UniMoveStation.NitoMessages.StringMessage;
             if (stringMessage != null)
             {
                 textBox.AppendText("Socket read got a string message from " + socket.RemoteEndPoint.ToString() + ": " + stringMessage.Message + Environment.NewLine);
@@ -119,7 +119,7 @@ namespace UniMoveStation.IO
             }
 
             // handle complex message
-            UniMoveStation.Messages.ComplexMessage complexMessage = message as UniMoveStation.Messages.ComplexMessage;
+            UniMoveStation.NitoMessages.ComplexMessage complexMessage = message as UniMoveStation.NitoMessages.ComplexMessage;
             if (complexMessage != null)
             {
                 textBox.AppendText("Socket read got a complex message from " + socket.RemoteEndPoint.ToString() + ": (UniqueID = " + complexMessage.UniqueID.ToString() +
@@ -142,7 +142,7 @@ namespace UniMoveStation.IO
         public void sendPositionMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, Vector3 position, int trackerIndex, int moveIndex)
         {
             // initialize message
-            UniMoveStation.Messages.PositionMessage msg = new UniMoveStation.Messages.PositionMessage();
+            UniMoveStation.NitoMessages.PositionMessage msg = new UniMoveStation.NitoMessages.PositionMessage();
             msg.Message = position;
             msg.StartTick = System.DateTimeOffset.Now.Ticks;
             msg.TrackerIndex = trackerIndex;
@@ -153,7 +153,7 @@ namespace UniMoveStation.IO
                 msg.Message.GetType(), msg.Message, msg.StartTick, msg.TrackerIndex, msg.MoveIndex);
 
             // serialize it to a binary array
-            byte[] binaryObject = UniMoveStation.Messages.Util.Serialize(msg);
+            byte[] binaryObject = UniMoveStation.NitoMessages.Util.Serialize(msg);
             // send binary message
             base.sendSerializedMessage(childSocket, binaryObject, description);
         }

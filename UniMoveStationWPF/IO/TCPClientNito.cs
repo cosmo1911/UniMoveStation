@@ -189,7 +189,7 @@ namespace UniMoveStation.IO
                     // At this point, we know we actually got a message.
 
                     // Deserialize the message
-                    object message = UniMoveStation.Messages.Util.Deserialize(e.Result);
+                    object message = UniMoveStation.NitoMessages.Util.Deserialize(e.Result);
 
                     if(handleMessages(message) == false)
                     {
@@ -211,14 +211,14 @@ namespace UniMoveStation.IO
         protected virtual bool handleMessages(object message)
         {
             // Handle the message
-            UniMoveStation.Messages.StringMessage stringMessage = message as UniMoveStation.Messages.StringMessage;
+            UniMoveStation.NitoMessages.StringMessage stringMessage = message as UniMoveStation.NitoMessages.StringMessage;
             if (stringMessage != null)
             {
                 Console.WriteLine("Socket read got a string message: " + stringMessage.Message + Environment.NewLine);
                 return true;
             }
 
-            UniMoveStation.Messages.ComplexMessage complexMessage = message as UniMoveStation.Messages.ComplexMessage;
+            UniMoveStation.NitoMessages.ComplexMessage complexMessage = message as UniMoveStation.NitoMessages.ComplexMessage;
             if (complexMessage != null)
             {
                 Console.WriteLine("Socket read got a complex message: (UniqueID = " + complexMessage.UniqueID.ToString() +
@@ -306,11 +306,11 @@ namespace UniMoveStation.IO
             try
             {
                 // Create the message to send
-                UniMoveStation.Messages.StringMessage msg = new UniMoveStation.Messages.StringMessage();
+                UniMoveStation.NitoMessages.StringMessage msg = new UniMoveStation.NitoMessages.StringMessage();
                 msg.Message = message;
 
                 // Serialize the message to a binary array
-                byte[] binaryMessage = UniMoveStation.Messages.Util.Serialize(msg);
+                byte[] binaryMessage = UniMoveStation.NitoMessages.Util.Serialize(msg);
 
                 // Send the message; the state is used by ClientSocket_WriteCompleted to display an output to the log
                 string description = "<string message: " + msg.Message + ">";
@@ -334,13 +334,13 @@ namespace UniMoveStation.IO
             try
             {
                 // Create the message to send
-                UniMoveStation.Messages.ComplexMessage msg = new UniMoveStation.Messages.ComplexMessage();
+                UniMoveStation.NitoMessages.ComplexMessage msg = new UniMoveStation.NitoMessages.ComplexMessage();
                 msg.UniqueID = Guid.NewGuid();
                 msg.Time = DateTimeOffset.Now;
                 msg.Message = message;
 
                 // Serialize the message to a binary array
-                byte[] binaryMessage = UniMoveStation.Messages.Util.Serialize(msg);
+                byte[] binaryMessage = UniMoveStation.NitoMessages.Util.Serialize(msg);
 
                 // Send the message; the state is used by ClientSocket_WriteCompleted to display an output to the log
                 string description = "<complex message: " + msg.UniqueID + ">";

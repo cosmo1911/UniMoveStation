@@ -275,9 +275,9 @@
       <Project>{5a69c22f-11d5-4a20-81cd-b3c3abc380c7}</Project>
       <Name>CLEyeImage</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Messages\Messages.csproj">
+    <ProjectReference Include="..\Messages\UniMoveStation.NitoMessages.csproj">
       <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
-      <Name>Messages</Name>
+      <Name>UniMoveStation.NitoMessages</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

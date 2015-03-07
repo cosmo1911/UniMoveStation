@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UniMoveStation.Messages;
-
+using UniMoveStation.NitoMessages;
 
 namespace UniMoveStation.Nito
 {
@@ -11,7 +10,7 @@ namespace UniMoveStation.Nito
 
         public event EventHandler<PositionReceivedEventArgs> OnPositionReceived;
 
-        public UmsClient() : base()
+        public UmsClient()
         {
             //add EventHandler
             OnPositionReceived += HandleOnPositionReceived;
@@ -48,11 +47,11 @@ namespace UniMoveStation.Nito
 
         protected override bool handleMessages(object message)
         {
-            UniMoveStation.Messages.PositionMessage positionMessage = message as UniMoveStation.Messages.PositionMessage;
+            PositionMessage positionMessage = message as PositionMessage;
             if (positionMessage != null)
             {
                 Debug.Log("Socket read got a string message: " + positionMessage.Message
-                    + ", Time=" + (System.DateTimeOffset.Now.Ticks - positionMessage.StartTick) / TimeSpan.TicksPerMillisecond + "ms"
+                    + ", Time=" + (DateTimeOffset.Now.Ticks - positionMessage.StartTick) / TimeSpan.TicksPerMillisecond + "ms"
                     + Environment.NewLine);
                 OnPositionReceived(this, new PositionReceivedEventArgs(positionMessage));
                 return true;

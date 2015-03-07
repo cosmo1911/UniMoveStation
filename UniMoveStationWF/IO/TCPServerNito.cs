@@ -144,7 +144,7 @@ namespace UniMoveStation.IO
                     // At this point, we know we actually got a message.
 
                     // Deserialize the message
-                    object message = UniMoveStation.Messages.Util.Deserialize(e.Result);
+                    object message = UniMoveStation.NitoMessages.Util.Deserialize(e.Result);
 
                     // Handle the message
                     if(handleMessage(message, socket) == false)
@@ -166,14 +166,14 @@ namespace UniMoveStation.IO
 
         protected virtual bool handleMessage(object message, SimpleServerChildTcpSocket socket)
         {
-            UniMoveStation.Messages.StringMessage stringMessage = message as UniMoveStation.Messages.StringMessage;
+            UniMoveStation.NitoMessages.StringMessage stringMessage = message as UniMoveStation.NitoMessages.StringMessage;
             if (stringMessage != null)
             {
                 textBox.AppendText("Socket read got a string message from " + socket.RemoteEndPoint.ToString() + ": " + stringMessage.Message + Environment.NewLine);
                 return true;
             }
 
-            UniMoveStation.Messages.ComplexMessage complexMessage = message as UniMoveStation.Messages.ComplexMessage;
+            UniMoveStation.NitoMessages.ComplexMessage complexMessage = message as UniMoveStation.NitoMessages.ComplexMessage;
             if (complexMessage != null)
             {
                 textBox.AppendText("Socket read got a complex message from " + socket.RemoteEndPoint.ToString() + ": (UniqueID = " + complexMessage.UniqueID.ToString() +
@@ -264,13 +264,13 @@ namespace UniMoveStation.IO
         public void sendMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, string message)
         {
             // This function sends a simple (string) message to all connected clients
-            UniMoveStation.Messages.StringMessage msg = new UniMoveStation.Messages.StringMessage();
+            UniMoveStation.NitoMessages.StringMessage msg = new UniMoveStation.NitoMessages.StringMessage();
             msg.Message = message;
 
             string description = "<string message: " + msg.Message + ">";
 
             // Serialize it to a binary array
-            byte[] binaryObject = UniMoveStation.Messages.Util.Serialize(msg);
+            byte[] binaryObject = UniMoveStation.NitoMessages.Util.Serialize(msg);
 
             // Start a send on child socket
 
@@ -337,7 +337,7 @@ namespace UniMoveStation.IO
         public void sendComplexMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, string message)
         {
             // This function sends a complex message to all connected clients
-            UniMoveStation.Messages.ComplexMessage msg = new UniMoveStation.Messages.ComplexMessage();
+            UniMoveStation.NitoMessages.ComplexMessage msg = new UniMoveStation.NitoMessages.ComplexMessage();
             msg.UniqueID = Guid.NewGuid();
             msg.Time = DateTimeOffset.Now;
             msg.Message = message;
@@ -345,7 +345,7 @@ namespace UniMoveStation.IO
             string description = "<complex message: " + msg.UniqueID + ">";
 
             // Serialize it to a binary array
-            byte[] binaryObject = UniMoveStation.Messages.Util.Serialize(msg);
+            byte[] binaryObject = UniMoveStation.NitoMessages.Util.Serialize(msg);
 
             sendSerializedMessage(childSocket, binaryObject, description);
         }

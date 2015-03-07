@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              StartupUri="View/MainView.xaml" 
              mc:Ignorable="d" 
-             xmlns:helper="clr-namespace:UniMoveStation.Helper">
+             xmlns:helper="clr-namespace:UniMoveStation.Selector">
   <Application.Resources>
     <ResourceDictionary>
       <helper:MyFlyoutStyleSelector x:Key="MyFlyoutStyleSelector" />

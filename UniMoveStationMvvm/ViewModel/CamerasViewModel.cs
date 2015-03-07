@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Linq;
-using UniMoveStation.Helper;
 using UniMoveStation.Model;
 using UniMoveStation.Service;
 using UniMoveStation.ViewModel.Flyout;
@@ -20,11 +19,8 @@ using Emgu.CV.Structure;
 using System.Threading;
 using System.Threading.Tasks;
 using MahApps.Metro.Controls.Dialogs;
+using UniMoveStation.Utils.MessengerMessage;
 using UniMoveStation.View;
-using System.Collections;
-using System.Runtime.InteropServices;
-using UniMoveStation.SharpMove;
-using UniMoveStation.Utilities;
 
 namespace UniMoveStation.ViewModel
 {
@@ -92,7 +88,7 @@ namespace UniMoveStation.ViewModel
             set { Set(() => ShowImage, ref _showImage, value); }
         }
 
-        public ObservableCollection<SingleCameraViewModel> Cameras
+        public ObservableCollection<CameraViewModel> Cameras
         {
             get;
             private set;
@@ -110,20 +106,20 @@ namespace UniMoveStation.ViewModel
         public CamerasViewModel()
         {
             Name = "all";
-            Cameras = new ObservableCollection<SingleCameraViewModel>();
+            Cameras = new ObservableCollection<CameraViewModel>();
             Controllers = new ObservableCollection<MotionControllerModel>();
             Refresh();
 
             Messenger.Default.Register<AddCameraMessage>(this, message =>
             {
-                Cameras.Add(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                Cameras.Add(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
             });
 
             Messenger.Default.Register<RemoveCameraMessage>(this, message =>
             {
-                if(SimpleIoc.Default.ContainsCreated<SingleCameraViewModel>(message.Camera.GUID))
+                if(SimpleIoc.Default.ContainsCreated<CameraViewModel>(message.Camera.GUID))
                 {
-                    Cameras.Remove(SimpleIoc.Default.GetInstance<SingleCameraViewModel>(message.Camera.GUID));
+                    Cameras.Remove(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
                 }
             });
 
@@ -141,10 +137,10 @@ namespace UniMoveStation.ViewModel
 
             if(IsInDesignMode)
             {
-                Cameras.Add(new SingleCameraViewModel());
-                Cameras.Add(new SingleCameraViewModel());
-                Cameras.Add(new SingleCameraViewModel());
-                Cameras.Add(new SingleCameraViewModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
                 Controllers.Add(new MotionControllerModel());
                 Controllers.Add(new MotionControllerModel());
             }
@@ -156,10 +152,10 @@ namespace UniMoveStation.ViewModel
                 }
                 if(SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.Debug)
                 {
-                    new SingleCameraViewModel();
-                    new SingleCameraViewModel();
-                    new SingleCameraViewModel();
-                    new SingleCameraViewModel();
+                    new CameraViewModel();
+                    new CameraViewModel();
+                    new CameraViewModel();
+                    new CameraViewModel();
                 }
             }
         }
@@ -170,13 +166,13 @@ namespace UniMoveStation.ViewModel
 
             for(int i = 0; i < count; i++)
             {
-                SingleCameraModel camera = new SingleCameraModel();
+                CameraModel camera = new CameraModel();
                 IConsoleService consoleService = new ConsoleService();
                 ITrackerService trackerService = new TrackerService(consoleService);
                 ICameraService cameraService = new CLEyeService(consoleService);
                 camera.TrackerId = i;
                 cameraService.Initialize(camera);
-                SingleCameraViewModel scvm = new SingleCameraViewModel(camera, trackerService, cameraService, consoleService);
+                CameraViewModel scvm = new CameraViewModel(camera, trackerService, cameraService, consoleService);
 
                 camera.Name = "Camera " + camera.Calibration.Position;
             }
@@ -186,7 +182,7 @@ namespace UniMoveStation.ViewModel
         public void Refresh()
         {
             Cameras.Clear();
-            foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
                 Cameras.Add(scvm);
             }
@@ -256,7 +252,7 @@ namespace UniMoveStation.ViewModel
                 return _applySelectionCommand
                     ?? (_applySelectionCommand = new RelayCommand<ListBox>(
                         DoApplySelection,
-                        (box) => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
+                        box => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
             }
         }
 
@@ -270,7 +266,7 @@ namespace UniMoveStation.ViewModel
                 return _cancelSelectionCommand
                     ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(
                         DoCancelSelection,
-                        (box) => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
+                        box => Cameras.Count > 0 && Cameras[0].Camera.Controllers.Count > 0));
             }
         }
 
@@ -364,7 +360,7 @@ namespace UniMoveStation.ViewModel
         #region Command Executions
         public void DoToggleAnnotate(bool annotate)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 scvm.DoToggleAnnotate(annotate);
             }
@@ -373,7 +369,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoToggleDebug(bool debug)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 scvm.DoToggleDebug(debug);
             }
@@ -382,7 +378,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoToggleCamera(bool enabled)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 scvm.DoToggleCamera(enabled);
             }
@@ -391,7 +387,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoToggleTracking(bool enabled)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 scvm.DoToggleTracking(enabled);
             }
@@ -400,7 +396,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoApplySelection(ListBox listBox)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 //scvm.DoApplySelection(listBox);
             }
@@ -408,7 +404,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoCancelSelection(ListBox listBox)
         {
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 //scvm.DoCancelSelection(listBox);
             }
@@ -417,10 +413,10 @@ namespace UniMoveStation.ViewModel
         public void DoFindCorrespondingPoints()
         {
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
-            List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
-            IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
+            List<CameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>().ToList<CameraViewModel>();
+            IEnumerable<CameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
 
-            foreach (SingleCameraViewModel scvm in orderedScvms)
+            foreach (CameraViewModel scvm in orderedScvms)
             {
                 foreach (MotionControllerViewModel mcvm in mcvms)
                 {
@@ -431,7 +427,7 @@ namespace UniMoveStation.ViewModel
                         // remove already obtained points of the current loop
                         if (scvm.Camera.Calibration.Position != 0)
                         {
-                            foreach (SingleCameraViewModel scvm2 in orderedScvms)
+                            foreach (CameraViewModel scvm2 in orderedScvms)
                             {
                                 int diff = scvm2.Camera.Calibration.CorrespondingPoints.Count - scvm.Camera.Calibration.CorrespondingPoints.Count;
                                 for (int i = diff - 1; i > -1; i--)
@@ -443,7 +439,7 @@ namespace UniMoveStation.ViewModel
                         }
                         return;
                     }
-                    else if (scvm.Camera.Calibration.CorrespondingPoints.Count < 100)
+                    if (scvm.Camera.Calibration.CorrespondingPoints.Count < 100)
                     {
                         scvm.Camera.Calibration.CorrespondingPoints.Add(new PointF(v3.x, v3.y));
                         Console.WriteLine("saving point " + scvm.Camera.Calibration.CorrespondingPoints.Count);
@@ -472,8 +468,8 @@ namespace UniMoveStation.ViewModel
             //                                MCvTermCriteria termCrit)             // Termination criteria, a reasonable value will be (30, 1.0e-12)
 
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
-            List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
-            IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
+            List<CameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>().ToList<CameraViewModel>();
+            IEnumerable<CameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
 
             int cameraCount = CLEyeMulticam.CLEyeCameraDevice.CameraCount;
             int pointCount = 8;
@@ -489,7 +485,7 @@ namespace UniMoveStation.ViewModel
             
             if (mcvms.Count == 0) return;
 
-            foreach (SingleCameraViewModel scvm in orderedScvms)
+            foreach (CameraViewModel scvm in orderedScvms)
             {
                 if(scvm.Camera.Calibration.Position == 0)
                 {
@@ -532,7 +528,7 @@ namespace UniMoveStation.ViewModel
                         }
 
                         //imagePoints[scvm.Camera.Calibration.Position] = Utils.GetImagePoints(mcvm.MotionController.RawPosition[scvm.Camera]);
-                        imagePoints[scvm.Camera.Calibration.Position] = Array.ConvertAll<PointF, MCvPoint2D64f>(scvm.Camera.Calibration.ObjectPointsProjected, Utils.PointFtoPoint2D);
+                        imagePoints[scvm.Camera.Calibration.Position] = Array.ConvertAll(scvm.Camera.Calibration.ObjectPointsProjected, Utils.CvHelper.PointFtoPoint2D);
 
                         R[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.ExtrinsicParameters[mcvm.MotionController.Id].RotationVector.RotationMatrix;
                         T[scvm.Camera.Calibration.Position] = scvm.Camera.Calibration.ExtrinsicParameters[mcvm.MotionController.Id].TranslationVector;
@@ -544,17 +540,17 @@ namespace UniMoveStation.ViewModel
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
             Console.WriteLine("Input: ({0}, {1}, {2})", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
-            Emgu.CV.LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
+            LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
             Console.WriteLine("Output: ({0}, {1}, {2})\n", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
             //sw.Stop();
             //ConsoleService.WriteLine("bundle adjust: " + sw.Elapsed.ToString());
 
             if (objectPoints[0].x.ToString().Equals("NaN"))
             {
-                System.Console.WriteLine("NaN"); 
+                Console.WriteLine("NaN"); 
                 return;
             }
-            foreach (SingleCameraViewModel scvm in scvms)
+            foreach (CameraViewModel scvm in scvms)
             {
                 
                 //scvm.Camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[scvm.Camera.Calibration.Position];
@@ -568,33 +564,30 @@ namespace UniMoveStation.ViewModel
         void DoFindFundamentalMatrices()
         {
             List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
-            List<SingleCameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>().ToList<SingleCameraViewModel>();
-            IEnumerable<SingleCameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
+            List<CameraViewModel> scvms = SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>().ToList<CameraViewModel>();
+            IEnumerable<CameraViewModel> orderedScvms = scvms.OrderBy(view => view.Camera.Calibration.Position);
 
-            foreach(SingleCameraViewModel scvm in orderedScvms)
+            foreach(CameraViewModel scvm in orderedScvms)
             {
-                foreach (SingleCameraViewModel scvm2 in orderedScvms)
+                foreach (CameraViewModel scvm2 in orderedScvms)
                 {
                     if (scvm.Camera.Calibration.Position == scvm2.Camera.Calibration.Position) continue;
-                    else
-                    {
-                        Matrix<double> fundamentalMatrix = FindFundamentalMatrix(scvm.Camera, scvm2.Camera);
-                        //FindHomographyMatrix(scvm.Camera, scvm.Camera);
-                    }
+                    Matrix<double> fundamentalMatrix = FindFundamentalMatrix(scvm.Camera, scvm2.Camera);
+                    //FindHomographyMatrix(scvm.Camera, scvm.Camera);
                 }
             }
         }
         #endregion
 
-        Matrix<double> FindFundamentalMatrix(SingleCameraModel cam1, SingleCameraModel cam2)
+        Matrix<double> FindFundamentalMatrix(CameraModel cam1, CameraModel cam2)
         {
-            IntPtr points1Ptr = Utils.CreatePointListPointer(Utils.NormalizePoints(cam1.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
-            IntPtr points2Ptr = Utils.CreatePointListPointer(Utils.NormalizePoints(cam2.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
+            IntPtr points1Ptr = Utils.CvHelper.CreatePointListPointer(Utils.CvHelper.NormalizePoints(cam1.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
+            IntPtr points2Ptr = Utils.CvHelper.CreatePointListPointer(Utils.CvHelper.NormalizePoints(cam2.Calibration.ObjectPointsProjected, cam1.Calibration.IntrinsicParameters));
 
             Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
 
             IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
-            Emgu.CV.CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
+            CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
 
             return fundamentalMatrix;
         }
@@ -615,7 +608,7 @@ namespace UniMoveStation.ViewModel
             
         }
 
-        void FindHomographyMatrix(SingleCameraModel cam1, SingleCameraModel cam2)
+        void FindHomographyMatrix(CameraModel cam1, CameraModel cam2)
         {
             PointF[] src = new PointF[4] {
                 cam1.Calibration.ObjectPointsProjected[0],
@@ -631,7 +624,7 @@ namespace UniMoveStation.ViewModel
                 cam2.Calibration.ObjectPointsProjected[3]
             };
 
-            HomographyMatrix h = Emgu.CV.CameraCalibration.FindHomography(src, dst, HOMOGRAPHY_METHOD.RANSAC, 3);
+            HomographyMatrix h = CameraCalibration.FindHomography(src, dst, HOMOGRAPHY_METHOD.RANSAC, 3);
 
             PointF test = cam1.Calibration.ObjectPointsProjected[0];
         }
@@ -726,7 +719,7 @@ namespace UniMoveStation.ViewModel
             await _owningWindow.ShowMetroDialogAsync(_dialog);
         }
 
-        private async void ShowCameraPositioningCalibrationDialog(MetroWindow window)
+        private void ShowCameraPositioningCalibrationDialog(MetroWindow window)
         {
             new CameraPositioningCalibrationService(Cameras).ShowMetroDialog(window);
         }
@@ -744,7 +737,7 @@ namespace UniMoveStation.ViewModel
         public void DoStart()
         {
             StartFcpTask();
-            foreach (SingleCameraViewModel scvm in Cameras)
+            foreach (CameraViewModel scvm in Cameras)
             {
                 scvm.Camera.Calibration.CorrespondingPoints = new List<PointF>();
             }
@@ -753,7 +746,7 @@ namespace UniMoveStation.ViewModel
 
         public void DoSave()
         {
-            foreach(SingleCameraViewModel scvm in Cameras)
+            foreach(CameraViewModel scvm in Cameras)
             {
                 ViewModelLocator.Instance.Settings.DoSaveCalibration(scvm.Camera);
             }

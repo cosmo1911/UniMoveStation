@@ -12,12 +12,11 @@
   See http://www.galasoft.ch/mvvm
 */
 
-using GalaSoft.MvvmLight;
+using System.Linq;
+using System.Windows;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
-using System.Windows;
 using UniMoveStation.ViewModel.Flyout;
-using System.Linq;
 
 namespace UniMoveStation.ViewModel
 {
@@ -103,7 +102,7 @@ namespace UniMoveStation.ViewModel
         public static void Cleanup()
         {
 
-            foreach(SingleCameraViewModel scvm in ViewModelLocator.Instance.Cameras.Cameras.Reverse())
+            foreach(CameraViewModel scvm in Instance.Cameras.Cameras.Reverse())
             {
                 scvm.Cleanup();
             }

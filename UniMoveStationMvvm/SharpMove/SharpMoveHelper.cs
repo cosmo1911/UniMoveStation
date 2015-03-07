@@ -56,7 +56,7 @@ namespace UniMoveStation.SharpMove
     {
         Bluetooth,
         USB,
-        Unknown,
+        Unknown
     };
 
     public enum PSMoveRemoteConfig
@@ -93,7 +93,7 @@ namespace UniMoveStation.SharpMove
         Left = 1 << 0x0F,
         PS = 1 << 0x10,
         Move = 1 << 0x13,
-        Trigger = 1 << 0x14,	/* We can use this value with IsButtonDown() (or the events) to get 
+        Trigger = 1 << 0x14	/* We can use this value with IsButtonDown() (or the events) to get 
 							 * a binary yes/no answer about if the trigger button is down at all.
 							 * For the full integer/analog value of the trigger, see the corresponding property below.
 							 */
@@ -109,13 +109,13 @@ namespace UniMoveStation.SharpMove
         EightyPercent = 0x04, /*!< Battery has at least 80% remaining */
         Max = 0x05, /*!< Battery is fully charged (not on charger) */
         Charging = 0xEE, /*!< Battery is currently being charged */
-        ChargingDone = 0xEF, /*!< Battery is fully charged (on charger) */
+        ChargingDone = 0xEF /*!< Battery is fully charged (on charger) */
     };
 
     public enum PSMoveFrame
     {
         FirstHalf = 0, /*!< The older frame */
-        SecondHalf, /*!< The most recent frame */
+        SecondHalf /*!< The most recent frame */
     };
 
     public enum PSMoveLEDAutoOption
@@ -147,7 +147,7 @@ namespace UniMoveStation.SharpMove
         NotCalibrated, /*!< Controller not registered with tracker */
         CalibrationError, /*!< Calibration failed (check lighting, visibility) */
         Calibrated, /*!< Color calibration successful, not currently tracking */
-        Tracking, /*!< Calibrated and successfully tracked in the camera */
+        Tracking /*!< Calibrated and successfully tracked in the camera */
     };
 
     public enum PSMoveTrackerExposure
@@ -155,6 +155,6 @@ namespace UniMoveStation.SharpMove
         Low, /*!< Very low exposure: Good tracking, no environment visible */
         Medium, /*!< Middle ground: Good tracking, environment visibile */
         High, /*!< High exposure: Fair tracking, but good environment */
-        Invalid, /*!< Invalid exposure value (for returning failures) */
+        Invalid /*!< Invalid exposure value (for returning failures) */
     };
 } //namespace

@@ -5,16 +5,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using UniMoveStation.Helper;
 using UniMoveStation.Model;
+using UniMoveStation.Utils.JsonConverter;
 
 namespace UniMoveStation.ViewModel.Flyout
 {
@@ -44,14 +40,16 @@ namespace UniMoveStation.ViewModel.Flyout
 
             // create accent color menu items for the demo
             AccentColors = ThemeManager.Accents
-                                       .Select(a => new AccentColorMenuData() { 
+                                       .Select(a => new AccentColorMenuData
+                                       { 
                                            Name = a.Name, 
                                            ColorBrush = a.Resources["AccentColorBrush"] as Brush })
                                        .ToList();
 
             // create metro theme color menu items for the demo
             AppThemes = ThemeManager.AppThemes
-                                    .Select(a => new AppThemeMenuData() { 
+                                    .Select(a => new AppThemeMenuData
+                                    { 
                                         Name = a.Name, 
                                         BorderColorBrush = a.Resources["BlackColorBrush"] as Brush,
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
@@ -124,7 +122,7 @@ namespace UniMoveStation.ViewModel.Flyout
             TextWriter writer = null;
             try
             {
-                string json = JsonConvert.SerializeObject(Settings, Newtonsoft.Json.Formatting.Indented);
+                string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
                 writer = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json", false);
                 writer.Write(json);
             }
@@ -140,14 +138,14 @@ namespace UniMoveStation.ViewModel.Flyout
 
         public void DoSaveCameras()
         {
-            ObservableCollection<SingleCameraModel> cameras = new ObservableCollection<SingleCameraModel>();
+            ObservableCollection<CameraModel> cameras = new ObservableCollection<CameraModel>();
 
-            foreach (SingleCameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<SingleCameraViewModel>())
+            foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
                 TextWriter writer = null;
                 try
                 {
-                    string json = JsonConvert.SerializeObject(scvm.Camera, Newtonsoft.Json.Formatting.Indented);
+                    string json = JsonConvert.SerializeObject(scvm.Camera, Formatting.Indented);
                     writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", scvm.Camera.GUID), false);
                     writer.Write(json);
                 }
@@ -158,14 +156,14 @@ namespace UniMoveStation.ViewModel.Flyout
             }
         }
 
-        public void DoSaveCalibration(SingleCameraModel camera)
+        public void DoSaveCalibration(CameraModel camera)
         {
             TextWriter writer = null;
             try
             {
                 string json = JsonConvert.SerializeObject(
                     camera.Calibration, 
-                    Newtonsoft.Json.Formatting.Indented, 
+                    Formatting.Indented, 
                     new JsonIntrinsicCameraParametersConverter(),
                     new JsonExtrinsicCameraParametersConverter(),
                     new JsonMatrixConverter(),
@@ -204,11 +202,11 @@ namespace UniMoveStation.ViewModel.Flyout
             }
 
             Settings.MovedHosts = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
-                ".psmoveapi\\moved_hosts.txt")).ToList<string>();
+                ".psmoveapi\\moved_hosts.txt")).ToList();
 
         }
 
-        public void LoadCalibration(SingleCameraModel camera)
+        public void LoadCalibration(CameraModel camera)
         {
             TextReader reader = null;
             try
@@ -266,7 +264,7 @@ namespace UniMoveStation.ViewModel.Flyout
         protected virtual void DoChangeTheme()
         {
             var theme = ThemeManager.DetectAppStyle(Application.Current);
-            var accent = ThemeManager.GetAccent(this.Name);
+            var accent = ThemeManager.GetAccent(Name);
             ThemeManager.ChangeAppStyle(Application.Current, accent, theme.Item1);
         }
     }
@@ -276,7 +274,7 @@ namespace UniMoveStation.ViewModel.Flyout
         protected override void DoChangeTheme()
         {
             var theme = ThemeManager.DetectAppStyle(Application.Current);
-            var appTheme = ThemeManager.GetAppTheme(this.Name);
+            var appTheme = ThemeManager.GetAppTheme(Name);
             ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, appTheme);
         }
     } // SettingsViewModel
