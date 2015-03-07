@@ -1,4 +1,5 @@
 ﻿using System;
+using UniMoveStation.Common;
 
 namespace UniMoveStation.NitoMessages
 {

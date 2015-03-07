@@ -1,0 +1,533 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             x:Class="UniMoveStation.UI.View.MotionControllerView"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             xmlns:viewModel="clr-namespace:UniMoveStation.Representation.ViewModel;assembly=UniMoveStation.Representation"
+             xmlns:valueConverter="clr-namespace:UniMoveStation.Representation.ValueConverter;assembly=UniMoveStation.Representation"
+             xmlns:cw="clr-namespace:ColorWheel.Controls;assembly=ColorWheel.Controls"
+             xmlns:m="clr-namespace:UniMoveStation.Business.Model;assembly=UniMoveStation.Business"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModel:MotionControllerViewModel, IsDesignTimeCreatable=True}"
+             Margin="8">
+
+    <UserControl.Resources>
+        <valueConverter:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+        <valueConverter:QuaternionToStringConverter x:Key="QuaternionToStringConverter"/> 
+    </UserControl.Resources>
+    <Grid>
+        <!-- Main Grid -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <!-- Top Grid -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"
+                                  MinWidth="100"
+                                  />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="0">
+                <!-- Left Grid-->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <!-- Upper Left Grid -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Column="0">
+                        <!-- Left of Upper Left Grid -->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <!--Circle-->
+                        <CheckBox Grid.Column="0" 
+                                  Grid.Row="0" 
+                                  IsHitTestVisible="False" 
+                                  Margin="0 0 0 4"
+                                  IsChecked="{Binding MotionController.Circle}">
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                                             Height="15" 
+                                             Width="18"
+                                             />
+                        </CheckBox>
+                        <!--Cross-->
+                        <CheckBox  Grid.Column="0"
+                                   Grid.Row="1"
+                                   IsHitTestVisible="False"
+                                   Margin="0 4 0 4"
+                                   IsChecked="{Binding MotionController.Cross}">
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
+                        </CheckBox>
+                        <!--Triangle-->
+                        <CheckBox Grid.Column="0"
+                                  Grid.Row="2"
+                                  IsHitTestVisible="False"
+                                  Margin="0 4 0 4"
+                                  IsChecked="{Binding MotionController.Triangle}">
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
+                        </CheckBox>
+                        <!--Square-->
+                        <CheckBox Grid.Column="0"
+                                  Grid.Row="3"
+                                  IsHitTestVisible="False"
+                                  Margin="0 4 0 4"
+                                  IsChecked="{Binding MotionController.Square}">
+                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationSquare.svg"
+                                             Height="15"
+                                             Width="18"
+                                             />
+                        </CheckBox>
+                        
+                        <!-- Left of Upper Left Grid -->
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <!-- Right of Upper Left Grid -->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <!--Move-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="0"
+                                  Content="Move"
+                                  Margin="0 0 0 4"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Move}"
+                                  />
+                        <!--PS-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="1"
+                                  Content="PS"
+                                  Margin="0 4 0 4"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.PS}"
+                                  />
+                        <!--Start-->
+                        <CheckBox Grid.Column="1"
+                                  Grid.Row="2"
+                                  Content="Start"
+                                  Margin="0 4 0 4"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Start}"
+                                  />
+                        <!--Select-->
+                        <CheckBox Grid.Column="1" 
+                                  Grid.Row="3"
+                                  Content="Select"
+                                  Margin="0 4 0 4"
+                                  IsHitTestVisible="False"
+                                  IsChecked="{Binding MotionController.Select}"
+                                  />
+                        <!-- Right of Upper Left Grid -->
+                    </Grid>
+                    <!-- Upper Left Grid -->
+                </Grid>
+                <Grid Grid.Row="1">
+                    <!-- Lower Left Grid -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!--Trigger-->
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="0"
+                               Text="Trigger"
+                               Margin="0 4 0 4"
+                               Width="45"
+                               />
+                    <ProgressBar Grid.Column="1"
+                                 Grid.Row="0"
+                                 MinWidth="100"
+                                 Minimum="0"
+                                 Maximum="255"
+                                 Margin="0 4 0 4"
+                                 Background="{StaticResource IdealForegroundColorBrush}"
+                                 Value="{Binding MotionController.Trigger}"
+                                 />
+                    <!--Rumble-->
+                    <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               VerticalAlignment="Center"
+                               Text="Rumble"
+                               Margin="0 4 0 4"
+                               Width="45"
+                               />
+                    <ProgressBar Grid.Column="1"
+                                 Grid.Row="1"
+                                 MinWidth="100"
+                                 Minimum="0"
+                                 Maximum="255"
+                                 Margin="0 4 0 4"
+                                 HorizontalAlignment="Center"
+                                 Background="{StaticResource IdealForegroundColorBrush}"
+                                 Value="{Binding MotionController.Rumble}"
+                                 />
+                    <!-- Lower Left Grid -->
+                </Grid>
+                <!-- Left Grid -->
+            </Grid>
+
+            <cw:ColorWheelControl Grid.Column="1"
+                                  Margin="4"
+                                  x:Name="ColorWheel"
+                                  Palette="{Binding Palette}"
+                                  Height="100"
+                                  Width="100"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  DataContextChanged="color_wheel_DataContextChanged">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ColorsUpdated">
+                        <mvvm:EventToCommand Command="{Binding SelectColorCommand}"
+                                             CommandParameter="{Binding Palette, ElementName=ColorWheel}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </cw:ColorWheelControl>
+
+            <StackPanel Orientation="Vertical"
+                        Grid.Column="2">
+                <controls:ToggleSwitch OnLabel="Connected"
+                                       OffLabel="Disconnected"
+                                       Margin="0 0 0 4"
+                                       HorizontalAlignment="Stretch" 
+                                       VerticalAlignment="Center"
+                                       HorizontalContentAlignment="Center"
+                                       IsChecked="{Binding MotionControllerService.Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <mvvm:EventToCommand Command="{Binding ToggleConnectionCommand}"
+                                                 CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource AncestorType={x:Type controls:ToggleSwitch}}}"
+                                                 />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </controls:ToggleSwitch>
+                <Button Content="Calibrate Magnetometer"
+                        Margin="0 4 0 4"
+                        Command="{Binding CalibrateMagnetometerCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                        />
+            </StackPanel>
+            <!-- Top Main Grid -->
+        </Grid>
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Hidden">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!--Name-->
+                <TextBlock Grid.Row="0"
+                           Margin="0 4 0 4"
+                           Text="Name"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="0"
+                         Grid.Column="1"
+                         controls:TextboxHelper.Watermark="Insert"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Name, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0 4 0 4"
+                         />
+                <!--Serial-->
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Serial"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="1"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Serial}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Connect Status-->
+                <TextBlock Grid.Row="2" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Connect Status"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.ConnectStatus}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Connection Type-->
+                <TextBlock Grid.Row="3" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Connection Type"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.ConnectionType}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Host-->
+                <TextBlock Grid.Row="4" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Host Address"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="4"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.HostIp}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Gyroscope-->
+                <TextBlock Grid.Row="5" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Gyroscope"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="5"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Gyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Accelerometer-->
+                <TextBlock Grid.Row="6" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Accelerometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="6"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Accelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Magnetometer-->
+                <TextBlock Grid.Row="7" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Magnetometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="7"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Magnetometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Orientation-->
+                <TextBlock Grid.Row="8" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Orientation"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="8"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Orientation, Converter={StaticResource QuaternionToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Gyroscope-->
+                <TextBlock Grid.Row="9" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Raw Gyroscope"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="9"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.RawGyroscope, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Accelerometer-->
+                <TextBlock Grid.Row="10" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Raw Accelerometer"
+                           VerticalAlignment="Center"
+                           />
+                <TextBox Grid.Row="10"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.RawAccelerometer, Converter={StaticResource Vector3ToStringConverter}}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Temperature-->
+                <TextBlock Grid.Row="11"
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Temperature"
+                           VerticalAlignment="Center"
+                           />
+
+                <TextBox Grid.Row="11"
+                         Grid.Column="1"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding MotionController.Temperature}"
+                         IsReadOnly="True"
+                         Margin="0 4 0 4"
+                         />
+                <!--Raw Position-->
+                <TextBlock Grid.Row="12" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Raw Position"
+                           VerticalAlignment="Center"
+                           />
+                <UniformGrid Grid.Row="12"
+                             Grid.Column="1"
+                             Columns="2">
+
+                    <ListBox ItemsSource="{Binding MotionController.RawPosition.Keys}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:CameraModel}">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox ItemsSource="{Binding MotionController.RawPosition.Values}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </UniformGrid>
+
+                <!--Fusion Position-->
+                <TextBlock Grid.Row="13" 
+                           Grid.Column="0"
+                           Margin="0 4 0 4"
+                           Text="Fusion Position"
+                           VerticalAlignment="Center"
+                           />
+                <UniformGrid Grid.Row="13"
+                             Grid.Column="1"
+                             Columns="2">
+
+                    <ListBox Grid.Column="0"
+                             ItemsSource="{Binding MotionController.FusionPosition.Keys}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:CameraModel}">
+                                <TextBlock Text="{Binding Name}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <ListBox Grid.Column="1"
+                             ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                             IsEnabled="False"
+                             BorderThickness="1"
+                             Margin="0 4 0 4">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </UniformGrid>
+
+            </Grid>
+        </ScrollViewer>
+        
+    </Grid>
+
+</UserControl>

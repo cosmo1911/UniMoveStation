@@ -89,13 +89,14 @@
       <HintPath>plugins\ref\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
-      <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras">
-      <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Platform">
-      <HintPath>..\packages\MvvmLightLibs.5.0.2.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
     </Reference>
     <Reference Include="HelixToolkit.Wpf">
       <HintPath>..\packages\HelixToolkit.Wpf.2015.1.474\lib\net45\HelixToolkit.Wpf.dll</HintPath>
@@ -125,8 +126,7 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MahApps.Metro.0.14.0-ALPHA98\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.5.1.1.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -145,166 +145,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CLEyeMulticam\CLEyeCameraDevice.cs" />
-    <Compile Include="CLEyeMulticam\CLEyeCameraImage.cs" />
-    <Compile Include="Design\DesignCLEyeService.cs" />
-    <Compile Include="Design\DesignConsoleService.cs" />
-    <Compile Include="Design\DesignServerService.cs" />
-    <Compile Include="Design\DesignTrackerService.cs" />
-    <Compile Include="Design\DesignMotionControllerService.cs" />
-    <Compile Include="Utils\JsonConverter\JsonCameraCalibrationConverter.cs" />
-    <Compile Include="Utils\JsonConverter\JsonCameraConverter.cs" />
-    <Compile Include="Utils\MessengerMessage\AddCameraMessage.cs" />
-    <Compile Include="Utils\MessengerMessage\AddMotionControllerMessage.cs" />
-    <Compile Include="Utils\MessengerMessage\RemoveCameraMessage.cs" />
-    <Compile Include="Utils\MessengerMessage\RemoveMotionControllerMessage.cs" />
-    <Compile Include="Utils\ObservableConcurrentDictionary.cs" />
-    <Compile Include="Selector\MyFlyoutStyleSelector.cs" />
-    <Compile Include="Selector\MyTabContainerStyleSelector.cs" />
-    <Compile Include="Selector\MyTabItemTemplateSelector .cs" />
-    <Compile Include="Selector\MyTabContentTemplateSelector.cs" />
-    <Compile Include="Model\CameraCalibrationModel.cs" />
-    <Compile Include="Model\SettingsModel.cs" />
-    <Compile Include="Nito\NitoClient.cs" />
-    <Compile Include="Nito\UmsClient.cs" />
-    <Compile Include="Nito\NitoServer.cs" />
-    <Compile Include="Model\CameraModel.cs" />
-    <Compile Include="Service\CameraPositioningCalibrationService.cs" />
-    <Compile Include="Service\CameraCalibrationService.cs" />
-    <Compile Include="Service\CLEyeService.cs" />
-    <Compile Include="Service\ConsoleService.cs" />
-    <Compile Include="Service\Interface\ICameraService.cs" />
-    <Compile Include="Service\Interface\IConsoleService.cs" />
-    <Compile Include="Service\Interface\IMotionControllerService.cs" />
-    <Compile Include="Service\Interface\ITrackerService.cs" />
-    <Compile Include="Model\MotionControllerModel.cs" />
-    <Compile Include="Service\MotionControllerService.cs" />
-    <Compile Include="Model\ServerModel.cs" />
-    <Compile Include="Service\ServerService.cs" />
-    <Compile Include="Service\HelixCameraVisualizationService.cs" />
-    <Compile Include="Service\TrackerService.cs" />
-    <Compile Include="SharpMove\PsMoveApi.cs" />
-    <Compile Include="SharpMove\SharpMoveHelper.cs" />
-    <Compile Include="Utils\ValueConverter\DictionaryTrackingToBoolConverter.cs" />
-    <Compile Include="ViewModel\MotionControllersViewModel.cs" />
-    <Compile Include="ViewModel\CamerasViewModel.cs" />
-    <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
-    <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />
-    <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
-    <Compile Include="ViewModel\Flyout\SettingsViewModel.cs" />
-    <Compile Include="ViewModel\CameraViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\MotionControllerViewModel.cs" />
-    <Compile Include="ViewModel\NavigationViewModel.cs" />
-    <Compile Include="ViewModel\ServerViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\Dialog\CameraPositioningCalibrationView.xaml.cs">
-      <DependentUpon>CameraPositioningCalibrationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Dialog\FcpView.xaml.cs">
-      <DependentUpon>FcpView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MotionControllersView.xaml.cs">
-      <DependentUpon>MotionControllersView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Dialog\CameraCalibrationView.xaml.cs">
-      <DependentUpon>CameraCalibrationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CamerasView.xaml.cs">
-      <DependentUpon>CamerasView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Flyout\AddCameraView.xaml.cs">
-      <DependentUpon>AddCameraView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Flyout\AddMotionControllerView.xaml.cs">
-      <DependentUpon>AddMotionControllerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Flyout\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MotionControllerView.xaml.cs">
-      <DependentUpon>MotionControllerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\NavigationPanelItemView.xaml.cs">
-      <DependentUpon>NavigationPanelItemView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ServerView.xaml.cs">
-      <DependentUpon>ServerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CameraView.xaml.cs">
-      <DependentUpon>CameraView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\NavigationView.xaml.cs">
-      <DependentUpon>NavigationView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Resource Include="Style\Styles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
-    <Page Include="View\Dialog\CameraPositioningCalibrationView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Dialog\FcpView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\MotionControllersView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Dialog\CameraCalibrationView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\CamerasView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Flyout\AddCameraView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Flyout\AddMotionControllerView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Flyout\SettingsView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MotionControllerView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\NavigationPanelItemView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ServerView.xaml">
-      <SubType>Form</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\CameraView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\NavigationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -337,7 +187,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -355,26 +204,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Entypo-license.txt" />
-    <Resource Include="Resources\WindowsIcons-license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\PlayStationCircle.svg" />
-    <Resource Include="Resources\PlayStationSquare.svg" />
-    <Resource Include="Resources\PlayStationTriangle.svg" />
-    <Resource Include="Resources\PlayStationX.svg" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Messages\UniMoveStation.NitoMessages.csproj">
-      <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
-      <Name>UniMoveStation.NitoMessages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utils\UniMoveStation.Utils.csproj">
-      <Project>{408e4fbb-2d54-456c-a91e-69cad02f7199}</Project>
-      <Name>UniMoveStation.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="CLEyeMulticam.dll">
@@ -473,6 +302,20 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="plugins\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UniMoveStation.Business\UniMoveStation.Business.csproj">
+      <Project>{4918f8b2-6f76-499a-89db-427c554c6e9f}</Project>
+      <Name>UniMoveStation.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UniMoveStation.Representation\UniMoveStation.Representation.csproj">
+      <Project>{0dacd0aa-853d-4967-8151-64c30188d829}</Project>
+      <Name>UniMoveStation.Representation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UniMoveStation.UI\UniMoveStation.UI.csproj">
+      <Project>{c2f38f8b-dadb-4e9b-8d7e-7071e90555d4}</Project>
+      <Name>UniMoveStation.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

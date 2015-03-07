@@ -1,0 +1,69 @@
+﻿<Expander x:Class="UniMoveStation.UI.View.NavigationPanelItemView"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+          xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+          xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+          xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
+          xmlns:ignore="http://www.ignore.com"
+          mc:Ignorable="d ignore"
+          FlowDirection="RightToLeft"
+          Padding="-1" 
+          Margin="0 0 0 0" 
+          BorderThickness="1"
+          BorderBrush="{StaticResource AccentColorBrush}">
+    
+    <Expander.Header>
+
+        <Button FlowDirection="LeftToRight"
+                BorderThickness="0"
+                Padding="0"
+                BorderBrush="Transparent"
+                Background="Transparent"
+                Foreground="{StaticResource IdealForegroundColorBrush}"
+                Style="{DynamicResource FlatButtonStyle}"
+                Command="{Binding SelectCameraCommand}"
+                CommandParameter="-1">
+
+            <StackPanel Orientation="Horizontal">
+                <!--Camera Icon-->
+                <svgc:SvgViewbox Source="Resources/PlayStationX.svg"
+                                    Height="19"
+                                    Width="19"
+                                    Margin="3 0 3 0"
+                                    />
+                <!--Cameras Label-->
+                <TextBlock Text="CAMERAS" 
+                            VerticalAlignment="Center"
+                            />
+            </StackPanel>
+        </Button>
+        <!--All Cameras-->
+
+    </Expander.Header>
+    <!--Camera Tabs-->
+    <controls:MetroTabControl TabStripPlacement="Left"
+                                FlowDirection="LeftToRight"
+                                ItemsSource="{Binding SingleCameras}"
+                                x:Name="navigation_control_cameras">
+
+        <controls:MetroTabControl.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Camera.Name}" FontSize="12">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <mvvm:EventToCommand Command="{Binding Navigation.SelectCameraCommand, Source={StaticResource ViewModelLocator}}"
+                                                            CommandParameter="{Binding SelectedIndex, ElementName=navigation_control_cameras}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                </TextBlock>
+            </DataTemplate>
+        </controls:MetroTabControl.ItemTemplate>
+        <controls:MetroTabControl.ContentTemplate>
+            <DataTemplate />
+        </controls:MetroTabControl.ContentTemplate>
+
+    </controls:MetroTabControl>
+    </Expander>

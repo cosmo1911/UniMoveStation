@@ -1,7 +1,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.ObjectModel;
-using UniMoveStation.ViewModel.Flyout;
+using UniMoveStation.Representation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
 {
