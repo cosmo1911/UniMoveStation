@@ -27,7 +27,7 @@ namespace UniMoveStation.Common
 
         public override String ToString()
         {
-            return String.Format("{{ {0:F}, {1:F}, {2:F} }}", X, X, Z);
+            return String.Format("{{ {0:F}, {1:F}, {2:F} }}", X, Y, Z);
         }
 
         public Float3(float x, float y, float z)
@@ -40,7 +40,7 @@ namespace UniMoveStation.Common
         public Float3(Vector3 vector3)
         {
             X = vector3.x;
-            X = vector3.y;
+            Y = vector3.y;
             Z = vector3.z;
         }
     } //Float3
