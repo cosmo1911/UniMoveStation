@@ -45,7 +45,7 @@ namespace UniMoveStation.Business.Nito
             positions[e.message.TrackerIndex, e.message.MoveIndex] = e.message.Message;
         }
 
-        protected override bool handleMessages(object message)
+        protected override bool HandleMessages(object message)
         {
             PositionMessage positionMessage = message as PositionMessage;
             if (positionMessage != null)
@@ -57,12 +57,12 @@ namespace UniMoveStation.Business.Nito
                 return true;
             }
 
-            return base.handleMessages(message);
+            return base.HandleMessages(message);
         }
 
         public Vector3 getFusionPosition(int trackerIndex, int moveIndex)
         {
-            sendMessage(string.Format("getFusionPosition({0}, {1})", trackerIndex, moveIndex));
+            SendMessage(string.Format("getFusionPosition({0}, {1})", trackerIndex, moveIndex));
             return positions[trackerIndex, moveIndex];
         }
     } // UmsClient

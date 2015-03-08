@@ -129,7 +129,10 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
 
         public void DoSaveCameras()
         {
-            SettingsService.SaveCameras(SimpleIoc.Default.GetInstance<CamerasViewModel>().Cameras);
+            foreach (CameraViewModel cameraViewModel in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
+            {
+                SettingsService.SaveCamera(cameraViewModel.Camera);
+            }
         }
 
         private void DoReloadSettings()

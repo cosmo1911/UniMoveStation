@@ -40,21 +40,18 @@ namespace UniMoveStation.Business.Service
                 Settings.MovedHosts);
         } // SaveSettings
 
-        public void SaveCameras(ObservableCollection<CameraModel> cameras)
+        public void SaveCamera(CameraModel cameraModel)
         {
-            foreach (CameraModel cameraModel in cameras)
+            TextWriter writer = null;
+            try
             {
-                TextWriter writer = null;
-                try
-                {
-                    string json = JsonConvert.SerializeObject(cameraModel, Formatting.Indented);
-                    writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", cameraModel.GUID), false);
-                    writer.Write(json);
-                }
-                finally
-                {
-                    if (writer != null) writer.Close();
-                }
+                string json = JsonConvert.SerializeObject(cameraModel, Formatting.Indented);
+                writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", cameraModel.GUID), false);
+                writer.Write(json);
+            }
+            finally
+            {
+                if (writer != null) writer.Close();
             }
         } // SaveCameras
 

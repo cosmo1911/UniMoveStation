@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using Nito.Async;
 using Nito.Async.Sockets;
-using UniMoveStation.Common;
 using UniMoveStation.Common.Utils;
 
 namespace UniMoveStation.Business.Nito
@@ -192,7 +191,7 @@ namespace UniMoveStation.Business.Nito
                     // Deserialize the message
                     object message = SerializationHelper.Deserialize(e.Result);
 
-                    if(handleMessages(message) == false)
+                    if(HandleMessages(message) == false)
                     {
                         Console.WriteLine("Socket read got an unknown message of type " + message.GetType().Name);
                     }
@@ -209,7 +208,7 @@ namespace UniMoveStation.Business.Nito
             }
         }
 
-        protected virtual bool handleMessages(object message)
+        protected virtual bool HandleMessages(object message)
         {
             // Handle the message
             NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
@@ -218,7 +217,7 @@ namespace UniMoveStation.Business.Nito
                 Console.WriteLine("Socket read got a string message: " + stringMessage.Message);
                 if(stringMessage.Message.Equals("foo"))
                 {
-                    sendMessage("bar");
+                    SendMessage("bar");
                 }
                 return true;
             }
@@ -234,13 +233,13 @@ namespace UniMoveStation.Business.Nito
             return false;
         }
 
-        public void connect(string ip, int port)
+        public void Connect(string ip, int port)
         {
             try
             {
                 // Read the IP address
-                IPAddress serverIPAddress;
-                if (!IPAddress.TryParse(ip, out serverIPAddress))
+                IPAddress serverIpAddress;
+                if (!IPAddress.TryParse(ip, out serverIpAddress))
                 {
                     Console.WriteLine("Invalid IP address: " + ip);
                     return;
@@ -252,9 +251,9 @@ namespace UniMoveStation.Business.Nito
                 ClientSocket.PacketArrived += ClientSocket_PacketArrived;
                 ClientSocket.WriteCompleted += args => ClientSocket_WriteCompleted(ClientSocket, args);
                 ClientSocket.ShutdownCompleted += ClientSocket_ShutdownCompleted;
-                ClientSocket.ConnectAsync(serverIPAddress, port);
+                ClientSocket.ConnectAsync(serverIpAddress, port);
                 ClientSocketState = SocketState.Connecting;
-                Console.WriteLine("Connecting socket to " + (new IPEndPoint(serverIPAddress, port)));
+                Console.WriteLine("Connecting socket to " + (new IPEndPoint(serverIpAddress, port)));
             }
             catch (Exception ex)
             {
@@ -267,7 +266,7 @@ namespace UniMoveStation.Business.Nito
             }
         }
 
-        public void disconnect()
+        public void Disconnect()
         {
             try
             {
@@ -286,7 +285,7 @@ namespace UniMoveStation.Business.Nito
             }
         }
 
-        public void closeAbortively()
+        public void CloseAbortively()
         {
             try
             {
@@ -306,13 +305,15 @@ namespace UniMoveStation.Business.Nito
             }
         }
 
-        public void sendMessage(string message)
+        public void SendMessage(string message)
         {
             try
             {
                 // Create the message to send
-                NitoMessages.StringMessage msg = new NitoMessages.StringMessage();
-                msg.Message = message;
+                NitoMessages.StringMessage msg = new NitoMessages.StringMessage
+                {
+                    Message = message
+                };
 
                 // Serialize the message to a binary array
                 byte[] binaryMessage = SerializationHelper.Serialize(msg);
@@ -334,15 +335,17 @@ namespace UniMoveStation.Business.Nito
             }
         }
 
-        public void sendComplexMessage(string message)
+        public void SendComplexMessage(string message)
         {
             try
             {
                 // Create the message to send
-                NitoMessages.ComplexMessage msg = new NitoMessages.ComplexMessage();
-                msg.UniqueID = Guid.NewGuid();
-                msg.Time = DateTimeOffset.Now;
-                msg.Message = message;
+                NitoMessages.ComplexMessage msg = new NitoMessages.ComplexMessage
+                {
+                    UniqueID = Guid.NewGuid(),
+                    Time = DateTimeOffset.Now,
+                    Message = message
+                };
 
                 // Serialize the message to a binary array
                 byte[] binaryMessage = SerializationHelper.Serialize(msg);
@@ -366,7 +369,7 @@ namespace UniMoveStation.Business.Nito
 
         // This is just a utility function for displaying all the IP(v4) addresses of a computer; it is not
         //  necessary in order to use ClientTcpSocket/ServerTcpSocket.
-        public void displayIP(object sender, EventArgs e)
+        public void DisplayIp(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -379,7 +382,7 @@ namespace UniMoveStation.Business.Nito
                 IPInterfaceProperties properties = network.GetIPProperties();
 
                 // Each network interface may have multiple IP addresses
-                foreach (IPAddressInformation address in properties.UnicastAddresses)
+                foreach (UnicastIPAddressInformation address in properties.UnicastAddresses)
                 {
                     // We're only interested in IPv4 addresses for now
                     if (address.Address.AddressFamily != AddressFamily.InterNetwork)
