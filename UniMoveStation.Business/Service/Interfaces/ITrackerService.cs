@@ -1,4 +1,6 @@
-﻿using UniMoveStation.Business.Model;
+﻿using System;
+using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service.Event;
 
 namespace UniMoveStation.Business.Service.Interfaces
 {
@@ -23,5 +25,7 @@ namespace UniMoveStation.Business.Service.Interfaces
         void AddMotionController(MotionControllerModel mc);
 
         void RemoveMotionController(MotionControllerModel mc);
+
+        event EventHandler OnImageReady;
     }
 }

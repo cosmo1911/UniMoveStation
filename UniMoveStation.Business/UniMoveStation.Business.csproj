@@ -118,6 +118,7 @@
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
     <Compile Include="Nito\UmsClient.cs" />
+    <Compile Include="Service\BitmapReadyEventArgs.cs" />
     <Compile Include="Service\Design\DesignCLEyeService.cs" />
     <Compile Include="Service\Design\DesignConsoleService.cs" />
     <Compile Include="Service\Design\DesignMotionControllerService.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Service\CameraPositioningCalibrationService.cs" />
     <Compile Include="Service\CLEyeService.cs" />
     <Compile Include="Service\ConsoleService.cs" />
+    <Compile Include="Service\Event\OnImageReadyEventArgs.cs" />
     <Compile Include="Service\HelixCameraVisualizationService.cs" />
     <Compile Include="Service\Interfaces\ICameraService.cs" />
     <Compile Include="Service\Interfaces\IConsoleService.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Service\Interfaces\ITrackerService.cs" />
     <Compile Include="Service\JsonSettingsService.cs" />
     <Compile Include="Service\MotionControllerService.cs" />
+    <Compile Include="Service\MultipleViewsService.cs" />
     <Compile Include="Service\ServerService.cs" />
     <Compile Include="Service\TrackerService.cs" />
   </ItemGroup>

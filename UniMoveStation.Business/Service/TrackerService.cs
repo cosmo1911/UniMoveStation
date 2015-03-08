@@ -13,6 +13,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common.SharpMove;
 using UniMoveStation.Common.Utils;
@@ -32,6 +33,8 @@ namespace UniMoveStation.Business.Service
         private CancellationTokenSource _ctsUpdate;
         private CameraModel _camera;
         private Task _updateTask;
+
+        public event EventHandler OnImageReady;
         #endregion
 
         #region Constructor
@@ -161,62 +164,13 @@ namespace UniMoveStation.Business.Service
                 MIplImage rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
                 Image<Bgr, Byte> img = new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
 
+                if (OnImageReady != null) OnImageReady(this, new OnImageReadyEventArgs(img));
 
-                if (_camera.Debug) DrawCubeToImage(img);
-
-                if(true)
+                if (_camera.Debug)
                 {
+                    DrawCubeToImage(img);
                     // draw center of image for calibration
-                    //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
-
-                    // TODO ioc
-                    //List<MotionControllerViewModel> mcvms = SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>().ToList<MotionControllerViewModel>();
-                    //List<CameraModel> cameras = SimpleIoc.Default.GetInstance<CamerasViewModel>().Cameras;
-                    //IEnumerable<CameraModel> orderedCameras = cameras.OrderBy(camera => camera.Calibration.Position);
-
-                    //foreach (CameraModel cameraModel in orderedCameras)
-                    //{
-
-                    //    if (cameraModel.Calibration.ObjectPointsProjected == null || _camera.Calibration.ObjectPointsProjected == null) continue;
-                    //    if (cameraModel.Calibration.Position == _camera.Calibration.Position) continue;
-                    //    if (cameraModel.Calibration.Position > 1) continue;
-
-                    //    IntPtr points1Ptr = CvHelper.CreatePointListPointer(cameraModel.Calibration.ObjectPointsProjected);
-                    //    IntPtr points2Ptr = CvHelper.CreatePointListPointer(_camera.Calibration.ObjectPointsProjected);
-
-                    //    Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
-
-                    //    IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
-                    //    CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3, 0.99, IntPtr.Zero);
-
-                    //    Matrix<double> lines1 = new Matrix<double>(8, 3);
-                    //    CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix.Ptr, lines1.Ptr);
-
-                    //    Matrix<double> lines2 = new Matrix<double>(8, 3);
-                    //    CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix.Ptr, lines2.Ptr);
-
-                    //    for (int i = 0; i < cameraModel.Calibration.ObjectPointsProjected.Length; i++)
-                    //    {
-                    //        {
-                    //            System.Drawing.Point[] points = new System.Drawing.Point[2]
-                    //            {
-                    //                new System.Drawing.Point(0, (int) -(lines2[i, 2]/lines2[i, 1])),
-                    //                new System.Drawing.Point(img.Cols, (int) (-(lines2[i, 2] + lines2[i, 0] * img.Cols) / lines2[i, 1]))
-                    //            };
-                    //            img.DrawPolyline(points, false, new Bgr(255, 255, 0), 1);
-                    //        }
-
-                    //        //{
-                    //        //    System.Drawing.Point[] points = new System.Drawing.Point[2]
-                    //        //    {
-                    //        //        new System.Drawing.Point(0, (int) -(lines1[i, 2]/lines1[i, 1])),
-                    //        //        new System.Drawing.Point(img.Cols, (int) (-(lines1[i, 2] + lines1[i, 0] * img.Cols) / lines1[i, 1]))
-                    //        //    };
-                    //        //    img.DrawPolyline(points, false, new Bgr(255, 0, 255), 1);
-                    //        //}
-                    //    }
-
-                    //}
+                    img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
                 }
                 
                 BitmapSource bitmapSource = BitmapHelper.ToBitmapSource(img);
@@ -453,8 +407,6 @@ namespace UniMoveStation.Business.Service
                 mc.FusionPosition[_camera] = fusionPosition;
             }
         } // ProcessData
-
-
 
         private void DrawCubeToImage(Image<Bgr, byte> img)
         {

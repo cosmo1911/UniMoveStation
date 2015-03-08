@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Emgu.CV.Structure;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -6,10 +7,12 @@ using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
 using UniMoveStation.Business.Service.Design;
+using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common;
 using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;
+using System.Drawing;
 
 namespace UniMoveStation.Representation.ViewModel
 {
@@ -102,6 +105,7 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 TrackerService.AddMotionController(mcvw.MotionController);
             }
+
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send(new AddCameraMessage(Camera));

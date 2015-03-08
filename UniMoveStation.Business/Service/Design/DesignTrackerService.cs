@@ -40,6 +40,7 @@ namespace UniMoveStation.Business.Service.Design
             _camera.Controllers.Remove(mc);
         }
         #endregion
-        
+
+        public event EventHandler OnImageReady;
     } // TrackerService
 } // Namespace

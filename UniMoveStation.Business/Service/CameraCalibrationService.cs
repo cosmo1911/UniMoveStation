@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Common;
 using UniMoveStation.Common.Utils;
@@ -237,7 +236,7 @@ namespace UniMoveStation.Business.Service
 
         public void SaveCalibration()
         {
-            SimpleIoc.Default.GetInstance<JsonSettingsService>().SaveCalibration(_camera);
+            new JsonSettingsService().SaveCalibration(_camera);
         }
     } // CameraCalibrationService
 } // namespace
