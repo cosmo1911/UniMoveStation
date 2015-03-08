@@ -2,16 +2,14 @@
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
                          xmlns:Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
-                         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                         xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:helix="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
-                         xmlns:service="clr-namespace:UniMoveStation.Business.Service;assembly=UniMoveStation.Business"
+                         xmlns:dialog="clr-namespace:UniMoveStation.Representation.ViewModel.Dialog;assembly=UniMoveStation.Representation"
                          x:Class="UniMoveStation.UI.View.Dialog.CameraPositioningCalibrationView"
                          mc:Ignorable="d"
                          Height="480"
-                         d:DataContext="{d:DesignInstance IsDesignTimeCreatable=False, Type={x:Type service:CameraPositioningCalibrationService}}"
+                         d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type={x:Type dialog:CameraPositioningCalibrationViewModel}}"
                          Title="Camera Positioning">
     <Grid Margin="0 10 0 0">
         <Grid.RowDefinitions>
@@ -23,15 +21,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-
-            <!--<chartingToolkit:Chart DataContext="{Binding}">
-                <chartingToolkit:LineSeries ItemsSource="{Binding CameraPositionsXZ}"
-                                            DependentValuePath="Value" 
-                                            IndependentValuePath="Key">
-                    
-                </chartingToolkit:LineSeries>
-                
-            </chartingToolkit:Chart>-->
+            
             <ScrollViewer HorizontalScrollBarVisibility="Hidden"
 		                  VerticalScrollBarVisibility="Hidden"
                           Controls:ControlsHelper.VerticalScrollBarOnLeftSide="True"
@@ -131,7 +121,7 @@
                                                             Grid.Row="3"
                                                             Margin="4"
                                                             Value="{Binding Camera.Calibration.XAngle, Mode=TwoWay}"
-                                                            IsEnabled="{Binding DataContext.InputAnglesManually, RelativeSource={RelativeSource AncestorType={x:Type Dialogs:BaseMetroDialog}}}"
+                                                            IsEnabled="{Binding DataContext.PositioningService.InputAnglesManually, RelativeSource={RelativeSource AncestorType={x:Type Dialogs:BaseMetroDialog}}}"
                                                             />
                                     <!--Y Rotation-->
                                     <TextBlock Grid.Row="4" 
@@ -144,7 +134,7 @@
                                                             Grid.Row="4"
                                                             Margin="4"
                                                             Value="{Binding Camera.Calibration.YAngle, Mode=TwoWay}"
-                                                            IsEnabled="{Binding DataContext.InputAnglesManually, RelativeSource={RelativeSource AncestorType={x:Type Dialogs:BaseMetroDialog}}}"
+                                                            IsEnabled="{Binding DataContext.PositioningService.InputAnglesManually, RelativeSource={RelativeSource AncestorType={x:Type Dialogs:BaseMetroDialog}}}"
                                                             />
                                 </Grid>
                             </DataTemplate>
@@ -160,7 +150,7 @@
                                    Width="Auto"
                                    Background="{helix:LinearGradientBrush Gray, LightGray}"
                                    Margin="4 4 0 4"
-                                   ItemsSource="{Binding HelixItems}">
+                                   ItemsSource="{Binding PositioningService.HelixItems}">
                 <helix:HelixViewport3D.DefaultCamera>
                     <PerspectiveCamera Position="150,150,150"
                                        LookDirection="-100,-100,-100"
@@ -182,8 +172,9 @@
                 <TextBlock Text="Input Angles Manually"
                            Margin="0 0 4 0"
                            />
-                <CheckBox IsChecked="{Binding InputAnglesManually}"
+                <CheckBox IsChecked="{Binding PositioningService.InputAnglesManually}"
                           DataContext="{Binding}"
+                          ToolTip="only automatically calculated with four cameras"
                           />
             </StackPanel>
             <Button Height="35"
@@ -206,11 +197,10 @@
 
             <Button Height="35"
                     MinWidth="80"
-                    Content="cancel"
+                    Content="close"
                     Style="{DynamicResource AccentedDialogSquareButton}"
                     Margin="4 0 4 0"
-                    Command="{Binding CancelCommand}"
-                    DataContext="{Binding}"
+                    x:Name="CloseButton"
                     />
         </StackPanel>
     </Grid>

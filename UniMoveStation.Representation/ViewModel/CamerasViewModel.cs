@@ -45,7 +45,6 @@ namespace UniMoveStation.Representation.ViewModel
         private Task _bundleTask;
         
         private RelayCommand<MetroWindow> _fcpCommand;
-        private RelayCommand<MetroWindow> _cameraPositioningCalibrationCommand;
         private CancellationTokenSource _ctsFcp;
         private Task _fcpTask;
         private bool _fcpFinished;
@@ -97,6 +96,8 @@ namespace UniMoveStation.Representation.ViewModel
             get;
             private set;
         }
+
+        public CameraPositioningCalibrationService PositioningService { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the AllCamerasViewModel class.
@@ -249,18 +250,6 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 return _fcpCommand
                     ?? (_fcpCommand = new RelayCommand<MetroWindow>(ShowFcpDialog));
-            }
-        }
-
-        /// <summary>
-        /// Gets the FindCorrespondingPointsCommand.
-        /// </summary>
-        public RelayCommand<MetroWindow> CameraPositioningCalibrationCommand
-        {
-            get
-            {
-                return _cameraPositioningCalibrationCommand
-                    ?? (_cameraPositioningCalibrationCommand = new RelayCommand<MetroWindow>(ShowCameraPositioningCalibrationDialog));
             }
         }
 
@@ -672,12 +661,6 @@ namespace UniMoveStation.Representation.ViewModel
             //_owningWindow = window;
 
             //await _owningWindow.ShowMetroDialogAsync(_dialog);
-        }
-
-        private void ShowCameraPositioningCalibrationDialog(MetroWindow window)
-        {
-            // TODO move to view
-            //new CameraPositioningCalibrationService(Cameras).ShowMetroDialog(window);
         }
 
         public async void DoCancelFcp()

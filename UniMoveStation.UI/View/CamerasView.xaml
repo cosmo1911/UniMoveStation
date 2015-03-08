@@ -205,10 +205,9 @@
                     CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
                     Visibility="Collapsed"
                     />
-            <Button Content="Position Calibration"
+            <Button Content="Positioning Calibration"
                     Margin="4"
-                    Command="{Binding CameraPositioningCalibrationCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                    x:Name="PositioningCalibrationButton"
                     />
             <Button Content="Fundamental"
                     Margin="4"

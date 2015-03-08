@@ -4,33 +4,20 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using UniMoveStation.Business.Model;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Common.Utils;
 
 namespace UniMoveStation.Business.Service
 {
     public class CameraPositioningCalibrationService
     {
-        //private BaseMetroDialog _dialog;
-        //private MetroWindow _owningWindow;
-        private RelayCommand _cancelCommand;
-        private RelayCommand _applyCommand;
-        private RelayCommand _saveCommand;
-
         private ObservableCollection<Visual3D> _helixItems;
         private ObservableCollection<CameraModel> _cameras;
+        private bool _inputAnglesManually;
 
         public ObservableCollection<CameraModel> Cameras
         {
-            get
-            {
-                return _cameras ?? (_cameras = new ObservableCollection<CameraModel>());
-            }
-            private set
-            {
-                _cameras = value;
-            }
+            get { return _cameras ?? (_cameras = new ObservableCollection<CameraModel>()); }
+            private set { _cameras = value; }
         }
 
         public ObservableCollection<Visual3D> HelixItems
@@ -49,8 +36,17 @@ namespace UniMoveStation.Business.Service
 
         public bool InputAnglesManually
         {
-            get;
-            set;
+            get
+            {
+                // TODO: allow more or less than four cameras.
+                // always input angles manually if more or less than four cameras are available
+                if (Cameras.Count != 4)
+                {
+                    return true;
+                }
+                return _inputAnglesManually;
+            }
+            set { _inputAnglesManually = value; }
         }
 
         #region Constructor
@@ -60,51 +56,7 @@ namespace UniMoveStation.Business.Service
         }
         #endregion
 
-        #region Commands
-        /// <summary>
-        /// Gets the CancelCommand.
-        /// </summary>
-        public RelayCommand CancelCommand
-        {
-            get
-            {
-                return _cancelCommand
-                    ?? (_cancelCommand = new RelayCommand(DoCancel));
-            }
-        }
-
-        /// <summary>
-        /// Gets the ApplyCommand.
-        /// </summary>
-        public RelayCommand ApplyCommand
-        {
-            get
-            {
-                return _applyCommand
-                    ?? (_applyCommand = new RelayCommand(DoApply));
-            }
-        }
-
-        /// <summary>
-        /// Gets the SaveCommand.
-        /// </summary>
-        public RelayCommand SaveCommand
-        {
-            get
-            {
-                return _saveCommand
-                    ?? (_saveCommand = new RelayCommand(DoSave));
-            }
-        }
-        #endregion
-
-        #region Command Executions
-        public async void DoCancel()
-        {
-            //await _dialog.RequestCloseAsync();
-        }
-
-        public void DoApply()
+        public void ApplyInput()
         {
             _helixItems.Clear();
 
@@ -189,27 +141,6 @@ namespace UniMoveStation.Business.Service
             return null;
         }
 
-        public void DoSave()
-        {
-            foreach (CameraModel cameraModel in Cameras)
-            {
-                // TODO: save models..
-                //ViewModelLocator.Instance.Settings.DoSaveCalibration(cameraModel);
-            }
-            DoCancel();
-        }
-        #endregion
-
-        public async void ShowMetroDialog()
-        {
-            // TODO move to view
-            //_dialog = new CameraPositioningCalibrationView(window);
-            //_dialog.DataContext = this;
-            //_owningWindow = window;
-
-            //await _owningWindow.ShowMetroDialogAsync(_dialog);
-        }
-
         private void InitializeHelix()
         {
             _helixItems.Add(new SunLight());
@@ -218,7 +149,6 @@ namespace UniMoveStation.Business.Service
                 Width = 500,
                 Length = 500
             });
-            RectangleVisual3D rec = new RectangleVisual3D();
 
             foreach (CameraModel cameraModel in Cameras)
             {

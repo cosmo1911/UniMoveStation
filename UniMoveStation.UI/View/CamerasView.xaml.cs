@@ -1,9 +1,13 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Common.Utils;
 using UniMoveStation.Representation.ViewModel;
+using UniMoveStation.Representation.ViewModel.Dialog;
+using UniMoveStation.UI.View.Dialog;
 
 namespace UniMoveStation.UI.View
 {
@@ -12,7 +16,10 @@ namespace UniMoveStation.UI.View
     /// </summary>
     public partial class CamerasView : UserControl
     {
-        private CamerasViewModel _viewModel;
+        private BaseMetroDialog _dialog;
+        private readonly MetroWindow _parentWindow;
+        private readonly CamerasViewModel _viewModel;
+        private RelayCommand _positioningCalibrationCommand;
         private RelayCommand _applySelectionCommand;
         private RelayCommand _cancelSelectionCommand;
 
@@ -24,7 +31,9 @@ namespace UniMoveStation.UI.View
             InitializeComponent();
 
             _viewModel = (CamerasViewModel)DataContext;
+            _parentWindow = (MetroWindow) Application.Current.MainWindow;
 
+            PositioningCalibrationButton.Command = PositioningCalibrationCommand;
             ApplySelectionButton.Command = ApplySelectionCommand;
             CancelSelectionButton.Command = CancelSelectionCommand;
         }
@@ -55,6 +64,20 @@ namespace UniMoveStation.UI.View
                     ?? (_cancelSelectionCommand = new RelayCommand(
                         DoCancelSelection,
                         () => _viewModel.Cameras.Count > 0 && _viewModel.Controllers.Count > 0));
+            }
+        }
+
+        /// <summary>
+        /// Gets the PositioningCalibrationCommand.
+        /// </summary>
+        public RelayCommand PositioningCalibrationCommand
+        {
+            get
+            {
+                return _positioningCalibrationCommand
+                    ?? (_positioningCalibrationCommand = new RelayCommand(
+                        ShowCameraPositioningDialog,
+                        () => _viewModel.Cameras.Count > 0));
             }
         }
         #endregion
@@ -114,7 +137,6 @@ namespace UniMoveStation.UI.View
                     ContentPresenter contentPresenter = WpfHelper.FindVisualChild<ContentPresenter>(listBoxItem);
                     DataTemplate dataTemplate = contentPresenter.ContentTemplate;
                     CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
-                    bool isChecked = false;
                     int trackingCount = 0;
                     foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
                     {
@@ -134,6 +156,16 @@ namespace UniMoveStation.UI.View
                     }
                 }
             }
+        }
+
+        public async void ShowCameraPositioningDialog()
+        {
+            _dialog = new CameraPositioningCalibrationView(_parentWindow)
+            {
+                DataContext = new CameraPositioningCalibrationViewModel(_viewModel.Cameras)
+            };
+
+            await _parentWindow.ShowMetroDialogAsync(_dialog);
         }
         #endregion
     }
