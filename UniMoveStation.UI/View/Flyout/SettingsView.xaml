@@ -3,13 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:mvvm="http://www.galasoft.ch/mvvmlight"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:ignore="http://www.ignore.com"
              xmlns:utils="clr-namespace:UniMoveStation.Common.Utils;assembly=UniMoveStation.Common"
+             xmlns:flyout="clr-namespace:UniMoveStation.Representation.ViewModel.Flyout;assembly=UniMoveStation.Representation"
              mc:Ignorable="d ignore"
-             d:DataContext="{Binding Settings, Source={StaticResource ViewModelLocator}}">
+             DataContext="{Binding Settings, Source={StaticResource ViewModelLocator}}"
+             d:DataContext="{d:DesignInstance Type=flyout:SettingsViewModel, IsDesignTimeCreatable=True}">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>

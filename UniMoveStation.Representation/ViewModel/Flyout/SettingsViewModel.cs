@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -15,6 +16,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         private RelayCommand _saveSettingsCommand;
         private RelayCommand _reloadSettingsCommand;
         private SettingsModel _settings;
+
         public JsonSettingsService SettingsService { get; set; }
 
         public List<AccentColorMenuData> AccentColors 
@@ -31,17 +33,16 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
 
         #region Constructor
         [PreferredConstructor]
-        public SettingsViewModel() : this(new JsonSettingsService(null))
+        public SettingsViewModel() : this(new JsonSettingsService())
         {
-            
+
         }
 
-        public SettingsViewModel(JsonSettingsService jsonSettingsService )
+        public SettingsViewModel(JsonSettingsService jsonSettingsService)
         {
             Header = "Settings";
             Settings = new SettingsModel();
-            SettingsService = jsonSettingsService ?? new JsonSettingsService(Settings);
-            SettingsService.Settings = Settings;
+            SettingsService = jsonSettingsService ?? new JsonSettingsService();
 
             // create accent color menu items for the demo
             AccentColors = ThemeManager.Accents
@@ -59,7 +60,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
                                         BorderColorBrush = a.Resources["BlackColorBrush"] as Brush,
                                         ColorBrush = a.Resources["WhiteColorBrush"] as Brush })
                                     .ToList();
-            SettingsService.ReloadSettings();
+            Settings = SettingsService.ReloadSettings();
         }
         #endregion
 
@@ -124,7 +125,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         #region Command Executions
         public void DoSaveSettings()
         {
-            SettingsService.SaveSettings();
+            SettingsService.SaveSettings(Settings);
         }
 
         public void DoSaveCameras()
@@ -137,7 +138,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
 
         private void DoReloadSettings()
         {
- 	        SettingsService.ReloadSettings();
+ 	        Settings = SettingsService.ReloadSettings();
         }
        
         #endregion

@@ -10,23 +10,12 @@ namespace UniMoveStation.Business.Service
 {
     public class JsonSettingsService
     {
-        public SettingsModel Settings
-        {
-            get;
-            set;
-        }
-
-        public JsonSettingsService(SettingsModel settings)
-        {
-            Settings = settings;
-        }
-
-        public void SaveSettings()
+        public void SaveSettings(SettingsModel settings)
         {
             TextWriter writer = null;
             try
             {
-                string json = JsonConvert.SerializeObject(Settings, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
                 writer = new StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json", false);
                 writer.Write(json);
             }
@@ -37,7 +26,7 @@ namespace UniMoveStation.Business.Service
             }
 
             File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".psmoveapi\\moved_hosts.txt"),
-                Settings.MovedHosts);
+                settings.MovedHosts);
         } // SaveSettings
 
         public void SaveCamera(CameraModel cameraModel)
@@ -76,8 +65,14 @@ namespace UniMoveStation.Business.Service
             }
         } // SaveCalibration
 
-        public void ReloadSettings()
+        public void ReloadSettings(SettingsModel settings)
         {
+            settings = ReloadSettings();
+        }
+
+        public SettingsModel ReloadSettings()
+        {
+            SettingsModel settings = new SettingsModel();
             TextReader reader = null;
             try
             {
@@ -95,14 +90,15 @@ namespace UniMoveStation.Business.Service
                 if (reader != null)
                 {
                     string fileContents = reader.ReadToEnd();
-                    Settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                    settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
                     reader.Close();
                 }
             }
 
-            Settings.MovedHosts = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            settings.MovedHosts = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 ".psmoveapi\\moved_hosts.txt")).ToList();
 
+            return settings;
         } // ReloadSettings
 
         public void LoadCalibration(CameraModel camera)

@@ -27,10 +27,7 @@ namespace UniMoveStation.Business.Model
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
             Debug = false;
-            _movedHosts = new List<string>
-            {
-                "127.0.0.1"
-            };
+            _movedHosts = new List<string>();
         }
 
         [JsonProperty]
@@ -40,7 +37,6 @@ namespace UniMoveStation.Business.Model
             set { Set(() => Debug, ref _debug, value); }
         }
 
-        [JsonProperty]
         public List<string> MovedHosts
         {
             get { return _movedHosts; }
