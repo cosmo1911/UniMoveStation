@@ -146,8 +146,10 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
             int connectedCount = cameraService.GetConnectedCount();
             if (connectedCount > 0)
             {
-                
-                existingCameras = SimpleIoc.Default.GetInstance<CamerasViewModel>().Cameras;
+                foreach (CameraViewModel cameraViewModel in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
+                {
+                    existingCameras.Add(cameraViewModel.Camera);
+                }
                 
                 for (int i = 0; i < connectedCount; i++)
                 {

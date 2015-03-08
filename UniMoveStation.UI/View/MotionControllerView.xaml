@@ -71,7 +71,7 @@
                                   IsHitTestVisible="False" 
                                   Margin="0 0 0 4"
                                   IsChecked="{Binding MotionController.Circle}">
-                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationCircle.svg"
+                            <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationCircle.svg"
                                              Height="15" 
                                              Width="18"
                                              />
@@ -82,7 +82,7 @@
                                    IsHitTestVisible="False"
                                    Margin="0 4 0 4"
                                    IsChecked="{Binding MotionController.Cross}">
-                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationX.svg"
+                            <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationX.svg"
                                              Height="15"
                                              Width="18"
                                              />
@@ -93,7 +93,7 @@
                                   IsHitTestVisible="False"
                                   Margin="0 4 0 4"
                                   IsChecked="{Binding MotionController.Triangle}">
-                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationTriangle.svg"
+                            <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationTriangle.svg"
                                              Height="15"
                                              Width="18"
                                              />
@@ -104,7 +104,7 @@
                                   IsHitTestVisible="False"
                                   Margin="0 4 0 4"
                                   IsChecked="{Binding MotionController.Square}">
-                            <svgc:SvgViewbox Source="/UniMoveStationMvvm;component/Resources/PlayStationSquare.svg"
+                            <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationSquare.svg"
                                              Height="15"
                                              Width="18"
                                              />

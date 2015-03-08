@@ -83,55 +83,37 @@ namespace UniMoveStation.Business.Model
 
         public ObservableConcurrentDictionary<CameraModel, Vector3> RawPosition
         {
-            get 
-            { 
-                return _rawPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
-            }
+            get { return _rawPosition ?? (_rawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => RawPosition, ref _rawPosition, value); }
         }
 
         public ObservableConcurrentDictionary<CameraModel, Vector3> FusionPosition
         {
-            get
-            {
-                return _fusionPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
-            }
+            get { return _fusionPosition ?? (_fusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => FusionPosition, ref _fusionPosition, value); }
         }
 
         public ObservableConcurrentDictionary<CameraModel, Vector3> CameraPosition
         {
-            get
-            {
-                return _cameraPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
-            }
+            get { return _cameraPosition ?? (_cameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => CameraPosition, ref _cameraPosition, value); }
         }
 
         public ObservableConcurrentDictionary<CameraModel, Vector3> WorldPosition
         {
-            get
-            {
-                return _worldPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
-            }
+            get { return _worldPosition ?? (_worldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => WorldPosition, ref _worldPosition, value); }
         }
 
         public ObservableConcurrentDictionary<CameraModel, bool> Tracking
         {
-            get
-            {
-                return _tracking ?? new ObservableConcurrentDictionary<CameraModel, bool>();
-            }
+            get { return _tracking ?? (_tracking = new ObservableConcurrentDictionary<CameraModel, bool>()); }
             set { Set(() => Tracking, ref _tracking, value); }
         }
 
         public ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus> TrackerStatus
         {
-            get
-            {
-                return _trackerStatus ?? new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>();
-            }
+            get { return _trackerStatus ?? (_trackerStatus = new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>()); }
             set { Set(() => TrackerStatus, ref _trackerStatus, value); }
         }
 

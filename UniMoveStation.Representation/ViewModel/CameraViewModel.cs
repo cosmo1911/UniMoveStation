@@ -100,7 +100,7 @@ namespace UniMoveStation.Representation.ViewModel
             // add existing controllers
             foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
             {
-                Camera.Controllers.Add(mcvw.MotionController);
+                TrackerService.AddMotionController(mcvw.MotionController);
             }
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
@@ -123,7 +123,9 @@ namespace UniMoveStation.Representation.ViewModel
 #if DEBUG
             if (IsInDesignMode)
             {
-                
+                Camera.Controllers.Add((new MotionControllerModel()));
+                Camera.Controllers.Add((new MotionControllerModel()));
+                Camera.Controllers.Add((new MotionControllerModel()));
             }
 #endif
         }

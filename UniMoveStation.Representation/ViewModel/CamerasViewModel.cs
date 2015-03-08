@@ -39,8 +39,6 @@ namespace UniMoveStation.Representation.ViewModel
         private RelayCommand<bool> _toggleTrackingCommand;
         private RelayCommand<bool> _toggleAnnotateCommand;
         private RelayCommand<bool> _toggleDebugCommand;
-        private RelayCommand<ListBox> _applySelectionCommand;
-        private RelayCommand<ListBox> _cancelSelectionCommand;
 
         private RelayCommand _bundleAdjustCommand;
         private CancellationTokenSource _ctsBundle;
@@ -52,8 +50,6 @@ namespace UniMoveStation.Representation.ViewModel
         private Task _fcpTask;
         private bool _fcpFinished;
 
-        private BaseMetroDialog _dialog;
-        private MetroWindow _owningWindow;
         private RelayCommand _cancelCommand;
         private RelayCommand _startCommand;
         private RelayCommand _saveCommand;
@@ -90,7 +86,7 @@ namespace UniMoveStation.Representation.ViewModel
             set { Set(() => ShowImage, ref _showImage, value); }
         }
 
-        public ObservableCollection<CameraModel> Cameras
+        public ObservableCollection<CameraViewModel> Cameras
         {
             get;
             private set;
@@ -108,20 +104,20 @@ namespace UniMoveStation.Representation.ViewModel
         public CamerasViewModel()
         {
             Name = "all";
-            Cameras = new ObservableCollection<CameraModel>();
+            Cameras = new ObservableCollection<CameraViewModel>();
             Controllers = new ObservableCollection<MotionControllerModel>();
             Refresh();
 
             Messenger.Default.Register<AddCameraMessage>(this, message =>
             {
-                Cameras.Add(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID).Camera);
+                Cameras.Add(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
             });
 
             Messenger.Default.Register<RemoveCameraMessage>(this, message =>
             {
                 if(SimpleIoc.Default.ContainsCreated<CameraViewModel>(message.Camera.GUID))
                 {
-                    Cameras.Remove(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID).Camera);
+                    Cameras.Remove(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
                 }
             });
 
@@ -139,10 +135,10 @@ namespace UniMoveStation.Representation.ViewModel
 
             if(IsInDesignMode)
             {
-                Cameras.Add(new CameraModel());
-                Cameras.Add(new CameraModel());
-                Cameras.Add(new CameraModel());
-                Cameras.Add(new CameraModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
+                Cameras.Add(new CameraViewModel());
                 Controllers.Add(new MotionControllerModel());
                 Controllers.Add(new MotionControllerModel());
             }
@@ -186,7 +182,7 @@ namespace UniMoveStation.Representation.ViewModel
             Cameras.Clear();
             foreach (CameraViewModel cameraViewModel in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
-                Cameras.Add(cameraViewModel.Camera);
+                Cameras.Add(cameraViewModel);
             }
         }
 
@@ -241,34 +237,6 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 return _toggleTrackingCommand
                     ?? (_toggleTrackingCommand = new RelayCommand<bool>(DoToggleTracking));
-            }
-        }
-
-        /// <summary>
-        /// Gets the ApplySelectionCommand.
-        /// </summary>
-        public RelayCommand<ListBox> ApplySelectionCommand
-        {
-            get
-            {
-                return _applySelectionCommand
-                    ?? (_applySelectionCommand = new RelayCommand<ListBox>(
-                        DoApplySelection,
-                        box => Cameras.Count > 0 && Cameras[0].Controllers.Count > 0));
-            }
-        }
-
-        /// <summary>
-        /// Gets the CancelSelectionCommand.
-        /// </summary>
-        public RelayCommand<ListBox> CancelSelectionCommand
-        {
-            get
-            {
-                return _cancelSelectionCommand
-                    ?? (_cancelSelectionCommand = new RelayCommand<ListBox>(
-                        DoCancelSelection,
-                        box => Cameras.Count > 0 && Cameras[0].Controllers.Count > 0));
             }
         }
 
@@ -362,56 +330,38 @@ namespace UniMoveStation.Representation.ViewModel
         #region Command Executions
         public void DoToggleAnnotate(bool annotate)
         {
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                SimpleIoc.Default.GetInstance<CameraViewModel>(cameraModel.GUID).DoToggleAnnotate(annotate);
+                cameraViewModel.DoToggleAnnotate(annotate);
             }
             Annotate = annotate;
         }
 
         public void DoToggleDebug(bool debug)
         {
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                SimpleIoc.Default.GetInstance<CameraViewModel>(cameraModel.GUID).DoToggleDebug(debug);
+                cameraViewModel.DoToggleDebug(debug);
             }
             Debug = debug;
         }
 
         public void DoToggleCamera(bool enabled)
         {
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                SimpleIoc.Default.GetInstance<CameraViewModel>(cameraModel.GUID).DoToggleCamera(enabled);
+                cameraViewModel.DoToggleCamera(enabled);
             }
             ShowImage = enabled;
         }
 
         public void DoToggleTracking(bool enabled)
         {
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                SimpleIoc.Default.GetInstance<CameraViewModel>(cameraModel.GUID).DoToggleTracking(enabled);
+                cameraViewModel.DoToggleTracking(enabled);
             }
             Tracking = enabled;
-        }
-
-        public void DoApplySelection(ListBox listBox)
-        {
-            // TODO move to view
-            foreach (CameraModel scvm in Cameras)
-            {
-                //scvm.DoApplySelection(listBox);
-            }
-        }
-
-        public void DoCancelSelection(ListBox listBox)
-        {
-            // TODO move to view
-            foreach (CameraModel scvm in Cameras)
-            {
-                //scvm.DoCancelSelection(listBox);
-            }
         }
 
         public void DoFindCorrespondingPoints()
@@ -737,22 +687,22 @@ namespace UniMoveStation.Representation.ViewModel
                 _ctsFcp.Cancel();
             }
             Console.WriteLine("canceling fcp");
-            await _dialog.RequestCloseAsync();
+            //await _dialog.RequestCloseAsync();
         }
 
         public void DoStartFcp()
         {
             StartFcpTask();
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                cameraModel.Calibration.CorrespondingPoints = new List<PointF>();
+                cameraViewModel.Camera.Calibration.CorrespondingPoints = new List<PointF>();
             }
             Console.WriteLine("starting fcp");
         }
 
         public void DoSaveFcp()
         {
-            foreach(CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraModel in Cameras)
             {
                 // TODO ioc
                 //ViewModelLocator.Instance.Settings.DoSaveCalibration(cameraModel);

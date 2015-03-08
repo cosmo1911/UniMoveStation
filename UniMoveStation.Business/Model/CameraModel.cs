@@ -124,10 +124,7 @@ namespace UniMoveStation.Business.Model
 
         public ObservableCollection<MotionControllerModel> Controllers
         {
-            get 
-            { 
-                return _controllers ?? new ObservableCollection<MotionControllerModel>(); 
-            }
+            get { return _controllers ?? (_controllers = new ObservableCollection<MotionControllerModel>()); }
             set { Set(() => Controllers, ref _controllers, value); }
         }
 
