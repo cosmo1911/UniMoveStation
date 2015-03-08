@@ -91,6 +91,7 @@
     <Compile Include="ValueConverter\Vector3ToStringConverter.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\CameraViewModel.cs" />
+    <Compile Include="ViewModel\DialogViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddCameraViewModel.cs" />
     <Compile Include="ViewModel\Flyout\AddMotionControllerViewModel.cs" />
     <Compile Include="ViewModel\Flyout\FlyoutBaseViewModel.cs" />

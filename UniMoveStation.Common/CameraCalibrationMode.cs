@@ -4,6 +4,7 @@
     {
         CalculatingIntrinsics,
         Calibrated,
-        SavingFrames
+        SavingFrames,
+        Stopped
     }
 }

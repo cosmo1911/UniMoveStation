@@ -85,16 +85,7 @@ namespace UniMoveStation.Business.Model
         {
             get 
             { 
-                if(_rawPosition == null)
-                {
-                    _rawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
-                    // TODO add already existing cameras
-                    //foreach(CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-                    //{
-                    //    _rawPosition.Add(scvm.Camera, Vector3.zero);
-                    //}
-                }
-                return _rawPosition; 
+                return _rawPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
             }
             set { Set(() => RawPosition, ref _rawPosition, value); }
         }
@@ -103,16 +94,7 @@ namespace UniMoveStation.Business.Model
         {
             get
             {
-                if (_fusionPosition == null)
-                {
-                    _fusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
-                    // TODO add already existing cameras
-                    //foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-                    //{
-                    //    _fusionPosition.Add(scvm.Camera, Vector3.zero);
-                    //}
-                }
-                return _fusionPosition;
+                return _fusionPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
             }
             set { Set(() => FusionPosition, ref _fusionPosition, value); }
         }
@@ -121,16 +103,7 @@ namespace UniMoveStation.Business.Model
         {
             get
             {
-                if (_cameraPosition == null)
-                {
-                    _cameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
-                    // TODO add already existing cameras
-                    //foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-                    //{
-                    //    _cameraPosition.Add(scvm.Camera, Vector3.zero);
-                    //}
-                }
-                return _cameraPosition;
+                return _cameraPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
             }
             set { Set(() => CameraPosition, ref _cameraPosition, value); }
         }
@@ -139,16 +112,7 @@ namespace UniMoveStation.Business.Model
         {
             get
             {
-                if (_worldPosition == null)
-                {
-                    _worldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>();
-                    // TODO add already existing cameras
-                    //foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-                    //{
-                    //    _worldPosition.Add(scvm.Camera, Vector3.zero);
-                    //}
-                }
-                return _worldPosition;
+                return _worldPosition ?? new ObservableConcurrentDictionary<CameraModel, Vector3>();
             }
             set { Set(() => WorldPosition, ref _worldPosition, value); }
         }
@@ -157,16 +121,7 @@ namespace UniMoveStation.Business.Model
         {
             get
             {
-                if (_tracking == null)
-                {
-                    _tracking = new ObservableConcurrentDictionary<CameraModel, bool>();
-                    // TODO add already existing cameras
-                    //foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-                    //{
-                    //    _tracking.Add(scvm.Camera, false);
-                    //}
-                }
-                return _tracking; 
+                return _tracking ?? new ObservableConcurrentDictionary<CameraModel, bool>();
             }
             set { Set(() => Tracking, ref _tracking, value); }
         }
@@ -175,16 +130,7 @@ namespace UniMoveStation.Business.Model
         {
             get
             {
-                if (_trackerStatus == null)
-                {
-                    _trackerStatus = new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>();
-                    // TODO add already existing cameras
-                    //foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllInstances<CameraViewModel>())
-                    //{
-                    //    _trackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
-                    //}
-                }
-                return _trackerStatus; 
+                return _trackerStatus ?? new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>();
             }
             set { Set(() => TrackerStatus, ref _trackerStatus, value); }
         }

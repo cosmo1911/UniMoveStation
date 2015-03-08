@@ -1,5 +1,7 @@
-﻿using MahApps.Metro.Controls;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using UniMoveStation.Representation.ViewModel;
 
 namespace UniMoveStation.UI.View.Dialog
 {
@@ -8,6 +10,9 @@ namespace UniMoveStation.UI.View.Dialog
     /// </summary>
     public partial class CameraCalibrationView : BaseMetroDialog
     {
+        private CameraViewModel _viewModel;
+        private RelayCommand _closeCommand;
+
         /// <summary>
         /// Initializes a new instance of the CameraCalibrationView class.
         /// </summary>
@@ -18,7 +23,37 @@ namespace UniMoveStation.UI.View.Dialog
 
         public CameraCalibrationView(MetroWindow parentWindow, MetroDialogSettings settings) : base(parentWindow, settings)
         {
+            DataContextChanged += CameraCalibrationView_DataContextChanged;
             InitializeComponent();
         }
+
+        void CameraCalibrationView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            _viewModel = (CameraViewModel)e.NewValue;
+
+            CloseButton.Command = CloseCommand;
+        }
+
+        #region Commands
+        /// <summary>
+        /// Gets the ButtonCommand.
+        /// </summary>
+        public RelayCommand CloseCommand
+        {
+            get
+            {
+                return _closeCommand
+                    ?? (_closeCommand = new RelayCommand(DoClose, () => !_viewModel.Camera.Calibration.StartFlag));
+            }
+        }
+        #endregion
+
+        #region Command Executions
+        public async void DoClose()
+        {
+            _viewModel.CalibrationService.StopCapture();
+            await RequestCloseAsync();
+        }
+        #endregion
     }
 }

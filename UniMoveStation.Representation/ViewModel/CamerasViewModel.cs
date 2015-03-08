@@ -304,7 +304,7 @@ namespace UniMoveStation.Representation.ViewModel
             get
             {
                 return _cancelCommand
-                    ?? (_cancelCommand = new RelayCommand(DoCancel));
+                    ?? (_cancelCommand = new RelayCommand(DoCancelFcp));
             }
         }
 
@@ -316,7 +316,7 @@ namespace UniMoveStation.Representation.ViewModel
             get
             {
                 return _startCommand
-                    ?? (_startCommand = new RelayCommand(DoStart));
+                    ?? (_startCommand = new RelayCommand(DoStartFcp));
             }
         }
 
@@ -329,7 +329,7 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 return _saveCommand
                     ?? (_saveCommand = new RelayCommand(
-                        DoSave,
+                        DoSaveFcp,
                         () => _fcpFinished));
             }
         }
@@ -730,7 +730,7 @@ namespace UniMoveStation.Representation.ViewModel
             //new CameraPositioningCalibrationService(Cameras).ShowMetroDialog(window);
         }
 
-        public async void DoCancel()
+        public async void DoCancelFcp()
         {
             if (_ctsFcp != null)
             {
@@ -740,7 +740,7 @@ namespace UniMoveStation.Representation.ViewModel
             await _dialog.RequestCloseAsync();
         }
 
-        public void DoStart()
+        public void DoStartFcp()
         {
             StartFcpTask();
             foreach (CameraModel cameraModel in Cameras)
@@ -750,7 +750,7 @@ namespace UniMoveStation.Representation.ViewModel
             Console.WriteLine("starting fcp");
         }
 
-        public void DoSave()
+        public void DoSaveFcp()
         {
             foreach(CameraModel cameraModel in Cameras)
             {
@@ -758,7 +758,7 @@ namespace UniMoveStation.Representation.ViewModel
                 //ViewModelLocator.Instance.Settings.DoSaveCalibration(cameraModel);
             }
             Console.WriteLine("saving fcp");
-            DoCancel();
+            DoCancelFcp();
         }
     } // CamerasViewModel
 } // namespace

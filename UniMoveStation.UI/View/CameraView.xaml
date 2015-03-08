@@ -274,9 +274,7 @@
                                             />
                     <Button Content="Calibrate"
                             Margin="4"
-                            Command="{Binding CalibrateCameraCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
-                            />
+                            x:Name="CalibrateButton"/>
                 </StackPanel>
             </Grid>
 

@@ -205,6 +205,7 @@
                     Margin="4"
                     Command="{Binding FindCorrespondingPointsCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                    Visibility="Collapsed"
                     />
             <Button Content="Position Calibration"
                     Margin="4"
@@ -214,6 +215,7 @@
             <Button Content="Fundamental"
                     Margin="4"
                     Command="{Binding FindFundamentalMatricesCommand}"
+                    Visibility="Collapsed"
                     />
             <Button Content="Bundle Adjust"
                     Margin="4"

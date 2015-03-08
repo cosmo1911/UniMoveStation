@@ -126,16 +126,7 @@ namespace UniMoveStation.Business.Model
         {
             get 
             { 
-                if(_controllers == null)
-                {
-                    //TODO add already existing controllers
-                    _controllers = new ObservableCollection<MotionControllerModel>();
-                    //foreach(MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
-                    //{
-                    //    _controllers.Add(mcvw.MotionController);
-                    //}
-                }
-                return _controllers; 
+                return _controllers ?? new ObservableCollection<MotionControllerModel>(); 
             }
             set { Set(() => Controllers, ref _controllers, value); }
         }

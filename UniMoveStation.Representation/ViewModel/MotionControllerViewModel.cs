@@ -84,7 +84,18 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 SimpleIoc.Default.Register(() => this, mc.Serial, true);
                 Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
-            }           
+            }
+
+            // initialize existing cameras
+            foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
+            {
+                MotionController.RawPosition.Add(scvm.Camera, Vector3.zero);
+                MotionController.FusionPosition.Add(scvm.Camera, Vector3.zero);
+                MotionController.CameraPosition.Add(scvm.Camera, Vector3.zero);
+                MotionController.WorldPosition.Add(scvm.Camera, Vector3.zero);
+                MotionController.Tracking.Add(scvm.Camera, false);
+                MotionController.TrackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
+            }
         }
 
         public MotionControllerViewModel()

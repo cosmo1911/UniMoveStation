@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Common;
 using UniMoveStation.Common.Utils;
@@ -20,16 +20,8 @@ namespace UniMoveStation.Business.Service
     {
         //private BaseMetroDialog _dialog;
         //private MetroWindow _owningWindow;
-        private RelayCommand _cancelCommand;
-        private RelayCommand _startCommand;
-        private RelayCommand _saveCommand;
         private CancellationTokenSource _ctsCameraCalibration;
-
-        public CameraModel Camera
-        {
-            get;
-            private set;
-        }
+        private CameraModel _camera;
         
         #region Display and aquaring chess board info
         Capture _capture; // capture device
@@ -52,9 +44,8 @@ namespace UniMoveStation.Business.Service
         #endregion
 
         #region Constructor
-        public CameraCalibrationService(CameraModel camera)
+        public CameraCalibrationService()
         {
-            Camera = camera;
             //fill line colour array
             Random R = new Random();
             for (int i = 0; i < line_colour_array.Length; i++)
@@ -64,54 +55,6 @@ namespace UniMoveStation.Business.Service
         }
         #endregion
 
-        public async void ShowDialog()
-        {
-            // TODO move to view
-            //_dialog = new CameraCalibrationView(window);
-            //_dialog.DataContext = this;
-            //_owningWindow = window;
-
-            //await _owningWindow.ShowMetroDialogAsync(_dialog);
-
-            
-            //// Can only access the first camera without CL Eye SDK
-            //if(Camera.TrackerId == 0)
-            //{
-            //    _capture = new Capture(Camera.TrackerId);
-            //    _ctsCameraCalibration = new CancellationTokenSource();
-            //    CancellationToken token = _ctsCameraCalibration.Token;
-
-            //    _capture.ImageGrabbed += _Capture_ImageGrabbed;
-            //    _capture.Start();
-            //    try
-            //    {
-            //        await Task.Run(() =>
-            //        {
-            //            while (!token.IsCancellationRequested)
-            //            {
-            //                if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
-            //                {
-
-            //                }
-            //            }
-            //        });
-            //    }
-            //    catch (OperationCanceledException)
-            //    {
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex.StackTrace);
-            //    }
-            //    finally
-            //    {
-            //        _capture.Stop();
-            //        _capture.Dispose();
-            //    }
-            //}
-        }
-
         void _Capture_ImageGrabbed(object sender, EventArgs e)
         {
             //lets get a frame from our capture device
@@ -119,7 +62,7 @@ namespace UniMoveStation.Business.Service
             Gray_Frame = img.Convert<Gray, Byte>();
             
             //apply chess board detection
-            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.SavingFrames)
+            if (_camera.Calibration.CurrentMode == CameraCalibrationMode.SavingFrames)
             {
                 corners = CameraCalibration.FindChessboardCorners(Gray_Frame, patternSize, Emgu.CV.CvEnum.CALIB_CB_TYPE.ADAPTIVE_THRESH);
                 //we use this loop so we can show a colour image rather than a gray: //CameraCalibration.DrawChessboardCorners(Gray_Frame, patternSize, corners);
@@ -130,13 +73,13 @@ namespace UniMoveStation.Business.Service
                     Gray_Frame.FindCornerSubPix(new PointF[1][] { corners }, new Size(11, 11), new Size(-1, -1), new MCvTermCriteria(30, 0.1));
 
                     //if go button has been pressed start aquiring frames else we will just display the points
-                    if (Camera.Calibration.StartFlag)
+                    if (_camera.Calibration.StartFlag)
                     {
                         Frame_array_buffer[frame_buffer_savepoint] = Gray_Frame.Copy(); //store the image
                         frame_buffer_savepoint++;//increase buffer positon
 
                         //check the state of buffer
-                        if (frame_buffer_savepoint == Frame_array_buffer.Length) Camera.Calibration.CurrentMode = CameraCalibrationMode.CalculatingIntrinsics; //buffer full
+                        if (frame_buffer_savepoint == Frame_array_buffer.Length) _camera.Calibration.CurrentMode = CameraCalibrationMode.CalculatingIntrinsics; //buffer full
                     }
 
                     //draw the results
@@ -152,7 +95,7 @@ namespace UniMoveStation.Business.Service
                 }
                 corners = null;
             }
-            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.CalculatingIntrinsics)
+            if (_camera.Calibration.CurrentMode == CameraCalibrationMode.CalculatingIntrinsics)
             {
                 //we can do this in the loop above to increase speed
                 for (int k = 0; k < Frame_array_buffer.Length; k++)
@@ -175,29 +118,29 @@ namespace UniMoveStation.Business.Service
                 }
                 ExtrinsicCameraParameters[] ex;
                 //our error should be as close to 0 as possible
-                Camera.Calibration.Error = CameraCalibration.CalibrateCamera(
+                _camera.Calibration.Error = CameraCalibration.CalibrateCamera(
                     corners_object_list, 
                     corners_points_list, 
                     Gray_Frame.Size, 
-                    Camera.Calibration.IntrinsicParameters, 
+                    _camera.Calibration.IntrinsicParameters, 
                     Emgu.CV.CvEnum.CALIB_TYPE.CV_CALIB_RATIONAL_MODEL, 
                     new MCvTermCriteria(30, 0.1), 
                     out ex);
 
-                Camera.Calibration.ExtrinsicParameters = ex;
+                _camera.Calibration.ExtrinsicParameters = ex;
 
                 //If Emgu.CV.CvEnum.CALIB_TYPE == CV_CALIB_USE_INTRINSIC_GUESS and/or CV_CALIB_FIX_ASPECT_RATIO are specified, some or all of fx, fy, cx, cy must be initialized before calling the function
                 //if you use FIX_ASPECT_RATIO and FIX_FOCAL_LEGNTH options, these values needs to be set in the intrinsic parameters before the CalibrateCamera function is called. Otherwise 0 values are used as default.
-                Console.WriteLine("Intrinsic Calculation Error: " + Camera.Calibration.Error); //display the results to the user
-                Camera.Calibration.CurrentMode = CameraCalibrationMode.Calibrated;
+                Console.WriteLine("Intrinsic Calculation Error: " + _camera.Calibration.Error); //display the results to the user
+                _camera.Calibration.CurrentMode = CameraCalibrationMode.Calibrated;
             }
-            if (Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
+            if (_camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
             {
                 //display the original image
                 //Sub_PicturBox.Image = img.ToBitmap();
                 //calculate the camera intrinsics
                 Matrix<float> Map1, Map2;
-                Camera.Calibration.IntrinsicParameters.InitUndistortMap(img.Width, img.Height, out Map1, out Map2);
+                _camera.Calibration.IntrinsicParameters.InitUndistortMap(img.Width, img.Height, out Map1, out Map2);
 
                 //remap the image to the particular intrinsics
                 //In the current version of EMGU any pixel that is not corrected is set to transparent allowing the original image to be displayed if the same
@@ -208,91 +151,93 @@ namespace UniMoveStation.Business.Service
 
                 //set up to allow another calculation
                 //SetButtonState(true);
-                Camera.Calibration.StartFlag = false;
+                _camera.Calibration.StartFlag = false;
             }
             if(!_ctsCameraCalibration.IsCancellationRequested)
             {
                 BitmapSource bitmapSource = BitmapHelper.ToBitmapSource(img);
                 bitmapSource.Freeze();
-                Camera.ImageSource = bitmapSource;
+                _camera.ImageSource = bitmapSource;
             }
         }
 
-
-        #region Commands
-        /// <summary>
-        /// Gets the ButtonCommand.
-        /// </summary>
-        public RelayCommand CancelCommand
+        public void Initialize(CameraModel camera)
         {
-            get
-            {
-                return _cancelCommand
-                    ?? (_cancelCommand = new RelayCommand(DoCancel));
-            }
+            _camera = camera;
         }
 
-        /// <summary>
-        /// Gets the StartCommand.
-        /// </summary>
-        public RelayCommand StartCommand
+        public void CancelCalibration()
         {
-            get
-            {
-                return _startCommand
-                    ?? (_startCommand = new RelayCommand(
-                        DoStart, 
-                        () => Camera.Calibration.StartFlag == false && Camera.TrackerId == 0));
-            }
+            _camera.Calibration.StartFlag = false;
+            _camera.Calibration.CurrentMode = CameraCalibrationMode.Stopped;
         }
 
-        /// <summary>
-        /// Gets the SaveCommand.
-        /// </summary>
-        public RelayCommand SaveCommand
+        public async void StartCapture()
         {
-            get
+            // Can only access the first camera without CL Eye SDK
+            if (_camera.TrackerId == 0)
             {
-                return _saveCommand
-                    ?? (_saveCommand = new RelayCommand(
-                        DoSave, 
-                        () => Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated));
+                _capture = new Capture(_camera.TrackerId);
+                _ctsCameraCalibration = new CancellationTokenSource();
+                CancellationToken token = _ctsCameraCalibration.Token;
+
+                _capture.ImageGrabbed += _Capture_ImageGrabbed;
+
+                _capture.Start();
+                try
+                {
+                    await Task.Run(() =>
+                    {
+                        while (!token.IsCancellationRequested)
+                        {
+                            if (_camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated)
+                            {
+
+                            }
+                            Thread.Sleep(100);
+                        }
+                    });
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                }
+                finally
+                {
+                    _capture.Stop();
+                    _capture.Dispose();
+                }
             }
         }
-        #endregion
 
-        #region Command Executions
-        public async void DoCancel()
+        public void StopCapture()
         {
             if (_ctsCameraCalibration != null)
             {
                 _ctsCameraCalibration.Cancel();
             }
-            Camera.Calibration.StartFlag = false;
-            // TODO move to view
-            //await _dialog.RequestCloseAsync();
         }
 
-        public void DoStart()
+        public void StartCalibration()
         {
-            
-            if (Camera.Calibration.CurrentMode != CameraCalibrationMode.SavingFrames) Camera.Calibration.CurrentMode = CameraCalibrationMode.SavingFrames;
+            if (_camera.Calibration.CurrentMode != CameraCalibrationMode.SavingFrames) _camera.Calibration.CurrentMode = CameraCalibrationMode.SavingFrames;
+            _capture.ImageGrabbed += _Capture_ImageGrabbed;
             //set up the arrays needed
-            Frame_array_buffer = new Image<Gray, byte>[Camera.Calibration.FrameBufferSize];
+            Frame_array_buffer = new Image<Gray, byte>[_camera.Calibration.FrameBufferSize];
             corners_object_list = new MCvPoint3D32f[Frame_array_buffer.Length][];
             corners_points_list = new PointF[Frame_array_buffer.Length][];
             frame_buffer_savepoint = 0;
             //allow the start
-            Camera.Calibration.StartFlag = true;
-
+            _camera.Calibration.StartFlag = true;
         }
 
-        public void DoSave()
+        public void SaveCalibration()
         {
-            // TODO ioc
-            //ViewModelLocator.Instance.Settings.DoSaveCalibration(Camera);
-            DoCancel();
+            SimpleIoc.Default.GetInstance<JsonSettingsService>().SaveCalibration(_camera);
         }
-        #endregion
     } // CameraCalibrationService
 } // namespace
