@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Nito;
 using UniMoveStation.Representation.MessengerMessage;
+using UniMoveStation.Representation.ViewModel.Flyout;
 
 namespace UniMoveStation.Representation.ViewModel
 {
@@ -19,6 +20,7 @@ namespace UniMoveStation.Representation.ViewModel
         private int _cameraCount;
         private RelayCommand<TabControl> _tabSelectedCommand;
         private RelayCommand<Object> _addCommand;
+        private RelayCommand<object> _removeCommand;
 
         #region Constructor
         /// <summary>
@@ -110,7 +112,7 @@ namespace UniMoveStation.Representation.ViewModel
         }
         #endregion
 
-        #region Relay Commands
+        #region Commands
         /// <summary>
         /// Gets the TabSelectedCommand.
         /// </summary>
@@ -147,32 +149,27 @@ namespace UniMoveStation.Representation.ViewModel
                     {
                         if (tag.ToString().Equals("controllers"))
                         {
-                            // TODO ioc
-                            //AddMotionControllerViewModel amcvm = ViewModelLocator.Instance.AddMotionController;
-                            //SimpleIoc.Default.GetInstance<MainViewModel>().DoToggleFlyout(amcvm);
-                            //amcvm.DoRefresh();
+                            AddMotionControllerViewModel amcvm = SimpleIoc.Default.GetInstance<AddMotionControllerViewModel>();
+                            amcvm.DoRefresh();
+                            Messenger.Default.Send(new ToggleFlyoutMessage(amcvm));
                         }
                         else if (tag.ToString().Equals("cameras"))
                         {
-                            // TODO ioc
-                            //AddCameraViewModel acvm = ViewModelLocator.Instance.AddCamera;
-                            //SimpleIoc.Default.GetInstance<MainViewModel>().DoToggleFlyout(acvm);
-                            //acvm.DoRefresh();
+                            AddCameraViewModel acvm = SimpleIoc.Default.GetInstance<AddCameraViewModel>();
+                            acvm.DoRefresh();
+                            Messenger.Default.Send(new ToggleFlyoutMessage(acvm));
                         }
                         else if (tag.ToString().Equals("server"))
                         {
                             if(SimpleIoc.Default.GetInstance<ServerViewModel>().Server.Enabled)
                             {
                                 NitoClient client = new NitoClient();
-                                client.connect("127.0.0.1", 3000);
+                                client.Connect("127.0.0.1", 3000);
                             }
                         }
                     }));
             }
         }
-
-        private RelayCommand<object> _removeCommand;
-
         /// <summary>
         /// Gets the RemoveCommand.
         /// </summary>
@@ -184,7 +181,9 @@ namespace UniMoveStation.Representation.ViewModel
                     ?? (_removeCommand = new RelayCommand<object>(DoRemove));
             }
         }
+        #endregion
 
+        #region Command Executions
         public void DoRemove(object obj)
         {
             if(obj is MotionControllerViewModel)

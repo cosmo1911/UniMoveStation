@@ -124,13 +124,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messages\UniMoveStation.NitoMessages.csproj">
-      <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
-      <Name>UniMoveStation.NitoMessages</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UniMoveStation.Common\UniMoveStation.Common.csproj">
       <Project>{f8f14469-54e7-4536-8354-91c6598a0bc2}</Project>
       <Name>UniMoveStation.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UniMoveStation.NitoMessages\UniMoveStation.NitoMessages.csproj">
+      <Project>{bb4f7ccc-4635-489e-8543-9e9133d17a04}</Project>
+      <Name>UniMoveStation.NitoMessages</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

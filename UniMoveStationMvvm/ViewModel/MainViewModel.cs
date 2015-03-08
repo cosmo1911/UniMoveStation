@@ -1,6 +1,9 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.ObjectModel;
+using System.Windows.Interop;
+using GalaSoft.MvvmLight.Messaging;
+using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;
 
 namespace UniMoveStation.ViewModel
@@ -32,6 +35,11 @@ namespace UniMoveStation.ViewModel
         public MainViewModel()
         {
             Flyouts = new ObservableCollection<FlyoutBaseViewModel>();
+
+            Messenger.Default.Register<ToggleFlyoutMessage>(this, msg =>
+            {
+                DoToggleFlyout(msg.ViewModel);
+            });
         }
         #endregion
 

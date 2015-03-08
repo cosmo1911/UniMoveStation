@@ -78,6 +78,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessengerMessage\ToggleFlyoutMessage.cs" />
     <Compile Include="MessengerMessage\AddCameraMessage.cs" />
     <Compile Include="MessengerMessage\AddMotionControllerMessage.cs" />
     <Compile Include="MessengerMessage\RemoveCameraMessage.cs" />
