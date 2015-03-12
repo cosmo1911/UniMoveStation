@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
+using UniMoveStation.Business.Service.Interfaces;
 
 namespace UniMoveStation.Representation.ViewModel.Dialog
 {
@@ -20,21 +21,20 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         private RelayCommand _saveCommand;
         private bool _inputAnglesManually;
 
-        public ObservableCollection<CameraViewModel> Cameras { get; private set; }
+        public ObservableCollection<CameraModel> Cameras { get; private set; }
 
         public CameraPositioningCalibrationService PositioningService { get; set; }
 
-        public JsonSettingsService SettingsService { get; set; }
+        public ISettingsService SettingsService { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the CameraPositioningCalibrationViewModel class.
         /// </summary>
-        public CameraPositioningCalibrationViewModel(ObservableCollection<CameraViewModel> cameras)
+        public CameraPositioningCalibrationViewModel(ObservableCollection<CameraModel> cameras)
         {
             Cameras = cameras;
-            PositioningService = new CameraPositioningCalibrationService(
-                new ObservableCollection<CameraModel>(Cameras.Select(element => element.Camera)));
-            SettingsService = new JsonSettingsService();
+            PositioningService = new CameraPositioningCalibrationService(cameras);
+            SettingsService = SimpleIoc.Default.GetInstance<ISettingsService>();
         }
 
 
@@ -73,9 +73,9 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         #region Command Executions
         public void DoSave()
         {
-            foreach (CameraViewModel cameraViewModel in Cameras)
+            foreach (CameraModel cameraModel in Cameras)
             {
-                SettingsService.SaveCalibration(cameraViewModel.Camera);
+                SettingsService.SaveCalibration(cameraModel.Calibration);
             }
         }
 

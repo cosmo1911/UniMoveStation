@@ -20,8 +20,8 @@
              Margin="4">
 
     <UserControl.Resources>
-        <valueConverter:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter"/>
-        <valueConverter:Vector3ToStringConverter x:Key="Vector3ToStringConverter"/>
+        <valueConverter:DictionaryTrackingToBoolConverter x:Key="DictionaryTrackingToBoolConverter" />
+        <valueConverter:Vector3ToStringConverter x:Key="Vector3ToStringConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
@@ -33,7 +33,7 @@
         <ScrollViewer HorizontalScrollBarVisibility="Hidden"
 		              VerticalScrollBarVisibility="Hidden">
 
-            <ItemsControl ItemsSource="{Binding Cameras}"
+            <ItemsControl ItemsSource="{Binding CameraViewModels}"
                           HorizontalContentAlignment="Stretch"
                           Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
                 <ItemsControl.ItemsPanel>
@@ -44,7 +44,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid d:DataContext="vm:CameraViewModel"
+                        <Grid d:DataContext="{d:DesignInstance m:CamerasModel}"
                               Margin="4">
                             <Grid.RowDefinitions>
                                 <RowDefinition MaxHeight="30"/>
@@ -97,7 +97,7 @@
                        FontFamily="Segoe UI Semibold"
                        FontSize="16"
                        />
-            <ListBox ItemsSource="{Binding Controllers, UpdateSourceTrigger=PropertyChanged}"
+            <ListBox ItemsSource="{Binding CamerasModel.Controllers, UpdateSourceTrigger=PropertyChanged}"
                      BorderThickness="0"
                      Margin="4"
                      x:Name="TrackedControllersListBox">
@@ -145,7 +145,7 @@
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
-                                   IsChecked="{Binding ShowImage}">
+                                   IsChecked="{Binding CamerasModel.ShowImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleCameraCommand}"
@@ -159,12 +159,12 @@
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
-                                   IsChecked="{Binding Tracking}">
+                                   IsChecked="{Binding CamerasModel.Tracking}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleTrackingCommand}"
-                                                CommandParameter="{Binding IsChecked, ElementName=SwitchTracking}"
-                                                />
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchTracking}"
+                                             />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </controls:ToggleSwitch>
@@ -174,7 +174,7 @@
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
-                                   IsChecked="{Binding Annotate}">
+                                   IsChecked="{Binding CamerasModel.Annotate}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleAnnotateCommand}"
@@ -189,11 +189,26 @@
                                    HorizontalAlignment="Stretch"
                                    VerticalAlignment="Center"
                                    HorizontalContentAlignment="Center"
-                                   IsChecked="{Binding Debug}">
+                                   IsChecked="{Binding CamerasModel.Debug}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <mvvm:EventToCommand Command="{Binding ToggleDebugCommand}"
                                              CommandParameter="{Binding IsChecked, ElementName=SwitchDebug}"
+                                             />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </controls:ToggleSwitch>
+            <controls:ToggleSwitch Header="Bundle Adjust"
+                                   Margin="4"
+                                   x:Name="SwitchBundleAdjust"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center"
+                                   HorizontalContentAlignment="Center"
+                                   IsChecked="{Binding CamerasModel.BundleAdjusting}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <mvvm:EventToCommand Command="{Binding ToggleBundleAdjustCommand}"
+                                             CommandParameter="{Binding IsChecked, ElementName=SwitchBundleAdjust}"
                                              />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -214,13 +229,9 @@
                     Command="{Binding FindFundamentalMatricesCommand}"
                     Visibility="Collapsed"
                     />
-            <Button Content="Bundle Adjust"
-                    Margin="4"
-                    Command="{Binding BundleAdjustCommand}"
-                    />
             <TextBox Margin="4"
                      IsReadOnly="True"
-                     Text="{Binding Cameras[0].Camera.Calibration.Point, Converter={StaticResource Vector3ToStringConverter}}"
+                     Text="{Binding CamerasModel.Position, Converter={StaticResource Vector3ToStringConverter}}"
                      />
         </StackPanel>
     </Grid>

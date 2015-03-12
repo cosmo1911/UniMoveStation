@@ -40,7 +40,7 @@ namespace UniMoveStation.Business.Service
         #endregion
 
         #region Constructor
-        public HelixCameraVisualizationService(CameraModel camera = null)
+        public HelixCameraVisualizationService()
         {
             _controllerObjects = new ObservableConcurrentDictionary<MotionControllerModel, SphereVisual3D>();
         }
@@ -62,6 +62,7 @@ namespace UniMoveStation.Business.Service
                         sw.Restart();
                         foreach(MotionControllerModel mc in _camera.Controllers)
                         {
+                            var mc1 = mc;
                             // update if the controller is selected for tracking
                             if(mc.Tracking.ContainsKey(_camera) && mc.Tracking[_camera])
                             {
@@ -71,30 +72,30 @@ namespace UniMoveStation.Business.Service
                                     DispatcherHelper.UIDispatcher.Invoke(() =>
                                     {
                                         // convert color
-                                        byte r = (byte)(mc.Color.r * 255 + 0.5);
-                                        byte g = (byte)(mc.Color.g * 255 + 0.5);
-                                        byte b = (byte)(mc.Color.b * 255 + 0.5);
+                                        byte r = (byte)(mc1.Color.r * 255 + 0.5);
+                                        byte g = (byte)(mc1.Color.g * 255 + 0.5);
+                                        byte b = (byte)(mc1.Color.b * 255 + 0.5);
                                         Color color = Color.FromRgb(r, g, b);
 
                                         SphereVisual3D sphere = new SphereVisual3D
                                         {
-                                            Center = new Point3D(mc.WorldPosition[_camera].x,
-                                                mc.WorldPosition[_camera].z,
-                                                mc.WorldPosition[_camera].y),
+                                            Center = new Point3D(mc1.WorldPosition[_camera].x,
+                                                mc1.WorldPosition[_camera].z,
+                                                mc1.WorldPosition[_camera].y),
                                             Radius = ((int)((14.0 / Math.PI) * 100)) / 200.0,
                                             Fill = new SolidColorBrush(color)
                                         };
-                                        _controllerObjects.Add(mc, sphere);
+                                        _controllerObjects.Add(mc1, sphere);
                                         _items.Add(sphere);
                                     });
                                 }
                                 // update position
                                 if (mc.WorldPosition.ContainsKey(_camera))
                                 {
-                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() => _controllerObjects[mc].Center = new Point3D(
-                                    mc.WorldPosition[_camera].x,
-                                    mc.WorldPosition[_camera].z,
-                                    mc.WorldPosition[_camera].y))); 
+                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() => _controllerObjects[mc1].Center = new Point3D(
+                                    mc1.WorldPosition[_camera].x,
+                                    mc1.WorldPosition[_camera].z,
+                                    mc1.WorldPosition[_camera].y))); 
                                 }
                             }
                             // remove objects corresponding to unselected controllers
@@ -102,7 +103,7 @@ namespace UniMoveStation.Business.Service
                             {
                                 if(_controllerObjects.ContainsKey(mc))
                                 {
-                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() => _items.Remove(_controllerObjects[mc])));
+                                    DispatcherHelper.UIDispatcher.Invoke((Action)(() => _items.Remove(_controllerObjects[mc1])));
                                     _controllerObjects.Remove(mc);
                                 }
                             }
@@ -123,10 +124,6 @@ namespace UniMoveStation.Business.Service
             {
                 Console.WriteLine(ex.StackTrace);
                 Stop();
-            }
-            finally
-            {
-                // clean up
             }
         }
 
@@ -169,14 +166,15 @@ namespace UniMoveStation.Business.Service
                 Width = 500,
                 Length = 500
             });
-            RectangleVisual3D rec = new RectangleVisual3D();
 
-            CubeVisual3D camera = new CubeVisual3D();
-            camera.SideLength = 10;
-            camera.Fill = new SolidColorBrush(Colors.Blue);
-            camera.Center = new Point3D(_camera.Calibration.TranslationVector[0, 0],
-                _camera.Calibration.TranslationVector[2, 0],
-                _camera.Calibration.TranslationVector[1, 0]);
+            CubeVisual3D camera = new CubeVisual3D
+            {
+                SideLength = 10,
+                Fill = new SolidColorBrush(Colors.Blue),
+                Center = new Point3D(_camera.Calibration.TranslationToWorld[0, 0],
+                    _camera.Calibration.TranslationToWorld[2, 0],
+                    _camera.Calibration.TranslationToWorld[1, 0])
+            };
             _items.Add(camera);
 
             ArrowVisual3D axis = new ArrowVisual3D

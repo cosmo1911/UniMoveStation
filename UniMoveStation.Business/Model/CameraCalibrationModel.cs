@@ -13,18 +13,19 @@ namespace UniMoveStation.Business.Model
     [JsonObject(MemberSerialization.OptIn)]
     public class CameraCalibrationModel : ViewModelBase
     {
+        private string _cameraGuid;
         private double _error;
         private int _frameBufferSize;
         private bool _startFlag;
         private CameraCalibrationMode _currentMode;
         private IntrinsicCameraParameters _intrinsicParameters;
         private ExtrinsicCameraParameters[] _extrinsicParameters;
-        private Matrix<double> _rotationMatrix;
-        private Matrix<double> _translationVector;
+        private Matrix<double> _rotationToWorld;
+        private Matrix<double> _translationToWorld;
         private Vector3 _point;
         private float _xAngle;
         private float _yAngle;
-        private int _position;
+        private int _index;
 
         private int _rotX;
         private int _rotY;
@@ -44,29 +45,51 @@ namespace UniMoveStation.Business.Model
             _currentMode = CameraCalibrationMode.SavingFrames;
             _intrinsicParameters = new IntrinsicCameraParameters();
             _extrinsicParameters = new ExtrinsicCameraParameters[5];
-            _translationVector = new Matrix<double>(3, 1);
-            _rotationMatrix = new Matrix<double>(3, 3);
+            _translationToWorld = new Matrix<double>(3, 1);
+            _rotationToWorld = new Matrix<double>(3, 3);
             _correspondingPoints = new List<PointF>();
         }
 
+        /// <summary>
+        /// identifier of the camera to which this calibration belongs
+        /// </summary>
+        [JsonProperty]
+        public string CameraGuid
+        {
+            get { return _cameraGuid; }
+            set { Set(() => CameraGuid, ref _cameraGuid, value); }
+        }
+
+        /// <summary>
+        /// debug purposes only
+        /// </summary>
         public int RotX
         {
             get { return _rotX; }
             set { Set(() => RotX, ref _rotX, value); }
         }
 
+        /// <summary>
+        /// debug purposes only
+        /// </summary>
         public int RotY
         {
             get { return _rotY; }
             set { Set(() => RotY, ref _rotY, value); }
         }
 
+        /// <summary>
+        /// debug purposes only
+        /// </summary>
         public int RotZ
         {
             get { return _rotZ; }
             set { Set(() => RotZ, ref _rotZ, value); }
         }
 
+        /// <summary>
+        /// auxiliary rectangle surrounding the motion controller's sphere
+        /// </summary>
         public MCvPoint3D32f[] ObjectPoints2D
         {
             get
@@ -99,6 +122,9 @@ namespace UniMoveStation.Business.Model
             set { Set(() => ObjectPoints2D, ref _objectPoints2D, value); }
         }
 
+        /// <summary>
+        /// auxiliary cube surrounding the motion controller's sphere
+        /// </summary>
         public MCvPoint3D32f[] ObjectPoints3D
         {
             get
@@ -136,12 +162,18 @@ namespace UniMoveStation.Business.Model
             set { Set(() => ObjectPoints3D, ref _objectPoints3D, value); }
         }
 
+        /// <summary>
+        /// projection of the auxiliary cube onto the image plane
+        /// </summary>
         public PointF[] ObjectPointsProjected
         {
             get { return _objectPointsProjected; }
             set { Set(() => ObjectPointsProjected, ref _objectPointsProjected, value); }
         }
 
+        /// <summary>
+        /// result of the bundle adjustment
+        /// </summary>
         public Vector3 Point
         {
             get { return _point; }
@@ -154,13 +186,21 @@ namespace UniMoveStation.Business.Model
             set { Set(() => CorrespondingPoints, ref _correspondingPoints, value); }
         }
 
+        /// <summary>
+        /// index / position of the camera in the camera array
+        /// in case of four cameras total and a rectangular positioning, camera 0 is diagonally opposite of camera 2
+        /// and subsequently camera 1 is diagonally across from camera 3.
+        /// </summary>
         [JsonProperty]
-        public int Position
+        public int Index
         {
-            get { return _position; }
-            set { Set(() => Position, ref _position, value); }
+            get { return _index; }
+            set { Set(() => Index, ref _index, value); }
         }
 
+        /// <summary>
+        /// euler rotation around the X axis of the camera coordinate frame towards the world coordinate frame
+        /// </summary>
         [JsonProperty]
         public float XAngle
         {
@@ -168,6 +208,9 @@ namespace UniMoveStation.Business.Model
             set { Set(() => XAngle, ref _xAngle, value); }
         }
 
+        /// <summary>
+        /// euler rotation around the Y axis of the camera coordinate frame towards the world coordinate frame
+        /// </summary>
         [JsonProperty]
         public float YAngle
         {
@@ -175,6 +218,9 @@ namespace UniMoveStation.Business.Model
             set { Set(() => YAngle, ref _yAngle, value); }
         }
 
+        /// <summary>
+        /// indicates how many pictures are captured during camera calibration
+        /// </summary>
         [JsonProperty]
         public int FrameBufferSize
         {
@@ -182,6 +228,9 @@ namespace UniMoveStation.Business.Model
             set { Set(() => FrameBufferSize, ref _frameBufferSize, value); }
         }
 
+        /// <summary>
+        /// camera calibration error
+        /// </summary>
         [JsonProperty]
         public double Error
         {
@@ -189,20 +238,29 @@ namespace UniMoveStation.Business.Model
             set { Set(() => Error, ref _error, value); }
         }
 
+        /// <summary>
+        /// rotation of the camera coordinate frame towards the world coordinate frame
+        /// </summary>
         [JsonProperty]
-        public Matrix<double> RotationMatrix
+        public Matrix<double> RotationToWorld
         {
-            get { return _rotationMatrix; }
-            set { Set(() => RotationMatrix, ref _rotationMatrix, value); }
+            get { return _rotationToWorld; }
+            set { Set(() => RotationToWorld, ref _rotationToWorld, value); }
         }
 
+        /// <summary>
+        /// position of the camera in the world coordinate frame
+        /// </summary>
         [JsonProperty]
-        public Matrix<double> TranslationVector
+        public Matrix<double> TranslationToWorld
         {
-            get { return _translationVector; }
-            set { Set(() => TranslationVector, ref _translationVector, value); }
+            get { return _translationToWorld; }
+            set { Set(() => TranslationToWorld, ref _translationToWorld, value); }
         }
 
+        /// <summary>
+        /// indiciates if the camera calibration is currently running
+        /// </summary>
         public bool StartFlag
         {
             get { return _startFlag; }

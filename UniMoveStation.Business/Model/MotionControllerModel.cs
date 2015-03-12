@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using GalaSoft.MvvmLight;
-using UniMoveStation.Common.SharpMove;
+using UniMoveStation.Common;
+using UniMoveStation.Business.PsMove;
 using UnityEngine;
 
 namespace UniMoveStation.Business.Model
@@ -62,6 +63,7 @@ namespace UniMoveStation.Business.Model
 
         public MotionControllerModel()
         {
+            
             Id = COUNTER--;
             Name = "Design " + Id;
             Serial = "00:00:00:00:00:0" + Id;
@@ -81,36 +83,63 @@ namespace UniMoveStation.Business.Model
         }
 #endif
 
+        /// <summary>
+        /// positions of the motion controllers in the image coordinate frame
+        /// 
+        /// x = 0..640
+        /// y = 0..480
+        /// z = sphere's radius in pixels
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, Vector3> RawPosition
         {
             get { return _rawPosition ?? (_rawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => RawPosition, ref _rawPosition, value); }
         }
 
+        /// <summary>
+        /// positions calculated by sensor fusion with the ps move api
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, Vector3> FusionPosition
         {
             get { return _fusionPosition ?? (_fusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => FusionPosition, ref _fusionPosition, value); }
         }
 
+        /// <summary>
+        /// positions of the motion controllers in the camera coordinate frame, i.e. origin 
+        /// of the coordinate frame in the center of the image. 
+        /// 
+        /// x, y and z (depth) given in centimeters
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, Vector3> CameraPosition
         {
             get { return _cameraPosition ?? (_cameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => CameraPosition, ref _cameraPosition, value); }
         }
 
+        /// <summary>
+        /// positions of the motion controllers in the world coordinate frame
+        /// 
+        /// x, y and z (depth) given in centimeters
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, Vector3> WorldPosition
         {
             get { return _worldPosition ?? (_worldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>()); }
             set { Set(() => WorldPosition, ref _worldPosition, value); }
         }
-
+        
+        /// <summary>
+        /// which cameras are tracking this controller?
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, bool> Tracking
         {
             get { return _tracking ?? (_tracking = new ObservableConcurrentDictionary<CameraModel, bool>()); }
             set { Set(() => Tracking, ref _tracking, value); }
         }
 
+        /// <summary>
+        /// whats the tracking status of this controller for each camera?
+        /// </summary>
         public ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus> TrackerStatus
         {
             get { return _trackerStatus ?? (_trackerStatus = new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>()); }

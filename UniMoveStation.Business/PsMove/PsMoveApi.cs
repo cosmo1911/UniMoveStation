@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace UniMoveStation.Common.SharpMove
+namespace UniMoveStation.Business.PsMove
 {
     public class PsMoveApi
     {

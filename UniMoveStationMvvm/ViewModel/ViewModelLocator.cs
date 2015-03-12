@@ -14,9 +14,11 @@
 
 using System.Linq;
 using System.Windows;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using UniMoveStation.Business.Service;
+using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Representation.ViewModel;
 using UniMoveStation.Representation.ViewModel.Flyout;
 
@@ -40,16 +42,16 @@ namespace UniMoveStation.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            ////if (ViewModelBase.IsInDesignModeStatic)
-            ////{
-            ////    // Create design time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            ////}
-            ////else
-            ////{
-            ////    // Create run time view services and models
-            ////    SimpleIoc.Default.Register<IDataService, DataService>();
-            ////}
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                // Create design time view services and models
+                //SimpleIoc.Default.Register<IDataService, DesignDataService>();
+            }
+            else
+            {
+                // Create run time view services and models
+                SimpleIoc.Default.Register<ISettingsService, JsonSettingsService>();
+            }
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<SettingsViewModel>();
@@ -59,6 +61,7 @@ namespace UniMoveStation.ViewModel
             SimpleIoc.Default.Register<ServerViewModel>();
             SimpleIoc.Default.Register<AddMotionControllerViewModel>();
             SimpleIoc.Default.Register<AddCameraViewModel>();
+
         }
 
         public MainViewModel Main

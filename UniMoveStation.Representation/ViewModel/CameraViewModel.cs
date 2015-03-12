@@ -81,7 +81,7 @@ namespace UniMoveStation.Representation.ViewModel
             CameraService = cameraService;
             ConsoleService = consoleService;
             VisualizationService = new HelixCameraVisualizationService();
-            CalibrationService = new CameraCalibrationService();
+            CalibrationService = new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>());
 
             CameraService.Initialize(Camera);
             TrackerService.Initialize(Camera);
@@ -109,8 +109,8 @@ namespace UniMoveStation.Representation.ViewModel
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send(new AddCameraMessage(Camera));
-            // load previously saved calibration of this camera
-            SimpleIoc.Default.GetInstance<SettingsViewModel>().SettingsService.LoadCalibration(Camera);
+            // try loading previously saved calibration of this camera
+            Camera.Calibration = SimpleIoc.Default.GetInstance<SettingsViewModel>().SettingsService.LoadCalibration(Camera.GUID);
         }
 
         /// <summary>

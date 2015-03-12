@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ItemsControl ItemsSource="{Binding Cameras}"
+            <ItemsControl ItemsSource="{Binding CameraViewModels}"
                           HorizontalContentAlignment="Stretch"
                           Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
                 <ItemsControl.ItemsPanel>

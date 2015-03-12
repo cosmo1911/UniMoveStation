@@ -4,7 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
-using UniMoveStation.Common.SharpMove;
+using UniMoveStation.Business.PsMove;
 
 namespace UniMoveStation.Representation.ViewModel.Flyout
 {

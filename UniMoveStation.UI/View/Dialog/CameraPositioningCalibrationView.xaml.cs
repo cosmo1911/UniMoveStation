@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using UniMoveStation.Representation.ViewModel;
+using UniMoveStation.Business.Model;
 using UniMoveStation.Representation.ViewModel.Dialog;
 
 namespace UniMoveStation.UI.View.Dialog
@@ -53,9 +53,10 @@ namespace UniMoveStation.UI.View.Dialog
 
         public async void DoClose()
         {
-            foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
+            // reset unsaved settings
+            foreach (CameraModel cameraModel in _viewModel.Cameras)
             {
-                _viewModel.SettingsService.LoadCalibration(cameraViewModel.Camera);
+                cameraModel.Calibration = _viewModel.SettingsService.LoadCalibration(cameraModel.GUID);
             }
             await RequestCloseAsync();
         }

@@ -118,7 +118,8 @@
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
     <Compile Include="Nito\UmsClient.cs" />
-    <Compile Include="Service\BitmapReadyEventArgs.cs" />
+    <Compile Include="PsMove\PsMoveApi.cs" />
+    <Compile Include="PsMove\PsMoveHelper.cs" />
     <Compile Include="Service\Design\DesignCLEyeService.cs" />
     <Compile Include="Service\Design\DesignConsoleService.cs" />
     <Compile Include="Service\Design\DesignMotionControllerService.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Service\Interfaces\ICameraService.cs" />
     <Compile Include="Service\Interfaces\IConsoleService.cs" />
     <Compile Include="Service\Interfaces\IMotionControllerService.cs" />
+    <Compile Include="Service\Interfaces\ISettingsService.cs" />
     <Compile Include="Service\Interfaces\ITrackerService.cs" />
     <Compile Include="Service\JsonSettingsService.cs" />
     <Compile Include="Service\MotionControllerService.cs" />

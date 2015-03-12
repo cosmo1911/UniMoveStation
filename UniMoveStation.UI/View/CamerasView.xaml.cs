@@ -49,7 +49,7 @@ namespace UniMoveStation.UI.View
                 return _applySelectionCommand
                     ?? (_applySelectionCommand = new RelayCommand(
                         DoApplySelection,
-                        () => _viewModel.Cameras.Count > 0 && _viewModel.Controllers.Count > 0));
+                        () => _viewModel.CamerasModel.Cameras.Count > 0 && _viewModel.CamerasModel.Controllers.Count > 0));
             }
         }
 
@@ -63,7 +63,7 @@ namespace UniMoveStation.UI.View
                 return _cancelSelectionCommand
                     ?? (_cancelSelectionCommand = new RelayCommand(
                         DoCancelSelection,
-                        () => _viewModel.Cameras.Count > 0 && _viewModel.Controllers.Count > 0));
+                        () => _viewModel.CamerasModel.Cameras.Count > 0 && _viewModel.CamerasModel.Controllers.Count > 0));
             }
         }
 
@@ -77,7 +77,7 @@ namespace UniMoveStation.UI.View
                 return _positioningCalibrationCommand
                     ?? (_positioningCalibrationCommand = new RelayCommand(
                         ShowCameraPositioningDialog,
-                        () => _viewModel.Cameras.Count > 0));
+                        () => _viewModel.CamerasModel.Cameras.Count > 0));
             }
         }
         #endregion
@@ -93,17 +93,17 @@ namespace UniMoveStation.UI.View
                 CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
                 bool isChecked = (bool)checkBox.IsChecked;
 
-                foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
+                foreach (CameraModel cameraModel in _viewModel.CamerasModel.Cameras)
                 {
                     if (isChecked)
                     {
-                        mc.Tracking[cameraViewModel.Camera] = true;
+                        mc.Tracking[cameraModel] = true;
                     }
                     else
                     {
-                        mc.Tracking[cameraViewModel.Camera] = false;
+                        mc.Tracking[cameraModel] = false;
                     }
-                    cameraViewModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
+                    //cameraModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
                 }
             }
         }
@@ -117,10 +117,10 @@ namespace UniMoveStation.UI.View
                 DataTemplate dataTemplate = contentPresenter.ContentTemplate;
                 CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
 
-                foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
+                foreach (CameraModel cameraModel in _viewModel.CamerasModel.Cameras)
                 {
-                    checkBox.IsChecked = mc.Tracking[cameraViewModel.Camera];
-                    cameraViewModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
+                    checkBox.IsChecked = mc.Tracking[cameraModel];
+                    //cameraModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
                 }
             }
         }
@@ -138,11 +138,11 @@ namespace UniMoveStation.UI.View
                     DataTemplate dataTemplate = contentPresenter.ContentTemplate;
                     CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
                     int trackingCount = 0;
-                    foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
+                    foreach (CameraModel cameraModel in _viewModel.CamerasModel.Cameras)
                     {
-                        if (mc.Tracking[cameraViewModel.Camera]) trackingCount++;
+                        if (mc.Tracking[cameraModel]) trackingCount++;
                     }
-                    if (trackingCount == _viewModel.Controllers.Count)
+                    if (trackingCount == _viewModel.CamerasModel.Controllers.Count)
                     {
                         checkBox.IsChecked = true;
                     }
@@ -162,7 +162,7 @@ namespace UniMoveStation.UI.View
         {
             _dialog = new CameraPositioningCalibrationView(_parentWindow)
             {
-                DataContext = new CameraPositioningCalibrationViewModel(_viewModel.Cameras)
+                DataContext = new CameraPositioningCalibrationViewModel(_viewModel.CamerasModel.Cameras)
             };
 
             await _parentWindow.ShowMetroDialogAsync(_dialog);

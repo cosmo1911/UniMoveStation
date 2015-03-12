@@ -10,6 +10,11 @@ namespace UniMoveStation.Common
         public float Y { get; set; }
         public float Z { get; set; }
 
+        public static Float3 Zero 
+        {
+            get { return new Float3(0, 0, 0); }
+        }
+
         public static implicit operator Float3(Vector3 vector3)
         {
             return new Float3(vector3);

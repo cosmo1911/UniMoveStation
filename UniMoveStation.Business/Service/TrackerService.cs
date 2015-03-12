@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using GalaSoft.MvvmLight.Ioc;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
-using UniMoveStation.Common.SharpMove;
+using UniMoveStation.Business.PsMove;
 using UniMoveStation.Common.Utils;
 using UnityEngine;
 
@@ -359,7 +355,7 @@ namespace UniMoveStation.Business.Service
                         _camera.Calibration.IntrinsicParameters);
 
                     ex.RotationVector[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
-                    ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
+                    ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + 90 * _camera.Calibration.Index);
                     ex.RotationVector[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
 
                     _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
@@ -384,7 +380,7 @@ namespace UniMoveStation.Business.Service
                         _camera.Calibration.ExtrinsicParameters[mc.Id],
                         _camera.Calibration.IntrinsicParameters);
 
-                    Matrix<double> cameraPositionInWorldSpace4x4 = CvHelper.Get3DTranslationMatrix(_camera.Calibration.TranslationVector);
+                    Matrix<double> cameraPositionInWorldSpace4x4 = CvHelper.Get3DTranslationMatrix(_camera.Calibration.TranslationToWorld);
 
                     Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(4, 1);
                     coordinatesInCameraSpace_homo[0, 0] = ex.TranslationVector[0, 0];
@@ -450,7 +446,7 @@ namespace UniMoveStation.Business.Service
                    points[6]
                 };
 
-            switch (_camera.Calibration.Position)
+            switch (_camera.Calibration.Index)
             {
                 case 0:
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);

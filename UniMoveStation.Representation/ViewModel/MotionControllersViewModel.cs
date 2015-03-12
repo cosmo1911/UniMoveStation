@@ -6,7 +6,7 @@ using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
 using UniMoveStation.Business.Service.Interfaces;
-using UniMoveStation.Common.SharpMove;
+using UniMoveStation.Business.PsMove;
 using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;
 

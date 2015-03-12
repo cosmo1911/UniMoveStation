@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using UniMoveStation.Business.JsonConverter;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service.Interfaces;
 
 namespace UniMoveStation.Business.Service
 {
-    public class JsonSettingsService
+    public class JsonSettingsService : ISettingsService
     {
         public void SaveSettings(SettingsModel settings)
         {
@@ -44,19 +44,19 @@ namespace UniMoveStation.Business.Service
             }
         } // SaveCameras
 
-        public void SaveCalibration(CameraModel camera)
+        public void SaveCalibration(CameraCalibrationModel calibration)
         {
             TextWriter writer = null;
             try
             {
                 string json = JsonConvert.SerializeObject(
-                    camera.Calibration,
+                    calibration,
                     Formatting.Indented,
                     new JsonIntrinsicCameraParametersConverter(),
                     new JsonExtrinsicCameraParametersConverter(),
                     new JsonMatrixConverter(),
                     new JsonPointFConverter());
-                writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", camera.GUID), false);
+                writer = new StreamWriter(String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", calibration.CameraGuid), false);
                 writer.Write(json);
             }
             finally
@@ -64,11 +64,6 @@ namespace UniMoveStation.Business.Service
                 if (writer != null) writer.Close();
             }
         } // SaveCalibration
-
-        public void ReloadSettings(SettingsModel settings)
-        {
-            settings = ReloadSettings();
-        }
 
         public SettingsModel ReloadSettings()
         {
@@ -101,13 +96,18 @@ namespace UniMoveStation.Business.Service
             return settings;
         } // ReloadSettings
 
-        public void LoadCalibration(CameraModel camera)
+        public CameraCalibrationModel LoadCalibration(string guid)
         {
+            CameraCalibrationModel calibration = new CameraCalibrationModel()
+            {
+                CameraGuid = guid
+            };
+
             TextReader reader = null;
             try
             {
-                string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", camera.GUID);
-                if (!File.Exists(path)) return;
+                string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", guid);
+                if (!File.Exists(path)) return calibration;
                 try
                 {
                     reader = new StreamReader(path);
@@ -122,7 +122,7 @@ namespace UniMoveStation.Business.Service
                 if (reader != null)
                 {
                     string fileContents = reader.ReadToEnd();
-                    camera.Calibration = JsonConvert.DeserializeObject<CameraCalibrationModel>(
+                    calibration = JsonConvert.DeserializeObject<CameraCalibrationModel>(
                         fileContents,
                         new JsonIntrinsicCameraParametersConverter(),
                         new JsonExtrinsicCameraParametersConverter(),
@@ -130,8 +130,10 @@ namespace UniMoveStation.Business.Service
                         new JsonPointFConverter());
 
                     reader.Close();
+
                 }
             }
+            return calibration;
         } // LoadCalibration
     } // JsonSettingsService
 } // namespace

@@ -1,4 +1,5 @@
-﻿using ColorWheel.Core;
+﻿using System.Collections.Concurrent;
+using ColorWheel.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -7,9 +8,11 @@ using MahApps.Metro.Controls;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Design;
 using UniMoveStation.Business.Service.Interfaces;
-using UniMoveStation.Common.SharpMove;
+using UniMoveStation.Common;
+using UniMoveStation.Business.PsMove;
 using UniMoveStation.Representation.MessengerMessage;
 using UnityEngine;
+using Random = System.Random;
 
 namespace UniMoveStation.Representation.ViewModel
 {
@@ -53,48 +56,57 @@ namespace UniMoveStation.Representation.ViewModel
         /// </summary>
         public MotionControllerViewModel(MotionControllerModel mc, IMotionControllerService mcs)
         {
-            _motionController = mc;
-            _motionControllerService = mcs;
-            Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Red, PaletteSchemaType.Analogous, 1);
+            if (!IsInDesignMode)
+            {
+                _motionController = mc;
+                _motionControllerService = mcs;
+                Palette = Palette.Create(new RGBColorWheel(), System.Windows.Media.Colors.Red, PaletteSchemaType.Analogous, 1);
 
-            MotionControllerService.Initialize(MotionController);
-            DoSelectColor(Palette);
+                MotionControllerService.Initialize(MotionController);
+                DoSelectColor(Palette);
 
-            Messenger.Default.Register<AddCameraMessage>(this,
-                message =>
-                {
-                    if(!MotionController.Tracking.ContainsKey(message.Camera))
+                Messenger.Default.Register<AddCameraMessage>(this,
+                    message =>
                     {
-                        MotionController.TrackerStatus.Add(message.Camera, PSMoveTrackerStatus.NotCalibrated);
-                        MotionController.Tracking.Add(message.Camera, false);
-                        MotionController.RawPosition.Add(message.Camera, Vector3.zero);
-                    }
-                });
+                        if (!MotionController.Tracking.ContainsKey(message.Camera))
+                        {
+                            MotionController.TrackerStatus.Add(message.Camera, PSMoveTrackerStatus.NotCalibrated);
+                            MotionController.Tracking.Add(message.Camera, false);
+                            MotionController.RawPosition.Add(message.Camera, Float3.Zero);
+                            MotionController.WorldPosition.Add(message.Camera, Float3.Zero);
+                            MotionController.CameraPosition.Add(message.Camera, Float3.Zero);
+                            MotionController.FusionPosition.Add(message.Camera, Float3.Zero);
+                        }
+                    });
 
-            Messenger.Default.Register<RemoveCameraMessage>(this,
-                message =>
+                Messenger.Default.Register<RemoveCameraMessage>(this,
+                    message =>
+                    {
+                        MotionController.TrackerStatus.Remove(message.Camera);
+                        MotionController.Tracking.Remove(message.Camera);
+                        MotionController.RawPosition.Remove(message.Camera);
+                        MotionController.WorldPosition.Remove(message.Camera);
+                        MotionController.CameraPosition.Remove(message.Camera);
+                        MotionController.FusionPosition.Remove(message.Camera);
+                    });
+
+
+                if (mc.Serial != null)
                 {
-                    MotionController.TrackerStatus.Remove(message.Camera);
-                    MotionController.Tracking.Remove(message.Camera);
-                    MotionController.RawPosition.Remove(message.Camera);
-                });
+                    SimpleIoc.Default.Register(() => this, mc.Serial, true);
+                    Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
+                }
 
-            
-            if (mc.Serial != null)
-            {
-                SimpleIoc.Default.Register(() => this, mc.Serial, true);
-                Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
-            }
-
-            // initialize existing cameras
-            foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-            {
-                MotionController.RawPosition.Add(scvm.Camera, Vector3.zero);
-                MotionController.FusionPosition.Add(scvm.Camera, Vector3.zero);
-                MotionController.CameraPosition.Add(scvm.Camera, Vector3.zero);
-                MotionController.WorldPosition.Add(scvm.Camera, Vector3.zero);
-                MotionController.Tracking.Add(scvm.Camera, false);
-                MotionController.TrackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
+                // initialize existing cameras
+                foreach (CameraViewModel scvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
+                {
+                    MotionController.RawPosition.Add(scvm.Camera, Float3.Zero);
+                    MotionController.FusionPosition.Add(scvm.Camera, Float3.Zero);
+                    MotionController.CameraPosition.Add(scvm.Camera, Float3.Zero);
+                    MotionController.WorldPosition.Add(scvm.Camera, Float3.Zero);
+                    MotionController.Tracking.Add(scvm.Camera, false);
+                    MotionController.TrackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
+                }
             }
         }
 
@@ -104,7 +116,43 @@ namespace UniMoveStation.Representation.ViewModel
 #if DEBUG
             if(IsInDesignMode)
             {
-                
+                Random rnd = new Random();
+                CameraModel camera = new CameraModel
+                {
+                    Name = "cam0"
+                };
+
+                MotionController = new MotionControllerModel
+                {
+                    Name = "Design " + rnd.Next(10),
+                    Serial = "00:00:00:00:00:0" + rnd.Next(10),
+                    Circle = rnd.Next(2) > 0,
+                    Cross = rnd.Next(2) > 0,
+                    Triangle = rnd.Next(2) > 0,
+                    Square = rnd.Next(2) > 0,
+                    Start = rnd.Next(2) > 0,
+                    Select = rnd.Next(2) > 0,
+                    Move = rnd.Next(2) > 0,
+                    PS = rnd.Next(2) > 0,
+                    Trigger = rnd.Next(256),
+                    Orientation = new UnityEngine.Quaternion(),
+                    RawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
+                    {
+                        {camera, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
+                    },
+                    FusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
+                    {
+                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
+                    },
+                    CameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
+                    {
+                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
+                    },
+                    WorldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
+                    {
+                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
+                    }
+                };
             }
 #endif
         }
@@ -173,7 +221,7 @@ namespace UniMoveStation.Representation.ViewModel
             float g = color.G / 51f;
             float b = color.B / 51f;
 
-            _motionControllerService.SetColor(new Color(r, g, b));
+            _motionControllerService.SetColor(new UnityEngine.Color(r, g, b));
         }
 
         /// <summary>

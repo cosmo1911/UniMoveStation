@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common;
 using UniMoveStation.Common.Utils;
 
@@ -17,10 +18,9 @@ namespace UniMoveStation.Business.Service
     /// </summary>
     public class CameraCalibrationService
     {
-        //private BaseMetroDialog _dialog;
-        //private MetroWindow _owningWindow;
         private CancellationTokenSource _ctsCameraCalibration;
         private CameraModel _camera;
+        private ISettingsService _settingsService; 
         
         #region Display and aquaring chess board info
         Capture _capture; // capture device
@@ -43,8 +43,10 @@ namespace UniMoveStation.Business.Service
         #endregion
 
         #region Constructor
-        public CameraCalibrationService()
+        public CameraCalibrationService(ISettingsService settingsService)
         {
+            _settingsService = settingsService;
+
             //fill line colour array
             Random R = new Random();
             for (int i = 0; i < line_colour_array.Length; i++)
@@ -236,7 +238,7 @@ namespace UniMoveStation.Business.Service
 
         public void SaveCalibration()
         {
-            new JsonSettingsService().SaveCalibration(_camera);
+            _settingsService.SaveCalibration(_camera.Calibration);
         }
     } // CameraCalibrationService
 } // namespace
