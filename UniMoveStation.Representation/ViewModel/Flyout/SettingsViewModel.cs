@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -126,14 +125,6 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         public void DoSaveSettings()
         {
             SettingsService.SaveSettings(Settings);
-        }
-
-        public void DoSaveCameras()
-        {
-            foreach (CameraViewModel cameraViewModel in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-            {
-                SettingsService.SaveCamera(cameraViewModel.Camera);
-            }
         }
 
         private void DoReloadSettings()

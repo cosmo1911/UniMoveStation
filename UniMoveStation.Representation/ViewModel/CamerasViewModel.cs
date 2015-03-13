@@ -126,15 +126,16 @@ namespace UniMoveStation.Representation.ViewModel
 
             for(int i = 0; i < count; i++)
             {
-                CameraModel camera = new CameraModel();
+                CameraModel camera = new CameraModel {TrackerId = i};
                 IConsoleService consoleService = new ConsoleService();
-                ITrackerService trackerService = new TrackerService(consoleService);
-                ICameraService cameraService = new ClEyeService(consoleService);
-                camera.TrackerId = i;
-                cameraService.Initialize(camera);
-                CameraViewModel scvm = new CameraViewModel(camera, trackerService, cameraService, consoleService);
+                new CameraViewModel(
+                    camera, 
+                    new TrackerService(consoleService), 
+                    new ClEyeService(consoleService), 
+                    consoleService, 
+                    new HelixCameraVisualizationService(),
+                    new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>()));
 
-                camera.Name = "Camera " + camera.Calibration.Index;
             }
             Refresh();
         }

@@ -18,6 +18,12 @@ namespace UniMoveStation.Business.Service.Interfaces
         void SaveCamera(CameraModel camera);
 
         /// <summary>
+        /// reloads the persistently saved camera configuration
+        /// </summary>
+        /// <param name="camera">already initialized camera to be updated</param>
+        void LoadCamera(CameraModel camera);
+
+        /// <summary>
         /// persistently saves the calibration data of a camera
         /// </summary>
         /// <param name="calibration">calibration data belonging to a camera</param>

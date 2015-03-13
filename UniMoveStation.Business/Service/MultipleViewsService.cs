@@ -439,7 +439,7 @@ namespace UniMoveStation.Business.Service
             }
         }
 
-        private async void ShowFcpDialog()
+        private void ShowFcpDialog()
         {
             // TODO move to view
             //_dialog = new FcpView(window);
@@ -449,7 +449,7 @@ namespace UniMoveStation.Business.Service
             //await _owningWindow.ShowMetroDialogAsync(_dialog);
         }
 
-        public async void DoCancelFcp()
+        public void DoCancelFcp()
         {
             if (_ctsFcp != null)
             {

@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using MahApps.Metro.Controls;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Design;
 using UniMoveStation.Business.Service.Interfaces;
@@ -28,7 +27,6 @@ namespace UniMoveStation.Representation.ViewModel
         private IMotionControllerService _motionControllerService;
         private RelayCommand<bool> _connectCommand;
         private RelayCommand<Palette> _selectColorCommand;
-        private RelayCommand<MetroWindow> _calibrateMagnetometerCommand;
 
         #region Properties
         public MotionControllerModel MotionController
@@ -182,18 +180,6 @@ namespace UniMoveStation.Representation.ViewModel
                     ?? (_selectColorCommand = new RelayCommand<Palette>(DoSelectColor));
             }
         }
-
-        /// <summary>
-        /// Gets the ConnectCommand.
-        /// </summary>
-        public RelayCommand<MetroWindow> CalibrateMagnetometerCommand
-        {
-            get
-            {
-                return _calibrateMagnetometerCommand
-                    ?? (_calibrateMagnetometerCommand = new RelayCommand<MetroWindow>(DoCalibrateMagnetometer));
-            }
-        }
         #endregion
 
         #region Command Executions
@@ -222,18 +208,6 @@ namespace UniMoveStation.Representation.ViewModel
             float b = color.B / 51f;
 
             _motionControllerService.SetColor(new UnityEngine.Color(r, g, b));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="window">
-        /// A reference to the main MetroWindow is needed in order to create dialogs
-        /// </param>
-        public void DoCalibrateMagnetometer(MetroWindow window)
-        {
-            // TODO move to view
-            //_motionControllerService.CalibrateMagnetometer(window);
         }
         #endregion
 

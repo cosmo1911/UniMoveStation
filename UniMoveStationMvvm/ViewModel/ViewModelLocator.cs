@@ -18,6 +18,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using UniMoveStation.Business.Service;
+using UniMoveStation.Business.Service.Design;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Representation.ViewModel;
 using UniMoveStation.Representation.ViewModel.Flyout;
@@ -45,7 +46,10 @@ namespace UniMoveStation.ViewModel
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
-                //SimpleIoc.Default.Register<IDataService, DesignDataService>();
+                //SimpleIoc.Default.Register<IConsoleService, DesignConsoleService>();
+                //SimpleIoc.Default.Register<ICameraService, DesignClEyeService>();
+                //SimpleIoc.Default.Register<ITrackerService, DesignTrackerService>();
+                //SimpleIoc.Default.Register<IMotionControllerService, DesignMotionControllerService>();
             }
             else
             {

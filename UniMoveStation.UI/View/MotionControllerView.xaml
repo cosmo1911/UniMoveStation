@@ -248,8 +248,7 @@
                 </controls:ToggleSwitch>
                 <Button Content="Calibrate Magnetometer"
                         Margin="0 4 0 4"
-                        Command="{Binding CalibrateMagnetometerCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:MetroWindow}}}"
+                        x:Name="CalibrationMagnetometerButton"
                         />
             </StackPanel>
             <!-- Top Main Grid -->

@@ -44,6 +44,43 @@ namespace UniMoveStation.Business.Service
             }
         } // SaveCameras
 
+        public void LoadCamera(CameraModel camera)
+        {
+            CameraModel tmp = new CameraModel
+            {
+                GUID = camera.GUID
+            };
+
+            string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", tmp.GUID);
+            if (!File.Exists(path))
+            {
+                camera.Name = "Camera " + camera.TrackerId;
+            }
+            else
+            {
+                TextReader reader = null;
+                try
+                {
+                    reader = new StreamReader(path);
+                }
+                finally
+                {
+                    if (reader != null)
+                    {
+                        string fileContents = reader.ReadToEnd();
+                        tmp = JsonConvert.DeserializeObject<CameraModel>(fileContents);
+
+                        reader.Close();
+
+                        camera.Annotate = tmp.Annotate;
+                        camera.FPS = tmp.FPS;
+                        camera.Name = tmp.Name;
+                    }
+                }
+            }
+            
+        }
+
         public void SaveCalibration(CameraCalibrationModel calibration)
         {
             TextWriter writer = null;
@@ -68,31 +105,30 @@ namespace UniMoveStation.Business.Service
         public SettingsModel ReloadSettings()
         {
             SettingsModel settings = new SettingsModel();
-            TextReader reader = null;
-            try
+            TextReader reader;
+            string defaultPath = AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\default.conf.json";
+            string userPath = AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json";
+            string movedHostsPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                ".psmoveapi\\moved_hosts.txt");
+            if (File.Exists(userPath))
             {
-                try
-                {
-                    reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json");
-                }
-                catch (FileNotFoundException)
-                {
-                    reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\default.conf.json");
-                }
+                reader = new StreamReader(userPath);
+                string fileContents = reader.ReadToEnd();
+                settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                reader.Close();
             }
-            finally
+            else if (File.Exists(defaultPath))
             {
-                if (reader != null)
-                {
-                    string fileContents = reader.ReadToEnd();
-                    settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
-                    reader.Close();
-                }
+                reader = new StreamReader(defaultPath);
+                string fileContents = reader.ReadToEnd();
+                settings = JsonConvert.DeserializeObject<SettingsModel>(fileContents);
+                reader.Close();
             }
-
-            settings.MovedHosts = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                ".psmoveapi\\moved_hosts.txt")).ToList();
-
+            if (File.Exists(movedHostsPath))
+            {
+                settings.MovedHosts = File.ReadAllLines(movedHostsPath).ToList();
+            }
             return settings;
         } // ReloadSettings
 
@@ -102,25 +138,14 @@ namespace UniMoveStation.Business.Service
             {
                 CameraGuid = guid
             };
-
             TextReader reader = null;
-            try
+
+            string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", guid);
+            if (File.Exists(path))
             {
-                string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.calib.json", guid);
-                if (!File.Exists(path)) return calibration;
                 try
                 {
                     reader = new StreamReader(path);
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Console.WriteLine(ex.StackTrace);
-                }
-            }
-            finally
-            {
-                if (reader != null)
-                {
                     string fileContents = reader.ReadToEnd();
                     calibration = JsonConvert.DeserializeObject<CameraCalibrationModel>(
                         fileContents,
@@ -128,9 +153,17 @@ namespace UniMoveStation.Business.Service
                         new JsonExtrinsicCameraParametersConverter(),
                         new JsonMatrixConverter(),
                         new JsonPointFConverter());
-
-                    reader.Close();
-
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
+                }
+                finally
+                {
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
                 }
             }
             return calibration;

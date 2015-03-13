@@ -74,14 +74,16 @@ namespace UniMoveStation.Representation.ViewModel
             CameraModel camera, 
             ITrackerService trackerService, 
             ICameraService cameraService, 
-            IConsoleService consoleService)
+            IConsoleService consoleService,
+            HelixCameraVisualizationService visualizationService,
+            CameraCalibrationService cameraCalibrationService)
         {
             Camera = camera;
             TrackerService = trackerService;
             CameraService = cameraService;
             ConsoleService = consoleService;
-            VisualizationService = new HelixCameraVisualizationService();
-            CalibrationService = new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>());
+            VisualizationService = visualizationService;
+            CalibrationService = cameraCalibrationService;
 
             CameraService.Initialize(Camera);
             TrackerService.Initialize(Camera);
@@ -109,8 +111,10 @@ namespace UniMoveStation.Representation.ViewModel
 
             SimpleIoc.Default.Register(() => this, Camera.GUID, true);
             Messenger.Default.Send(new AddCameraMessage(Camera));
-            // try loading previously saved calibration of this camera
+            // try loading previously saved configurations for this camera
+            SimpleIoc.Default.GetInstance<ISettingsService>().LoadCamera(camera);
             Camera.Calibration = SimpleIoc.Default.GetInstance<SettingsViewModel>().SettingsService.LoadCalibration(Camera.GUID);
+
         }
 
         /// <summary>
@@ -120,7 +124,9 @@ namespace UniMoveStation.Representation.ViewModel
             new CameraModel(), 
             new DesignTrackerService(),  
             new DesignClEyeService(), 
-            new ConsoleService())
+            new ConsoleService(),
+            new HelixCameraVisualizationService(), 
+            new CameraCalibrationService(new JsonSettingsService()))
         {
             Camera.Name = "Design " + Camera.TrackerId;
 

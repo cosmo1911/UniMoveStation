@@ -1,4 +1,5 @@
-﻿using UniMoveStation.Business.Model;
+﻿using MahApps.Metro.Controls;
+using UniMoveStation.Business.Model;
 
 namespace UniMoveStation.Business.Service.Interfaces
 {
@@ -20,6 +21,6 @@ namespace UniMoveStation.Business.Service.Interfaces
 
         void SetColor(UnityEngine.Color color);
 
-        void CalibrateMagnetometer();
+        void CalibrateMagnetometer(MetroWindow window);
     }
 }

@@ -3,6 +3,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Business.PsMove;
@@ -16,6 +18,8 @@ namespace UniMoveStation.Business.Service
         private PSMoveRemoteConfig _remoteConfig = PSMoveRemoteConfig.LocalAndRemote;
         private CancellationTokenSource _ctsUpdate;
         private CancellationTokenSource _ctsMagnetometerCalibration;
+
+        public int MagnetometerCalibrationProgress { get; set; }
 
         public MotionControllerService()
         {
@@ -100,94 +104,94 @@ namespace UniMoveStation.Business.Service
         #endregion
 
         #region Magnetometer Calibration Task
-        public async void StartMagnetometerCalibrationTask()
+        public async void StartMagnetometerCalibrationTask(MetroWindow window)
         {
-            // TODO move to view?
-            //CancelUpdateTask();
-            //_ctsMagnetometerCalibration = new CancellationTokenSource();
+            CancelUpdateTask();
+            _ctsMagnetometerCalibration = new CancellationTokenSource();
+            var controller = await window.ShowProgressAsync("Magnetometer Calibration", null, true);
+            CancellationToken token = _ctsMagnetometerCalibration.Token;
+            try
+            {
+                await Task.Run(() =>
+                {
+                    PsMoveApi.psmove_reset_magnetometer_calibration(_motionController.Handle);
+                    int oldRange = 0;
+                    bool calibrationFinished = false;
+                    Color color = _motionController.Color;
+                    while (!token.IsCancellationRequested && !calibrationFinished)
+                    {
+                        while (PsMoveApi.psmove_poll(_motionController.Handle) > 0)
+                        {
+                            float ax, ay, az;
+                            PsMoveApi.psmove_get_magnetometer_vector(_motionController.Handle, out ax, out ay, out az);
 
-            //var controller = await window.ShowProgressAsync("Magnetometer Calibration", null, true);
-            //CancellationToken token = _ctsMagnetometerCalibration.Token;
-            //try
-            //{
-            //    await Task.Run(() =>
-            //    {
-            //        PsMoveApi.psmove_reset_magnetometer_calibration(_motionController.Handle);
-            //        int oldRange = 0;
-            //        bool calibrationFinished = false;
-            //        Color color = _motionController.Color;
-            //        while (!token.IsCancellationRequested && !calibrationFinished)
-            //        {
-            //            while(PsMoveApi.psmove_poll(_motionController.Handle) > 0)
-            //            {
-            //                float ax, ay, az;
-            //                PsMoveApi.psmove_get_magnetometer_vector(_motionController.Handle, out ax, out ay, out az);
+                            int range = PsMoveApi.psmove_get_magnetometer_calibration_range(_motionController.Handle);
+                            MagnetometerCalibrationProgress = 100*range/320;
+                            if (MagnetometerCalibrationProgress > 100) MagnetometerCalibrationProgress = 100;
+                            else if (MagnetometerCalibrationProgress < 0) MagnetometerCalibrationProgress = 0;
+                            controller.SetProgress(MagnetometerCalibrationProgress/100.0);
 
-            //                int range = PsMoveApi.psmove_get_magnetometer_calibration_range(_motionController.Handle);
-            //                int percentage = 100 * range / 320;
-            //                if (percentage > 100) percentage = 100;
-            //                else if (percentage < 0) percentage = 0;
-            //                controller.SetProgress(percentage / 100.0);
+                            float r = (color.r/100)*MagnetometerCalibrationProgress;
+                            float g = (color.g/100)*MagnetometerCalibrationProgress;
+                            float b = (color.b/100)*MagnetometerCalibrationProgress;
+                            SetLED(new Color(r, g, b));
+                            PsMoveApi.psmove_update_leds(_motionController.Handle);
 
-            //                float r = (color.r / 100) * percentage;
-            //                float g = (color.g / 100) * percentage;
-            //                float b = (color.b / 100) * percentage;
-            //                SetLED(new Color(r, g, b));
-            //                PsMoveApi.psmove_update_leds(_motionController.Handle);
+                            if (controller.IsCanceled)
+                            {
+                                CancelMagnetometerCalibrationTask();
+                            }
 
-            //                if (controller.IsCanceled)
-            //                {
-            //                    CancelMagnetometerCalibrationTask();
-            //                }
+                            if (range >= 320)
+                            {
+                                if (oldRange > 0)
+                                {
+                                    PsMoveApi.psmove_save_magnetometer_calibration(_motionController.Handle);
+                                    calibrationFinished = true;
+                                    break;
+                                }
+                            }
+                            else if (range > oldRange)
+                            {
+                                controller.SetMessage(string.Format("Rotate the controller in all directions: {0}%...",
+                                    MagnetometerCalibrationProgress));
+                                oldRange = range;
+                            }
+                        }
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
 
-            //                if (range >= 320)
-            //                {
-            //                    if(oldRange > 0) {
-            //                        PsMoveApi.psmove_save_magnetometer_calibration(_motionController.Handle);
-            //                        calibrationFinished = true;
-            //                        break;
-            //                    }
-            //                } else if(range > oldRange)
-            //                {
-            //                    controller.SetMessage(string.Format("Rotate the controller in all directions: {0}%...", percentage));
-            //                    oldRange = range;
-            //                }
-            //            }
-            //        }
-            //    });
-            //}
-            //catch (OperationCanceledException)
-            //{
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+            }
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.StackTrace);
-            //}
-
-            //await controller.CloseAsync();
-
-            //if (controller.IsCanceled)
-            //{
-            //    await window.ShowMessageAsync("Magnetometer Calibration", "Calibration has been cancelled.");
-            //} else
-            //{
-            //    await window.ShowMessageAsync("Magnetometer Calibration", "Calibration finished successfully.");
-            //}
+            await controller.CloseAsync();
+            if (controller.IsCanceled)
+            {
+                await window.ShowMessageAsync("Magnetometer Calibration", "Calibration has been cancelled.");
+            }
+            else
+            {
+                await window.ShowMessageAsync("Magnetometer Calibration", "Calibration finished successfully.");
+            }
         }
 
         private void CancelMagnetometerCalibrationTask()
         {
-            if(_ctsMagnetometerCalibration != null)
+            if (_ctsMagnetometerCalibration != null)
             {
                 _ctsMagnetometerCalibration.Cancel();
             }
         }
 
-        public void CalibrateMagnetometer()
+        public void CalibrateMagnetometer(MetroWindow window)
         {
-            // TODO move to view
-            //StartMagnetometerCalibrationTask(window);
+            StartMagnetometerCalibrationTask(window);
         }
         #endregion
 
@@ -218,7 +222,7 @@ namespace UniMoveStation.Business.Service
 
         #endregion
 
-        #region SharpMotionController
+        #region Motion Controller
         private uint prevButtons;
         private uint currentButtons;
         private float timeElapsed;

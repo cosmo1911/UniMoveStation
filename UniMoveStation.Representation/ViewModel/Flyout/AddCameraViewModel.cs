@@ -108,15 +108,21 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         {
             if (NewCamera != null)
             {
-                CameraViewModel scvw;
                 if (!NewCamera.GUID.Contains("9ABC-DEFG-HIJK-LMNOPQRSTUVW"))
                 {
                     IConsoleService consoleService = new ConsoleService();
-                    scvw = new CameraViewModel(NewCamera, new TrackerService(consoleService), new ClEyeService(consoleService), consoleService);
+                    new CameraViewModel(
+                        NewCamera, 
+                        new TrackerService(consoleService), 
+                        new ClEyeService(consoleService), 
+                        consoleService,
+                        new HelixCameraVisualizationService(),
+                        new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>()));
                 }
+                // add debug design
                 else 
                 {
-                    scvw = new CameraViewModel();
+                    new CameraViewModel();
                 }
                 IsOpen = false;
             }

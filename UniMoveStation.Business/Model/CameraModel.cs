@@ -56,7 +56,6 @@ namespace UniMoveStation.Business.Model
             set { Set(() => FPS, ref _fps, value); }
         }
 
-        [JsonProperty]
         public bool Visualization
         {
             get { return _visualization; }

@@ -47,7 +47,7 @@ namespace UniMoveStation.Business.JsonConverter
                 JObject o = new JObject
                 {
                     {"RotationVector", rotationVector},
-                    {"TranslationToWorld", translationVector},
+                    {"TranslationVector", translationVector},
                     {"ExtrinsicMatrix", extrinsicMatrix}
                 };
                 o.WriteTo(writer);
@@ -69,7 +69,7 @@ namespace UniMoveStation.Business.JsonConverter
                         serializer)
                 },
                 TranslationVector = (Matrix<double>) new JsonMatrixConverter().ReadJson(
-                    jObject["TranslationToWorld"].CreateReader(), 
+                    jObject["TranslationVector"].CreateReader(), 
                     typeof(Matrix<double>), 
                     null, 
                     serializer)
