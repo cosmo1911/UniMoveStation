@@ -16,6 +16,7 @@ namespace UniMoveStation.Business.Model
         private bool _showImage;
         private bool _tracking;
         private bool _debug;
+        private bool _design;
         private bool _visualization;
         private int _fps;
         private BitmapSource _imageSource;
@@ -24,17 +25,13 @@ namespace UniMoveStation.Business.Model
         private ObservableCollection<MotionControllerModel> _controllers;
         private CameraCalibrationModel _calibration;
 
-#if DEBUG
-        private static int COUNTER = -1;
+        public static int COUNTER = -1;
+
         public CameraModel()
         {
-            TrackerId = COUNTER--;
-            Name = "Design " + TrackerId;
-            GUID = TrackerId + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW";
             Calibration = new CameraCalibrationModel();
             FPS = 60;
         }
-#endif
 
         public CameraCalibrationModel Calibration
         {
@@ -73,6 +70,13 @@ namespace UniMoveStation.Business.Model
         {
             get { return _debug; }
             set { Set(() => Debug, ref _debug, value); }
+        }
+
+        [JsonProperty]
+        public bool Design
+        {
+            get { return _design; }
+            set { Set(() => Design, ref _design, value); }
         }
 
         public int TrackerId

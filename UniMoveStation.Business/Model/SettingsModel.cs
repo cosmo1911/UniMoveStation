@@ -11,8 +11,8 @@ namespace UniMoveStation.Business.Model
     {
         private double? _width;
         private double? _height;
-        private double? _x;
-        private double? _y;
+        private double? _left;
+        private double? _top;
         private bool _debug;
         private bool _loadCamerasOnStartUp;
         private bool _loadControllersOnStartUp;
@@ -22,8 +22,8 @@ namespace UniMoveStation.Business.Model
         {
             Width = 1280;
             Height = 720;
-            X = 0;
-            Y = 0;
+            Left = 0;
+            Top = 0;
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
             Debug = false;
@@ -58,17 +58,17 @@ namespace UniMoveStation.Business.Model
         }
 
         [JsonProperty]
-        public double? X
+        public double? Left
         {
-            get { return _x; }
-            set { Set(() => X, ref _x, value); }
+            get { return _left; }
+            set { Set(() => Left, ref _left, value); }
         }
 
         [JsonProperty]
-        public double? Y
+        public double? Top
         {
-            get { return _y; }
-            set { Set(() => Y, ref _y, value); }
+            get { return _top; }
+            set { Set(() => Top, ref _top, value); }
         }
 
         [JsonProperty]
@@ -108,9 +108,9 @@ namespace UniMoveStation.Business.Model
                         break;
                     case "Height":
                         break;
-                    case "X":
+                    case "Left":
                         break;
-                    case "Y":
+                    case "Top":
                         break;
                 }
                 return null;

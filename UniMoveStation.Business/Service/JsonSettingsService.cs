@@ -46,12 +46,7 @@ namespace UniMoveStation.Business.Service
 
         public void LoadCamera(CameraModel camera)
         {
-            CameraModel tmp = new CameraModel
-            {
-                GUID = camera.GUID
-            };
-
-            string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", tmp.GUID);
+            string path = String.Format(AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\{0}.cam.json", camera.GUID);
             if (!File.Exists(path))
             {
                 camera.Name = "Camera " + camera.TrackerId;
@@ -68,13 +63,13 @@ namespace UniMoveStation.Business.Service
                     if (reader != null)
                     {
                         string fileContents = reader.ReadToEnd();
-                        tmp = JsonConvert.DeserializeObject<CameraModel>(fileContents);
+                        CameraModel tmp = JsonConvert.DeserializeObject<CameraModel>(fileContents);
+
+                        camera.Name = tmp.Name;
+                        camera.FPS = tmp.FPS;
+                        camera.Annotate = tmp.Annotate;
 
                         reader.Close();
-
-                        camera.Annotate = tmp.Annotate;
-                        camera.FPS = tmp.FPS;
-                        camera.Name = tmp.Name;
                     }
                 }
             }

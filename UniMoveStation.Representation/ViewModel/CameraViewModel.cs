@@ -121,14 +121,18 @@ namespace UniMoveStation.Representation.ViewModel
         /// for design time purposes only
         /// </summary>
         public CameraViewModel() : this(
-            new CameraModel(), 
+            new CameraModel
+            {
+                TrackerId = CameraModel.COUNTER,
+                Name = "Camera " + CameraModel.COUNTER,
+                GUID = CameraModel.COUNTER-- + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW"
+            }, 
             new DesignTrackerService(),  
             new DesignClEyeService(), 
             new ConsoleService(),
             new HelixCameraVisualizationService(), 
             new CameraCalibrationService(new JsonSettingsService()))
         {
-            Camera.Name = "Design " + Camera.TrackerId;
 
 #if DEBUG
             if (IsInDesignMode)

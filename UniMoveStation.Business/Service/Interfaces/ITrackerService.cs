@@ -1,6 +1,5 @@
 ﻿using System;
 using UniMoveStation.Business.Model;
-using UniMoveStation.Business.Service.Event;
 
 namespace UniMoveStation.Business.Service.Interfaces
 {

@@ -126,7 +126,10 @@ namespace UniMoveStation.Representation.ViewModel
 
             for(int i = 0; i < count; i++)
             {
-                CameraModel camera = new CameraModel {TrackerId = i};
+                CameraModel camera = new CameraModel
+                {
+                    TrackerId = i
+                };
                 IConsoleService consoleService = new ConsoleService();
                 new CameraViewModel(
                     camera, 

@@ -7,12 +7,14 @@ using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
+using UniMoveStation.Business.Service.Interfaces;
 
 namespace UniMoveStation.Representation.ViewModel.Flyout
 {
     public class SettingsViewModel : FlyoutBaseViewModel
     {
         private RelayCommand _saveSettingsCommand;
+        private RelayCommand _saveCamerasCommand;
         private RelayCommand _reloadSettingsCommand;
         private SettingsModel _settings;
 
@@ -119,11 +121,32 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
                     ?? (_saveSettingsCommand = new RelayCommand(DoSaveSettings));
             }
         }
+
+        /// <summary>
+        /// Gets the SaveCamerasCommand.
+        /// </summary>
+        public RelayCommand SaveCamerasCommand
+        {
+            get
+            {
+                return _saveCamerasCommand
+                    ?? (_saveCamerasCommand = new RelayCommand(DoSaveCameras));
+            }
+        }
         #endregion Commands
 
         #region Command Executions
         public void DoSaveSettings()
         {
+            SettingsService.SaveSettings(Settings);
+        }
+
+        public void DoSaveCameras()
+        {
+            foreach (CameraViewModel cvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
+            {
+                SimpleIoc.Default.GetInstance<ISettingsService>().SaveCamera(cvm.Camera);
+            }
             SettingsService.SaveSettings(Settings);
         }
 

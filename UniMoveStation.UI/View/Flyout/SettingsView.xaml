@@ -38,24 +38,24 @@
                                />
                     <TextBlock Grid.Row="1" 
                                Grid.Column="0"
-                               Text="X"
+                               Text="Left"
                                Margin="0 4 4 4"
                                VerticalAlignment="Center"
                                />
                     <TextBox Grid.Row="1"
                              Grid.Column="1"
-                             Text="{Binding Settings.X, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                             Text="{Binding Settings.Left, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                              utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                     <TextBlock Grid.Row="1"
                                Grid.Column="2"
-                               Text="Y"
+                               Text="Top"
                                Margin="4"
                                VerticalAlignment="Center"
                                />
                     <TextBox Grid.Row="1"
                              Grid.Column="3"
-                             Text="{Binding Settings.Y, UpdateSourceTrigger=Explicit}"
+                             Text="{Binding Settings.Top, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
                              utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
                              />
                 </Grid>
@@ -77,7 +77,7 @@
                                />
                     <TextBlock Grid.Row="1" 
                                Grid.Column="0"
-                               Text="X"
+                               Text="Width"
                                Margin="0 4 4 4"
                                VerticalAlignment="Center"
                                />
@@ -92,7 +92,7 @@
                              />
                     <TextBlock Grid.Row="1" 
                                Grid.Column="2"
-                               Text="Y"
+                               Text="Height"
                                Margin="4"
                                VerticalAlignment="Center"
                                />
@@ -159,13 +159,18 @@
             </StackPanel>
             
         </ScrollViewer>
-        <UniformGrid Columns="2"
+        <UniformGrid Columns="3"
                      Grid.Row="2"
                      Margin="8">
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
                     Content="save"
                     Command="{Binding SaveSettingsCommand}"
+                    />
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
+                    Content="save cams"
+                    Command="{Binding SaveCamerasCommand}"
                     />
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
