@@ -25,6 +25,7 @@ namespace UniMoveStation.Business.Model
         private Vector3 _point;
         private float _xAngle;
         private float _yAngle;
+        private float _zAngle;
         private int _index;
 
         private int _rotX;
@@ -216,6 +217,16 @@ namespace UniMoveStation.Business.Model
         {
             get { return _yAngle; }
             set { Set(() => YAngle, ref _yAngle, value); }
+        }
+
+        /// <summary>
+        /// euler rotation around the Z axis of the camera coordinate frame towards the world coordinate frame
+        /// </summary>
+        [JsonProperty]
+        public float ZAngle
+        {
+            get { return _zAngle; }
+            set { Set(() => ZAngle, ref _zAngle, value); }
         }
 
         /// <summary>

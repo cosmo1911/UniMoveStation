@@ -54,11 +54,11 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             {
                 new CameraViewModel(),
                 new CameraViewModel(),
-                new CameraViewModel(), 
+                new CameraViewModel(),
                 new CameraViewModel()
             })
         {
-
+            // empty
         }
 
 

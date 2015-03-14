@@ -56,7 +56,7 @@ namespace UniMoveStation.UI.View.Dialog
             // reset unsaved settings
             foreach (CameraViewModel cameraViewModel in _viewModel.Cameras)
             {
-                //cameraViewModel.Camera.Calibration = _viewModel.SettingsService.LoadCalibration(cameraViewModel.Camera.GUID);
+                cameraViewModel.Camera.Calibration = _viewModel.SettingsService.LoadCalibration(cameraViewModel.Camera.GUID);
             }
             await RequestCloseAsync();
         }

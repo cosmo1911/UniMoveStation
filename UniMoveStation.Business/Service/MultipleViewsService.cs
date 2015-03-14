@@ -278,19 +278,25 @@ namespace UniMoveStation.Business.Service
                     camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
                     camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
                     camera.Calibration.TranslationToWorld = T[camera.Calibration.Index];
-                    camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[camera.Calibration.Index];
+                    //camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[camera.Calibration.Index];
+
+                    //RotationVector3D rot = new RotationVector3D();
+                    //rot.RotationMatrix = R[camera.Calibration.Index];
+                    //camera.Calibration.XAngle = (int)(rot[0, 0] * (180 / Math.PI));
+                    //camera.Calibration.YAngle = (int)(rot[1, 0] * (180 / Math.PI));
+                    //camera.Calibration.ZAngle = (int)(rot[2, 0] * (180 / Math.PI));
                 }
             }
 
-            //float posx = 0, posy = 0, posz = 0; 
-            //for (int i = 0; i < objectPoints.Length; i++)
-            //{
-            //    posx += (float)objectPoints[0].x / objectPoints.Length;
-            //    posy += (float)objectPoints[0].y / objectPoints.Length;
-            //    posz += (float)objectPoints[0].z / objectPoints.Length;
-            //}
+            float posx = 0, posy = 0, posz = 0;
+            for (int i = 0; i < objectPoints.Length; i++)
+            {
+                posx += (float)objectPoints[i].x / objectPoints.Length;
+                posy += (float)objectPoints[i].y / objectPoints.Length;
+                posz += (float)objectPoints[i].z / objectPoints.Length;
+            }
 
-            _cameras.Position = new Vector3((float)objectPoints[0].x, (float)objectPoints[0].y, (float)objectPoints[0].z);
+            _cameras.Position = new Vector3(posx, posy, posz);
         }
 
         void DoFindFundamentalMatrices()
@@ -394,6 +400,7 @@ namespace UniMoveStation.Business.Service
         public void CancelBundleTask()
         {
             if (_ctsBundle == null) return;
+            if (_bundleTask.Status != TaskStatus.Running) return;
 
             _ctsBundle.Cancel();
             _bundleTask.Wait();
