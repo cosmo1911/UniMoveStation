@@ -136,5 +136,10 @@ namespace UniMoveStation.Business.Model
         {
             get { return "CameraModel"; }
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     } // CameraModel
 } // namespace

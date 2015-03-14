@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Linq;
 using ColorWheel.Core;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -66,6 +67,7 @@ namespace UniMoveStation.Representation.ViewModel
                 Messenger.Default.Register<AddCameraMessage>(this,
                     message =>
                     {
+                        // initialize entries for newly added camera
                         if (!MotionController.Tracking.ContainsKey(message.Camera))
                         {
                             MotionController.TrackerStatus.Add(message.Camera, PSMoveTrackerStatus.NotCalibrated);
@@ -80,6 +82,7 @@ namespace UniMoveStation.Representation.ViewModel
                 Messenger.Default.Register<RemoveCameraMessage>(this,
                     message =>
                     {
+                        // remove entries corresponding to recently removed camera
                         MotionController.TrackerStatus.Remove(message.Camera);
                         MotionController.Tracking.Remove(message.Camera);
                         MotionController.RawPosition.Remove(message.Camera);
@@ -88,10 +91,11 @@ namespace UniMoveStation.Representation.ViewModel
                         MotionController.FusionPosition.Remove(message.Camera);
                     });
 
-
                 if (mc.Serial != null)
                 {
+                    // register with service locator
                     SimpleIoc.Default.Register(() => this, mc.Serial, true);
+                    // notify existing cameras to add this controller
                     Messenger.Default.Send(new AddMotionControllerMessage(MotionController));
                 }
 
@@ -108,50 +112,63 @@ namespace UniMoveStation.Representation.ViewModel
             }
         }
 
+        /// <summary>
+        /// for design purposes only
+        /// </summary>
         public MotionControllerViewModel()
-            : this(new MotionControllerModel(), new DesignMotionControllerService())
+            : this(
+            new MotionControllerModel
+            {
+                Design = true,
+                Id = MotionControllerModel.COUNTER,
+                Name = "Design " + MotionControllerModel.COUNTER,
+                Serial = "00:00:00:00:00:0" + MotionControllerModel.COUNTER++,
+            }, 
+            new DesignMotionControllerService())
         {
 #if DEBUG
-            if(IsInDesignMode)
+            Random rnd = new Random();
+            if (IsInDesignMode)
             {
-                Random rnd = new Random();
-                CameraModel camera = new CameraModel
-                {
-                    Name = "cam0"
-                };
+                CameraModel cam0 = new CameraModel { Name = "cam0" };
+                CameraModel cam1 = new CameraModel { Name = "cam1" };
 
                 MotionController = new MotionControllerModel
                 {
                     Name = "Design " + rnd.Next(10),
                     Serial = "00:00:00:00:00:0" + rnd.Next(10),
-                    Circle = rnd.Next(2) > 0,
-                    Cross = rnd.Next(2) > 0,
-                    Triangle = rnd.Next(2) > 0,
-                    Square = rnd.Next(2) > 0,
-                    Start = rnd.Next(2) > 0,
-                    Select = rnd.Next(2) > 0,
-                    Move = rnd.Next(2) > 0,
-                    PS = rnd.Next(2) > 0,
-                    Trigger = rnd.Next(256),
-                    Orientation = new UnityEngine.Quaternion(),
                     RawPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
-                    {
-                        {camera, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
-                    },
+                {
+                    {cam0, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))},
+                    {cam1, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
+                },
                     FusionPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
-                    {
-                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
-                    },
+                {
+                    {cam0, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))},
+                    {cam1, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
+                },
                     CameraPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
-                    {
-                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
-                    },
+                {
+                    {cam0, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))},
+                    {cam1, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
+                },
                     WorldPosition = new ObservableConcurrentDictionary<CameraModel, Vector3>
-                    {
-                        {camera, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))}
-                    }
+                {
+                    {cam0, new Vector3(rnd.Next(-50, 50), rnd.Next(-50, 50), rnd.Next(-50, 50))},
+                    {cam1, new Vector3(rnd.Next(640), rnd.Next(480), rnd.Next(30))}
+                }
                 };
             }
+
+            MotionController.Circle = rnd.Next(2) > 0;
+            MotionController.Cross = rnd.Next(2) > 0;
+            MotionController.Triangle = rnd.Next(2) > 0;
+            MotionController.Square = rnd.Next(2) > 0;
+            MotionController.Start = rnd.Next(2) > 0;
+            MotionController.Select = rnd.Next(2) > 0;
+            MotionController.Move = rnd.Next(2) > 0;
+            MotionController.PS = rnd.Next(2) > 0;
+            MotionController.Trigger = rnd.Next(256);
 #endif
         }
         #endregion
@@ -211,6 +228,7 @@ namespace UniMoveStation.Representation.ViewModel
         }
         #endregion
 
+        #region Misc
         public override void Cleanup()
         {
             MotionControllerService.Stop();
@@ -218,5 +236,11 @@ namespace UniMoveStation.Representation.ViewModel
             SimpleIoc.Default.Unregister<MotionControllerViewModel>(_motionController.Serial);
             base.Cleanup();
         }
+
+        public override string ToString()
+        {
+            return MotionController.Name;
+        }
+        #endregion
     } // MotionControllerViewModel
 } // namespace

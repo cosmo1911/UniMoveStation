@@ -9,6 +9,8 @@
              xmlns:ignore="http://www.ignore.com"
              xmlns:valueConverter="clr-namespace:UniMoveStation.Representation.ValueConverter;assembly=UniMoveStation.Representation"
              xmlns:viewModel="clr-namespace:UniMoveStation.Representation.ViewModel;assembly=UniMoveStation.Representation"
+             xmlns:unityEngine="clr-namespace:UnityEngine;assembly=UnityEngine"
+             xmlns:model="clr-namespace:UniMoveStation.Business.Model;assembly=UniMoveStation.Business"
              mc:Ignorable="d ignore"
              DataContext="{Binding MotionControllers, Source={StaticResource ViewModelLocator}}"
              d:DataContext="{d:DesignInstance Type=viewModel:MotionControllerViewModel, IsDesignTimeCreatable=True}"
@@ -101,13 +103,13 @@
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListBox ItemsSource="{Binding MotionController.RawPosition.Values}"
+                            <ListBox ItemsSource="{Binding MotionController.RawPosition}"
                                      Background="Transparent">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                                   Background="Transparent"
-                                                   />
+                                        <TextBlock Text="{Binding Path=.}"
+                                                       Background="Transparent"
+                                                       />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -120,13 +122,13 @@
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListBox ItemsSource="{Binding MotionController.FusionPosition.Values}"
+                            <ListBox ItemsSource="{Binding MotionController.FusionPosition}"
                                      Background="Transparent">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                                   Background="Transparent"
-                                                   />
+                                        <TextBlock Text="{Binding Path=.}"
+                                                       Background="Transparent"
+                                                       />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -139,13 +141,13 @@
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListBox ItemsSource="{Binding MotionController.CameraPosition.Values}"
+                            <ListBox ItemsSource="{Binding MotionController.CameraPosition}"
                                      Background="Transparent">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                                   Background="Transparent"
-                                                   />
+                                        <TextBlock Text="{Binding Path=.}"
+                                                       Background="Transparent"
+                                                       />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -158,16 +160,16 @@
                                         IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ListBox ItemsSource="{Binding MotionController.WorldPosition.Values}"
+                                <ListBox ItemsSource="{Binding MotionController.WorldPosition}"
                                      Background="Transparent">
-                                <ListBox.ItemTemplate>
+                                    <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=., Converter={StaticResource Vector3ToStringConverter}}"
-                                                   Background="Transparent"
-                                                   />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                            <TextBlock Text="{Binding Path=.}"
+                                                       Background="Transparent"
+                                                       />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

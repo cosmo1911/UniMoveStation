@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using Emgu.CV.Structure;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -7,12 +6,10 @@ using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
 using UniMoveStation.Business.Service.Design;
-using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common;
 using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;
-using System.Drawing;
 
 namespace UniMoveStation.Representation.ViewModel
 {
@@ -125,7 +122,8 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 TrackerId = CameraModel.COUNTER,
                 Name = "Camera " + CameraModel.COUNTER,
-                GUID = CameraModel.COUNTER-- + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW"
+                GUID = CameraModel.COUNTER-- + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW",
+                Debug = true
             }, 
             new DesignTrackerService(),  
             new DesignClEyeService(), 
@@ -397,7 +395,12 @@ namespace UniMoveStation.Representation.ViewModel
             Messenger.Default.Send(new RemoveCameraMessage(Camera));
             SimpleIoc.Default.Unregister<CameraViewModel>(Camera.GUID);
             base.Cleanup();
-        }      
+        }
+
+        public override string ToString()
+        {
+            return Camera.Name;
+        }
         #endregion
     } // CameraViewModel
 } // Namespace

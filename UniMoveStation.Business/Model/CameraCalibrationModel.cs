@@ -292,5 +292,10 @@ namespace UniMoveStation.Business.Model
         {
             get { return "CameraCalibrationModel"; }
         }
+
+        public override string ToString()
+        {
+            return CameraGuid;
+        }
     } // CameraCalibrationModel
 } // namespace

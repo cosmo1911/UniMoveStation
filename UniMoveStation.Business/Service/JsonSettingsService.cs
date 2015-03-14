@@ -73,8 +73,7 @@ namespace UniMoveStation.Business.Service
                     }
                 }
             }
-            
-        }
+        } // LoadCameras
 
         public void SaveCalibration(CameraCalibrationModel calibration)
         {

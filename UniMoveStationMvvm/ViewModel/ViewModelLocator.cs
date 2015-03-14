@@ -13,6 +13,7 @@
 */
 
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
@@ -110,6 +111,7 @@ namespace UniMoveStation.ViewModel
         
         public static void Cleanup()
         {
+            SimpleIoc.Default.GetInstance<CamerasViewModel>().Cleanup();
 
             foreach(CameraViewModel cvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>().Reverse())
             {

@@ -21,7 +21,7 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         private RelayCommand _saveCommand;
         private bool _inputAnglesManually;
 
-        public ObservableCollection<CameraModel> Cameras { get; private set; }
+        public ObservableCollection<CameraViewModel> Cameras { get; private set; }
 
         public CameraPositioningCalibrationService PositioningService { get; set; }
 
@@ -30,11 +30,35 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         /// <summary>
         /// Initializes a new instance of the CameraPositioningCalibrationViewModel class.
         /// </summary>
-        public CameraPositioningCalibrationViewModel(ObservableCollection<CameraModel> cameras)
+        public CameraPositioningCalibrationViewModel(ObservableCollection<CameraViewModel> cameras)
         {
-            Cameras = cameras;
-            PositioningService = new CameraPositioningCalibrationService(cameras);
-            SettingsService = SimpleIoc.Default.GetInstance<ISettingsService>();
+            if (IsInDesignMode)
+            {
+                Cameras = cameras;
+                SettingsService = new JsonSettingsService();
+            }
+            else
+            {
+                Cameras = cameras;
+                ObservableCollection<CameraModel> cameraModels = new ObservableCollection<CameraModel>(cameras.Select(viewModel => viewModel.Camera));
+                PositioningService = new CameraPositioningCalibrationService(cameraModels);
+                SettingsService = SimpleIoc.Default.GetInstance<ISettingsService>();
+            }
+        }
+
+        /// <summary>
+        /// for design purposes only
+        /// </summary>
+        public CameraPositioningCalibrationViewModel()
+            : this(new ObservableCollection<CameraViewModel>
+            {
+                new CameraViewModel(),
+                new CameraViewModel(),
+                new CameraViewModel(), 
+                new CameraViewModel()
+            })
+        {
+
         }
 
 
@@ -73,9 +97,9 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         #region Command Executions
         public void DoSave()
         {
-            foreach (CameraModel cameraModel in Cameras)
+            foreach (CameraViewModel cameraViewModel in Cameras)
             {
-                SettingsService.SaveCalibration(cameraModel.Calibration);
+                SettingsService.SaveCalibration(cameraViewModel.Camera.Calibration);
             }
         }
 

@@ -128,7 +128,8 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 CameraModel camera = new CameraModel
                 {
-                    TrackerId = i
+                    TrackerId = i,
+                    Name = "Camera " + i
                 };
                 IConsoleService consoleService = new ConsoleService();
                 new CameraViewModel(
@@ -154,6 +155,7 @@ namespace UniMoveStation.Representation.ViewModel
 
         public override void Cleanup()
         {
+            DoToggleBundleAdjust(false);
             base.Cleanup();
         }
 

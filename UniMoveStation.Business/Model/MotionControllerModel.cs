@@ -9,6 +9,7 @@ namespace UniMoveStation.Business.Model
 {
     public class MotionControllerModel : ObservableObject
     {
+        private bool _design;
         protected static float MIN_UPDATE_RATE = 0.02f;
 
         private int _id;
@@ -59,29 +60,20 @@ namespace UniMoveStation.Business.Model
         #endregion
 
 #if DEBUG
-        private static int COUNTER = -1;
+        public static int COUNTER = 0;
 
         public MotionControllerModel()
         {
-            
-            Id = COUNTER--;
-            Name = "Design " + Id;
-            Serial = "00:00:00:00:00:0" + Id;
-            System.Random random = new System.Random();
-            Circle = random.Next(2) > 0;
-            Cross = random.Next(2) > 0;
-            Triangle = random.Next(2) > 0;
-            Square = random.Next(2) > 0;
-            Start = random.Next(2) > 0;
-            Select = random.Next(2) > 0;
-            Move = random.Next(2) > 0;
-            PS = random.Next(2) > 0;
-            Trigger = random.Next(256);
             Orientation = new Quaternion();
-
             Color = Color.blue;
         }
 #endif
+
+        public bool Design
+        {
+            get { return _design; }
+            set { Set(() => Design, ref _design, value); }
+        }
 
         /// <summary>
         /// positions of the motion controllers in the image coordinate frame
@@ -375,6 +367,11 @@ namespace UniMoveStation.Business.Model
         {
             get { return _rumble; }
             set { Set(() => Rumble, ref _rumble, value); }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     } // MotionControllerModel
 } // namespace
