@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Event;
@@ -219,17 +220,19 @@ namespace UniMoveStation.Business.Service
 
         public void EnableTracking(MotionControllerModel mc)
         {
+            if (mc.Design) return;
+
             if (_camera.Handle == IntPtr.Zero) StartTracker();
 
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({0}).", _camera.GUID, mc.Serial));
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({1}).", _camera.GUID, mc.Serial));
 
             byte r = (byte)((mc.Color.r * 255) + 0.5f);
             byte g = (byte)((mc.Color.g * 255) + 0.5f);
             byte b = (byte)((mc.Color.b * 255) + 0.5f);
 
             mc.TrackerStatus[_camera] = PsMoveApi.psmove_tracker_enable_with_color(_camera.Handle, mc.Handle, r, g, b);
-            
-            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking 
+
+            if (mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Tracking
                 || mc.TrackerStatus[_camera] == PSMoveTrackerStatus.Calibrated)
             {
                 PsMoveApi.psmove_tracker_update_image(_camera.Handle);
@@ -251,17 +254,19 @@ namespace UniMoveStation.Business.Service
 
             //mc.ProjectionMatrix[_camera] = proj;
 
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of {0} = {2}", 
+            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of {1} = {2}",
                 _camera.GUID, mc.Name, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
+            
         }
 
-        public void DisableTracking(MotionControllerModel motionController)
+        public void DisableTracking(MotionControllerModel mc)
         {
-            PsMoveApi.psmove_tracker_disable(_camera.Handle, motionController.Handle);
-            motionController.Tracking[_camera] = false;
-            motionController.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
+            if (mc.Design) return;
+            PsMoveApi.psmove_tracker_disable(_camera.Handle, mc.Handle);
+            mc.Tracking[_camera] = false;
+            mc.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracking of Motion Controller ({1}) disabled.", 
-                _camera.GUID, motionController.Serial));
+                _camera.GUID, mc.Serial));
         }
 
         public void DisableTracking()
@@ -295,11 +300,11 @@ namespace UniMoveStation.Business.Service
         {
             if (_camera.Handle != IntPtr.Zero)
             {
-                PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
-                if(mc.Id >= 0) trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
                 Vector3 rawPosition = Vector3.zero;
                 Vector3 fusionPosition = Vector3.zero;
-                Matrix4x4 model = new Matrix4x4();
+                PSMoveTrackerStatus trackerStatus = mc.TrackerStatus[_camera];
+
+                if(!mc.Design) trackerStatus = PsMoveApi.psmove_tracker_get_status(_camera.Handle, mc.Handle);
 
                 if (trackerStatus == PSMoveTrackerStatus.Tracking)
                 {
@@ -346,7 +351,32 @@ namespace UniMoveStation.Business.Service
                     //        model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
                     //    }
                     //}
+                }
+                else if (mc.Design)
+                {
+                    switch (_camera.Calibration.Index)
+                    {
+                        case 0:
+                            rawPosition = new Vector3(129, 280, 8.970074f);
+                            break;
+                        case 1:
+                            rawPosition = new Vector3(180, 293, 11.9714022f);
+                            break;
+                        case 2:
+                            rawPosition = new Vector3(528, 286, 9.038924f);
+                            break;
+                        case 3:
+                            rawPosition = new Vector3(389, 275, 6.530668f);
+                            break;
+                    }
+                }
+                mc.TrackerStatus[_camera] = trackerStatus;
+                mc.RawPosition[_camera] = rawPosition;
+                mc.FusionPosition[_camera] = fusionPosition;
 
+                if (trackerStatus == PSMoveTrackerStatus.Tracking || mc.Design)
+                {
+                    // controller position -> rectangle in surrounding the sphere in image coordinates
                     PointF[] imgPts = CvHelper.GetImagePointsF(mc.RawPosition[_camera]);
 
                     ExtrinsicCameraParameters ex = CameraCalibration.FindExtrinsicCameraParams2(
@@ -360,36 +390,47 @@ namespace UniMoveStation.Business.Service
 
                     _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
                     Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
-                    R3x3_cameraToWorld = rotate(-_camera.Calibration.RotX, -_camera.Calibration.RotY - _camera.Calibration.YAngle, -_camera.Calibration.RotZ);
+                    R3x3_cameraToWorld = CvHelper.Rotate(
+                        -_camera.Calibration.RotX,
+                        -_camera.Calibration.RotY - _camera.Calibration.YAngle,
+                        -_camera.Calibration.RotZ);
 
-                    Matrix<double> test3x1 = new Matrix<double>(3, 1);
-                    test3x1[0, 0] += (Math.PI / 180) * _camera.Calibration.RotX;
-                    test3x1[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
-                    test3x1[2, 0] += (Math.PI / 180) * _camera.Calibration.RotZ;
+                    Matrix<double> minus = new Matrix<double>(3, 3);
+                    minus = CvHelper.Rotate(
+                        _camera.Calibration.RotX,
+                        _camera.Calibration.RotY + _camera.Calibration.YAngle,
+                        _camera.Calibration.RotZ);
 
-                    Matrix<double> test3x3 = new Matrix<double>(3, 3);
-                    CvInvoke.cvRodrigues2(test3x1, test3x3, IntPtr.Zero);
+                    Matrix<double> rotInv = new Matrix<double>(3, 3);
+                    CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, rotInv, SOLVE_METHOD.CV_LU);
 
-                    //IntPtr dstPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_64F);
-                    //Emgu.CV.CvInvoke.cvInvert(ex.RotationVector.RotationMatrix.Ptr, dstPtr, SOLVE_METHOD.CV_LU);
-
-                    //Matrix<double> rotInv = new Matrix<double>(3, 3, dstPtr);
+                    Matrix<double> test = CvHelper.ConvertToHomogenous(-1*R3x3_cameraToWorld);
 
                     _camera.Calibration.ObjectPointsProjected = CameraCalibration.ProjectPoints(
                         _camera.Calibration.ObjectPoints3D,
                         _camera.Calibration.ExtrinsicParameters[mc.Id],
                         _camera.Calibration.IntrinsicParameters);
 
-                    Matrix<double> cameraPositionInWorldSpace4x4 = CvHelper.Get3DTranslationMatrix(_camera.Calibration.TranslationToWorld);
 
-                    Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(4, 1);
-                    coordinatesInCameraSpace_homo[0, 0] = ex.TranslationVector[0, 0];
-                    coordinatesInCameraSpace_homo[1, 0] = ex.TranslationVector[1, 0];
-                    coordinatesInCameraSpace_homo[2, 0] = ex.TranslationVector[2, 0];
-                    coordinatesInCameraSpace_homo[3, 0] = 1;
 
-                    mc.CameraPosition[_camera] = new Vector3((float) coordinatesInCameraSpace_homo[0, 0], (float) coordinatesInCameraSpace_homo[1, 0], (float) coordinatesInCameraSpace_homo[2, 0]);
-                    Matrix<double> Rt_homo = CvHelper.ConvertToHomogenous(-1 * R3x3_cameraToWorld);
+                    Matrix<double> cameraPositionInWorldSpace4x4 = new Matrix<double>(new double[,]
+                    {
+                        {1, 0, 0, _camera.Calibration.TranslationToWorld[0, 0]},
+                        {0, 1, 0, _camera.Calibration.TranslationToWorld[1, 0]},
+                        {0, 0, 1, _camera.Calibration.TranslationToWorld[2, 0]},
+                        {0, 0, 0, 1},
+                    });
+
+                    Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(new double[]
+                    {
+                        ex.TranslationVector[0, 0],
+                        ex.TranslationVector[1, 0],
+                        ex.TranslationVector[2, 0],
+                        1
+                    });
+
+                    mc.CameraPosition[_camera] = new Vector3((float)coordinatesInCameraSpace_homo[0, 0], (float)coordinatesInCameraSpace_homo[1, 0], (float)coordinatesInCameraSpace_homo[2, 0]);
+                    Matrix<double> Rt_homo = CvHelper.ConvertToHomogenous(rotInv);
                     Matrix<double> x_world_homo = CvHelper.ConvertToHomogenous(R3x3_cameraToWorld) * coordinatesInCameraSpace_homo;
                     Rt_homo[0, 3] = x_world_homo[0, 0];
                     Rt_homo[1, 3] = x_world_homo[1, 0];
@@ -398,11 +439,9 @@ namespace UniMoveStation.Business.Service
                     mc.WorldPosition[_camera] = new Vector3((float)x_world_homo[0, 0], (float)x_world_homo[1, 0], (float)x_world_homo[2, 0]);
 
                 }
-                mc.TrackerStatus[_camera] = trackerStatus;
-                mc.RawPosition[_camera] = rawPosition;
-                mc.FusionPosition[_camera] = fusionPosition;
             }
         } // ProcessData
+        #endregion
 
         private void DrawCubeToImage(Image<Bgr, byte> img)
         {
@@ -474,43 +513,5 @@ namespace UniMoveStation.Business.Service
                     break;
             }
         }
-
-        /** this conversion uses NASA standard aeroplane conventions as described on page:
-        *   http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm
-        *   Coordinate System: right hand
-        *   Positive angle: right hand
-        *   Order of euler angles: heading first, then attitude, then bank
-        *   matrix row column ordering:
-        *   [m00 m01 m02]
-        *   [m10 m11 m12]
-        *   [m20 m21 m22]*/
-        public Matrix<double> rotate(double x, double y, double z)
-        {
-            double heading = (Math.PI / 180) * y;
-            double attitude = (Math.PI / 180) * z;
-            double bank = (Math.PI / 180) * x;
-
-            // Assuming the angles are in radians.
-            double ch = Math.Cos(heading);
-            double sh = Math.Sin(heading);
-            double ca = Math.Cos(attitude);
-            double sa = Math.Sin(attitude);
-            double cb = Math.Cos(bank);
-            double sb = Math.Sin(bank);
-
-            Matrix<double> r = new Matrix<double>(3, 3);
-            r[0, 0] = ch * ca;
-            r[0, 1] = sh * sb - ch * sa * cb;
-            r[0, 2] = ch * sa * sb + sh * cb;
-            r[1, 0] = sa;
-            r[1, 1] = ca * cb;
-            r[1, 2] = -ca * sb;
-            r[2, 0] = -sh * ca;
-            r[2, 1] = sh * sa * cb + ch * sb;
-            r[2, 2] = -sh * sa * sb + ch * cb;
-
-            return r;
-        }
-        #endregion
     } // TrackerService
 } // Namespace

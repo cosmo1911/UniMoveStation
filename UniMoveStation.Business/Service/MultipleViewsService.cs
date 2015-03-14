@@ -207,7 +207,8 @@ namespace UniMoveStation.Business.Service
 
                         double distance = Math.Abs(objectPoints[0].z) -
                                              Math.Abs(controller.WorldPosition[camera].z - radiusCm);
-
+                        // camera which is closest to the controller should be most precise
+                        // TODO: replace with average / kalman / ...?
                         if (objectPoints[0].x == 0 || distance > 0)
                         {
                             float wx = controller.WorldPosition[camera].x;
@@ -215,34 +216,34 @@ namespace UniMoveStation.Business.Service
                             float wz = controller.WorldPosition[camera].z;
 
 
-                            objectPoints[0] = new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz - radiusCm);
-                            objectPoints[1] = new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz - radiusCm);
-                            objectPoints[2] = new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz - radiusCm);
-                            objectPoints[3] = new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz - radiusCm);
+                            objectPoints[0] += new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz - radiusCm);
+                            objectPoints[1] += new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz - radiusCm);
+                            objectPoints[2] += new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz - radiusCm);
+                            objectPoints[3] += new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz - radiusCm);
 
-                            objectPoints[4] = new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz + radiusCm);
-                            objectPoints[5] = new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz + radiusCm);
-                            objectPoints[6] = new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz + radiusCm);
-                            objectPoints[7] = new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz + radiusCm);
+                            objectPoints[4] += new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz + radiusCm);
+                            objectPoints[5] += new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz + radiusCm);
+                            objectPoints[6] += new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz + radiusCm);
+                            objectPoints[7] += new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz + radiusCm);
                         }
 
                         //imagePoints[scvm.Camera.Calibration.Index] = Utils.GetImagePoints(mcvm.MotionController.RawPosition[scvm.Camera]);
                         imagePoints[camera.Calibration.Index] = Array.ConvertAll(camera.Calibration.ObjectPointsProjected, CvHelper.PointFtoPoint2D);
 
-                        R[camera.Calibration.Index] = camera.Calibration.RotationToWorld;
-                        T[camera.Calibration.Index] = camera.Calibration.TranslationToWorld;
+                        R[camera.Calibration.Index] = camera.Calibration.RotationToWorld.Clone();
+                        T[camera.Calibration.Index] = camera.Calibration.TranslationToWorld.Clone();
 
                     }
                 } // foreach controller
             } // foreach camera
 
             // average object points
-            //for (int i = 0; i < objectPoints.Length; i++)
-            //{
-            //    objectPoints[i].x /= visible;
-            //    objectPoints[i].y /= visible;
-            //    objectPoints[i].z /= visible;
-            //}
+            for (int i = 0; i < objectPoints.Length; i++)
+            {
+                objectPoints[i].x /= visible;
+                objectPoints[i].y /= visible;
+                objectPoints[i].z /= visible;
+            }
 
             // check for calucation error
             for (int i = 0; i < objectPoints.Length; i++)

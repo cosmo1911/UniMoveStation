@@ -101,18 +101,18 @@
 										<controls:NumericUpDown Grid.Column="0"
 											Margin="4 4 2 4"
 											DataContext="{Binding}"
-											Value="{Binding Camera.Calibration.TranslationVector[0\, 0], Mode=TwoWay}"
+											Value="{Binding Camera.Calibration.TranslationToWorld[0\, 0], Mode=TwoWay}"
 											Foreground="Red"
                                                                 />
 										<controls:NumericUpDown Grid.Column="1"
 											Margin="2 4 2 4"
 											DataContext="{Binding}"
-											Value="{Binding Camera.Calibration.TranslationVector[1\, 0], Mode=TwoWay}"
+											Value="{Binding Camera.Calibration.TranslationToWorld[1\, 0], Mode=TwoWay}"
 											Foreground="Blue"/>
 										<controls:NumericUpDown Grid.Column="2"
 											Margin="2 4 4 4"
 											DataContext="{Binding}"
-											Value="{Binding Camera.Calibration.TranslationVector[2\, 0], Mode=TwoWay}"
+											Value="{Binding Camera.Calibration.TranslationToWorld[2\, 0], Mode=TwoWay}"
 											Foreground="Green"
                                                                 />
 									</Grid>

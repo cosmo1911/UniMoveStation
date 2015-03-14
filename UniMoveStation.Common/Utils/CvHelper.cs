@@ -251,5 +251,44 @@ namespace UniMoveStation.Common.Utils
 
             return result;
         }
+
+
+
+        /** this conversion uses NASA standard aeroplane conventions as described on page:
+        *   http://www.euclideanspace.com/maths/geometry/rotations/euler/index.htm
+        *   Coordinate System: right hand
+        *   Positive angle: right hand
+        *   Order of euler angles: heading first, then attitude, then bank
+        *   matrix row column ordering:
+        *   [m00 m01 m02]
+        *   [m10 m11 m12]
+        *   [m20 m21 m22]*/
+        public static Matrix<double> Rotate(double x, double y, double z)
+        {
+            double heading = (Math.PI / 180) * y;
+            double attitude = (Math.PI / 180) * z;
+            double bank = (Math.PI / 180) * x;
+
+            // Assuming the angles are in radians.
+            double ch = Math.Cos(heading);
+            double sh = Math.Sin(heading);
+            double ca = Math.Cos(attitude);
+            double sa = Math.Sin(attitude);
+            double cb = Math.Cos(bank);
+            double sb = Math.Sin(bank);
+
+            Matrix<double> r = new Matrix<double>(3, 3);
+            r[0, 0] = ch * ca;
+            r[0, 1] = sh * sb - ch * sa * cb;
+            r[0, 2] = ch * sa * sb + sh * cb;
+            r[1, 0] = sa;
+            r[1, 1] = ca * cb;
+            r[1, 2] = -ca * sb;
+            r[2, 0] = -sh * ca;
+            r[2, 1] = sh * sa * cb + ch * sb;
+            r[2, 2] = -sh * sa * sb + ch * cb;
+
+            return r;
+        }
     } // CvHelper
 } // namespace
