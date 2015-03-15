@@ -1,7 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.ObjectModel;
-using System.Windows.Interop;
 using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;

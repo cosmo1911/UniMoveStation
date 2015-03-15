@@ -163,6 +163,11 @@ namespace System.Collections.Concurrent
             TryAddWithNotification(key, value);
         }
 
+        public void Clear()
+        {
+            _dictionary.Clear();
+        }
+
         public bool ContainsKey(TKey key)
         {
             return _dictionary.ContainsKey(key);

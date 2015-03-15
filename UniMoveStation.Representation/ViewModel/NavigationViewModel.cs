@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
+using UniMoveStation.Business.Service;
 using UniMoveStation.Representation.MessengerMessage;
 using UniMoveStation.Representation.ViewModel.Flyout;
 
@@ -15,9 +18,14 @@ namespace UniMoveStation.Representation.ViewModel
 {
     public class NavigationViewModel : ViewModelBase
     {
+        private ObservableCollection<object> _cameraTabs;
+        private ObservableCollection<object> _motionControllerTabs;
+        private ObservableCollection<object> _serverTabs;
+
         private int _lastSelectedIndex;
         private int _motionControllerCount;
         private int _cameraCount;
+
         private RelayCommand<TabControl> _tabSelectedCommand;
         private RelayCommand<Object> _addCommand;
         private RelayCommand<object> _removeCommand;
@@ -66,6 +74,18 @@ namespace UniMoveStation.Representation.ViewModel
                     CameraTabs.Remove(SimpleIoc.Default.GetInstance<CameraViewModel>(message.Camera.GUID));
                 });
 
+            Messenger.Default.Register<AddClientMessage>(this,
+                message =>
+                {
+                    ServerTabs.Add(SimpleIoc.Default.GetInstance<ClientViewModel>(message.Client.RemoteEndPoint));
+                });
+
+            Messenger.Default.Register<RemoveClientMessage>(this,
+                message =>
+                {
+                    ServerTabs.Remove(SimpleIoc.Default.GetInstance<ClientViewModel>(message.Client.RemoteEndPoint));
+                });
+
             if (IsInDesignMode)
             {
                 MotionControllerTabs.Add(new MotionControllerViewModel());
@@ -95,20 +115,20 @@ namespace UniMoveStation.Representation.ViewModel
 
         public ObservableCollection<object> CameraTabs
         {
-            get;
-            private set;
+            get { return _cameraTabs; }
+            set { Set(() => CameraTabs, ref _cameraTabs, value); }
         }
 
         public ObservableCollection<object> MotionControllerTabs
         {
-            get;
-            private set;
+            get { return _motionControllerTabs; }
+            set { Set(() => MotionControllerTabs, ref _motionControllerTabs, value); }
         }
 
         public ObservableCollection<object> ServerTabs
         {
-            get;
-            private set;
+            get { return _serverTabs; }
+            set { Set(() => ServerTabs, ref _serverTabs, value); }
         }
         #endregion
 
@@ -164,7 +184,7 @@ namespace UniMoveStation.Representation.ViewModel
                             if(SimpleIoc.Default.GetInstance<ServerViewModel>().Server.Enabled)
                             {
                                 NitoClient client = new NitoClient();
-                                client.Connect("127.0.0.1", 3000);
+                                client.Connect("127.0.0.1", SimpleIoc.Default.GetInstance<ServerService>().Server.Port);
                             }
                         }
                     }));
@@ -195,6 +215,11 @@ namespace UniMoveStation.Representation.ViewModel
             {
                 CameraViewModel scvw = (CameraViewModel) obj;
                 scvw.Cleanup();
+            }
+            else if(obj is ClientViewModel)
+            {
+                ClientViewModel cvw = (ClientViewModel) obj;
+                cvw.Cleanup();
             }
         }
         #endregion

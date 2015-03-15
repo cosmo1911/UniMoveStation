@@ -113,11 +113,13 @@
     <Compile Include="JsonConverter\JsonPointFConverter.cs" />
     <Compile Include="Model\CameraCalibrationModel.cs" />
     <Compile Include="Model\CameraModel.cs" />
+    <Compile Include="Model\ClientModel.cs" />
     <Compile Include="Model\MotionControllersModel.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Model\CamerasModel.cs" />
     <Compile Include="Model\ServerModel.cs" />
     <Compile Include="Model\SettingsModel.cs" />
+    <Compile Include="Nito\ChildSocketState.cs" />
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
     <Compile Include="Nito\UmsClient.cs" />
@@ -133,6 +135,8 @@
     <Compile Include="Service\CameraPositioningCalibrationService.cs" />
     <Compile Include="Service\ClEyeService.cs" />
     <Compile Include="Service\ConsoleService.cs" />
+    <Compile Include="Service\Event\OnClientAddedEventArgs.cs" />
+    <Compile Include="Service\Event\OnClientRemovedEventArgs.cs" />
     <Compile Include="Service\Event\OnImageReadyEventArgs.cs" />
     <Compile Include="Service\HelixCameraVisualizationService.cs" />
     <Compile Include="Service\Interfaces\ICameraService.cs" />

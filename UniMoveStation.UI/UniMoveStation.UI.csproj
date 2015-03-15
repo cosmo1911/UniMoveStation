@@ -128,6 +128,9 @@
     <Compile Include="View\CameraView.xaml.cs">
       <DependentUpon>CameraView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ClientView.xaml.cs">
+      <DependentUpon>ClientView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialog\CameraCalibrationView.xaml.cs">
       <DependentUpon>CameraCalibrationView.xaml</DependentUpon>
     </Compile>
@@ -183,6 +186,10 @@
     <Page Include="View\CameraView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ClientView.xaml">
+      <SubType>Form</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Dialog\CameraCalibrationView.xaml">
       <Generator>MSBuild:Compile</Generator>

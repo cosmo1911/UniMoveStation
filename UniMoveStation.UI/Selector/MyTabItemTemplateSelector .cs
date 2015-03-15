@@ -14,46 +14,49 @@ namespace UniMoveStation.UI.Selector
             FrameworkElement element = container as FrameworkElement;
 
             var myResourceDictionary = new ResourceDictionary();
-            myResourceDictionary.Source = new Uri("/UniMoveStation.UI;component/Themes/Generic.xaml", UriKind.RelativeOrAbsolute);  
+            myResourceDictionary.Source = new Uri("/UniMoveStation.UI;component/Themes/Generic.xaml", UriKind.RelativeOrAbsolute);
 
-            if (item != null)
+            if (item == null) return null;
+
+            if (item is CameraViewModel)
             {
-                if (item is CameraViewModel)
-                {
-                    return myResourceDictionary["SingleCameraTabItemTemplate"] as DataTemplate;
-                }
-                if (item is MotionControllersViewModel)
-                {
-                    return myResourceDictionary["AllMotionControllersTabItemTemplate"] as DataTemplate;
-                }
-                if (item is CamerasViewModel)
-                {
-                    return myResourceDictionary["AllCamerasTabItemTemplate"] as DataTemplate;
-                }
-                if (item is MotionControllerViewModel)
-                {
-                    return myResourceDictionary["MotionControllerTabItemTemplate"] as DataTemplate;
-                }
-                if (item is ServerViewModel)
-                {
-                    return myResourceDictionary["ServerTabItemTemplate"] as DataTemplate;
-                }
-                if (item == CollectionView.NewItemPlaceholder)
-                {
-                    return myResourceDictionary["AddButtonTabItemTemplate"] as DataTemplate;
-                }
-                if (item is AddMotionControllerViewModel)
-                {
-                    return myResourceDictionary["AddMotionControllerItemTemplate"] as DataTemplate;
-                }
-                if (item is AddCameraViewModel)
-                {
-                    return myResourceDictionary["AddCameraItemTemplate"] as DataTemplate;
-                }
-                if (item is SettingsViewModel)
-                {
-                    return myResourceDictionary["SettingsItemTemplate"] as DataTemplate;
-                }
+                return myResourceDictionary["SingleCameraTabItemTemplate"] as DataTemplate;
+            }
+            if (item is MotionControllersViewModel)
+            {
+                return myResourceDictionary["AllMotionControllersTabItemTemplate"] as DataTemplate;
+            }
+            if (item is CamerasViewModel)
+            {
+                return myResourceDictionary["AllCamerasTabItemTemplate"] as DataTemplate;
+            }
+            if (item is MotionControllerViewModel)
+            {
+                return myResourceDictionary["MotionControllerTabItemTemplate"] as DataTemplate;
+            }
+            if (item is ServerViewModel)
+            {
+                return myResourceDictionary["ServerTabItemTemplate"] as DataTemplate;
+            }
+            if (item is ClientViewModel)
+            {
+                return myResourceDictionary["ClientTabItemTemplate"] as DataTemplate;
+            }
+            if (item == CollectionView.NewItemPlaceholder)
+            {
+                return myResourceDictionary["AddButtonTabItemTemplate"] as DataTemplate;
+            }
+            if (item is AddMotionControllerViewModel)
+            {
+                return myResourceDictionary["AddMotionControllerItemTemplate"] as DataTemplate;
+            }
+            if (item is AddCameraViewModel)
+            {
+                return myResourceDictionary["AddCameraItemTemplate"] as DataTemplate;
+            }
+            if (item is SettingsViewModel)
+            {
+                return myResourceDictionary["SettingsItemTemplate"] as DataTemplate;
             }
 
             return null;

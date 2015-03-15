@@ -161,7 +161,7 @@
 
     <!--Single Camera Tab Data Template-->
     <DataTemplate DataType="{x:Type viewModel:CameraViewModel}"
-                      x:Key="SingleCameraTabContentTemplate">
+                  x:Key="SingleCameraTabContentTemplate">
         <view:CameraView/>
     </DataTemplate>
 
@@ -240,20 +240,20 @@
 
     <!--Server Tab Item Template-->
     <DataTemplate DataType="{x:Type viewModel:ServerViewModel}"
-                      x:Key="ServerTabItemTemplate">
+                  x:Key="ServerTabItemTemplate">
         <StackPanel Orientation="Horizontal">
-            <!--Camera Icon-->
+            <!--Server Icon-->
             <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationTriangle.svg"
-                                 Height="32"
-                                 Width="32"
-                                 Margin="8 4 16 4"
-                                 />
-            <!--Camera Label-->
+                             Height="32"
+                             Width="32"
+                             Margin="8 4 16 4"
+                             />
+            <!--Server Label-->
             <TextBlock Text="Server"
-                           FontSize="20"
-                           Height="32"
-                           Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
-                           />
+                       FontSize="20"
+                       Height="32"
+                       Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
+                       />
         </StackPanel>
     </DataTemplate>
 
@@ -262,7 +262,32 @@
                       x:Key="ServerTabContentTemplate">
         <view:ServerView/>
     </DataTemplate>
-    
+
+    <!--Client Tab Item Template-->
+    <DataTemplate DataType="{x:Type viewModel:ClientViewModel}"
+                      x:Key="ClientTabItemTemplate">
+        <StackPanel Orientation="Horizontal">
+            <!--Client Icon-->
+            <svgc:SvgViewbox Source="/UniMoveStation.UI;component/Resources/PlayStationSquare.svg"
+                             Height="32"
+                             Width="32"
+                             Margin="8 4 16 4"
+                             />
+            <!--Client Label-->
+            <TextBlock Text="{Binding Client.Name}"
+                       FontSize="20"
+                       Height="32"
+                       Foreground="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}"
+                       />
+        </StackPanel>
+    </DataTemplate>
+
+    <!--Client Tab Data Template-->
+    <DataTemplate DataType="{x:Type viewModel:ClientViewModel}"
+                  x:Key="ClientTabContentTemplate">
+        <view:ClientView/>
+    </DataTemplate>
+
     <DataTemplate x:Key="AddMotionControllerItemTemplate" 
                   DataType="{x:Type fvm:AddMotionControllerViewModel}">
         <flyout:AddMotionControllerView />

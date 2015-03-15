@@ -33,6 +33,10 @@ namespace UniMoveStation.UI.Selector
                 {
                     return myResourceDictionary["MyTabItemStyle"] as Style;
                 }
+                if (item is ClientViewModel)
+                {
+                    return myResourceDictionary["MyClosableTabItemStyle"] as Style;
+                }
                 if (item is MotionControllerViewModel)
                 {
                     return myResourceDictionary["MyClosableTabItemStyle"] as Style;

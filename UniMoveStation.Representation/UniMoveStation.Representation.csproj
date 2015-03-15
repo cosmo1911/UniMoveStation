@@ -96,6 +96,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessengerMessage\AddClientMessage.cs" />
+    <Compile Include="MessengerMessage\RemoveClientMessage.cs" />
     <Compile Include="MessengerMessage\ToggleFlyoutMessage.cs" />
     <Compile Include="MessengerMessage\AddCameraMessage.cs" />
     <Compile Include="MessengerMessage\AddMotionControllerMessage.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="ValueConverter\MultiValueConverter.cs" />
     <Compile Include="ValueConverter\QuaternionToStringConverter.cs" />
     <Compile Include="ValueConverter\Vector3ToStringConverter.cs" />
+    <Compile Include="ViewModel\ClientViewModel.cs" />
     <Compile Include="ViewModel\Dialog\CameraCalibrationViewModel.cs" />
     <Compile Include="ViewModel\Dialog\CameraPositioningCalibrationViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />

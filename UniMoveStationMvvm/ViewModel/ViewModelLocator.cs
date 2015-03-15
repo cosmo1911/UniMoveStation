@@ -57,6 +57,7 @@ namespace UniMoveStation.ViewModel
                 // Create run time view services and models
                 SimpleIoc.Default.Register<ISettingsService, JsonSettingsService>();
                 SimpleIoc.Default.Register<CameraCalibrationService>();
+                SimpleIoc.Default.Register<ServerService>(true);
             }
 
             SimpleIoc.Default.Register<MainViewModel>();

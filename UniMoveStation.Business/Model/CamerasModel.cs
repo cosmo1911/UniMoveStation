@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
-using UniMoveStation.Common;
 using UnityEngine;
 
 namespace UniMoveStation.Business.Model

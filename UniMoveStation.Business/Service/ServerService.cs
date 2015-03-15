@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GalaSoft.MvvmLight.Ioc;
 using Nito.Async.Sockets;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
@@ -11,16 +12,6 @@ namespace UniMoveStation.Business.Service
 {
     public class ServerService : NitoServer
     {
-        public ServerService() : base(null)
-        {
-
-        }
-
-        public ServerService(IConsoleService consoleService) : base(consoleService)
-        {
-
-        }
-
         public override void RefreshDisplay()
         {
             // we can only send messages or disconnect if we have connected clients
@@ -42,7 +33,7 @@ namespace UniMoveStation.Business.Service
         protected override bool HandleMessage(object message, SimpleServerChildTcpSocket socket)
         {
             ChildSocketState socketState = ChildSocketState.Disconnecting;
-            ChildSockets.TryGetValue(socket, out socketState);
+            Server.ChildSockets.TryGetValue(socket, out socketState);
             KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket = new KeyValuePair<SimpleServerChildTcpSocket,ChildSocketState>(socket, socketState);
 
             NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;

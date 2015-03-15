@@ -5,40 +5,29 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows;
 using Nito.Async;
 using Nito.Async.Sockets;
+using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common.Utils;
 
 namespace UniMoveStation.Business.Nito
 {
-    public class NitoServer : DependencyObject
+    public class NitoServer
     {
-        /// <summary>
-        /// The <see cref="ChildSockets" /> dependency property's name.
-        /// </summary>
-        public const string ChildSocketsPropertyName = "ChildSockets";
+        public ServerModel Server { get; set; }
 
-        /// <summary>
-        /// Identifies the <see cref="ChildSockets" /> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty ChildSocketsProperty = DependencyProperty.Register(
-            ChildSocketsPropertyName,
-            typeof(Dictionary<SimpleServerChildTcpSocket, ChildSocketState>),
-            typeof(NitoServer),
-            new UIPropertyMetadata(default(Dictionary<SimpleServerChildTcpSocket, ChildSocketState>)));
+        public IConsoleService ConsoleService { get; set; }
 
-        public IConsoleService ConsoleService
-        {
-            get;
-            set;
-        }
+        public EventHandler OnClientAddedHandler;
 
-        public NitoServer(IConsoleService consoleService)
+        public EventHandler OnClientRemovedHandler;
+
+        public void Initialize(IConsoleService consoleService, ServerModel server)
         {
             ConsoleService = consoleService;
-            ChildSockets = new Dictionary<SimpleServerChildTcpSocket, ChildSocketState>();
+            Server = server;
         }
 
         /// <summary>
@@ -46,40 +35,17 @@ namespace UniMoveStation.Business.Nito
         /// </summary>
         protected SimpleServerTcpSocket ListeningSocket;
 
-        /// <summary>
-        /// The state of a child socket connection.
-        /// </summary>
-        public enum ChildSocketState
-        {
-            /// <summary>
-            /// The child socket has an established connection.
-            /// </summary>
-            Connected,
 
-            /// <summary>
-            /// The child socket is disconnecting.
-            /// </summary>
-            Disconnecting
-        }
-
-        /// <summary>
-        /// A mapping of sockets (with established connections) to their state.
-        /// </summary>
-        public Dictionary<SimpleServerChildTcpSocket, ChildSocketState> ChildSockets
-        {
-            get { return (Dictionary<SimpleServerChildTcpSocket, ChildSocketState>) GetValue(ChildSocketsProperty); }
-            set { SetValue(ChildSocketsProperty, value); }
-        }
         /// <summary>
         /// Closes and clears the listening socket and all connected sockets, without causing exceptions.
         /// </summary>
         private void ResetListeningSocket()
         {
             // Close all child sockets
-            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> socket in ChildSockets)
+            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> socket in Server.ChildSockets)
                 socket.Key.ShutdownAsync();
-            
-            ChildSockets.Clear();
+
+            Server.ChildSockets.Clear();
 
             // Close the listening socket
             ListeningSocket.Close();
@@ -97,7 +63,7 @@ namespace UniMoveStation.Business.Nito
                 childSocket.Close();
 
             // Remove it from the list of child sockets
-            ChildSockets.Remove(childSocket);
+            Server.ChildSockets.Remove(childSocket);
         }
 
         public virtual void RefreshDisplay()
@@ -121,7 +87,12 @@ namespace UniMoveStation.Business.Nito
             try
             {
                 // Save the new child socket connection
-                ChildSockets.Add(socket, ChildSocketState.Connected);
+                Server.ChildSockets.Add(socket, ChildSocketState.Connected);
+                Server.Clients.Add(socket, new ClientModel
+                {
+                    RemoteEndPoint = socket.RemoteEndPoint.ToString()
+                });
+                if (OnClientAddedHandler != null) OnClientAddedHandler(this, new OnClientAddedEventArgs(Server.Clients[socket]));
 
                 socket.PacketArrived += args => ChildSocket_PacketArrived(socket, args);
                 socket.WriteCompleted += args => ChildSocket_WriteCompleted(socket, args);
@@ -221,7 +192,7 @@ namespace UniMoveStation.Business.Nito
                 // Close the socket and remove it from the list
                 ResetChildSocket(socket);
             }
-
+            if(OnClientRemovedHandler != null) OnClientRemovedHandler(this, new OnClientRemovedEventArgs(Server.Clients[socket]));
             RefreshDisplay();
         }
 
@@ -317,7 +288,7 @@ namespace UniMoveStation.Business.Nito
         public void SendMessageAll(string message)
         {
             // Start a send on each child socket
-            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in ChildSockets)
+            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in Server.ChildSockets)
             {
                 SendMessage(childSocket, message);
             }
@@ -326,7 +297,7 @@ namespace UniMoveStation.Business.Nito
         public void SendComplexMessageAll(string message)
         {
             // Start a send on each child socket
-            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in ChildSockets)
+            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in Server.ChildSockets)
             {
                 SendComplexMessage(childSocket, message);
             }
@@ -370,17 +341,39 @@ namespace UniMoveStation.Business.Nito
             SendSerializedMessage(childSocket, binaryObject, description);
         }
 
+        public void Disconnect(ClientModel client)
+        {
+            SimpleServerChildTcpSocket[] children = new SimpleServerChildTcpSocket[Server.ChildSockets.Keys.Count];
+            Server.ChildSockets.Keys.CopyTo(children, 0);
+            foreach (SimpleServerChildTcpSocket child in children)
+            {
+                if (child.RemoteEndPoint.ToString().Equals(client.RemoteEndPoint))
+                {
+                    try
+                    {
+                        child.ShutdownAsync();
+                        Server.ChildSockets[child] = ChildSocketState.Disconnecting;
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleService.WriteLine("Child Socket error disconnecting from " + child.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                        ResetChildSocket(child);
+                    }
+                }
+            }
+        }
+
         public void Disconnect()
         {
             // Initiate a graceful disconnect for all clients
-            SimpleServerChildTcpSocket[] children = new SimpleServerChildTcpSocket[ChildSockets.Keys.Count];
-            ChildSockets.Keys.CopyTo(children, 0);
+            SimpleServerChildTcpSocket[] children = new SimpleServerChildTcpSocket[Server.ChildSockets.Keys.Count];
+            Server.ChildSockets.Keys.CopyTo(children, 0);
             foreach (SimpleServerChildTcpSocket child in children)
             {
                 try
                 {
                     child.ShutdownAsync();
-                    ChildSockets[child] = ChildSocketState.Disconnecting;
+                    Server.ChildSockets[child] = ChildSocketState.Disconnecting;
                 }
                 catch (Exception ex)
                 {
@@ -399,7 +392,7 @@ namespace UniMoveStation.Business.Nito
             Dictionary<SimpleServerChildTcpSocket, Exception> SocketErrors = new Dictionary<SimpleServerChildTcpSocket, Exception>();
 
             // Abortively close all clients
-            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in ChildSockets)
+            foreach (KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket in Server.ChildSockets)
             {
                 try
                 {
@@ -420,7 +413,7 @@ namespace UniMoveStation.Business.Nito
                 ResetChildSocket(error.Key);
             }
 
-            ChildSockets.Clear();
+            Server.ChildSockets.Clear();
 
             // In case there were any errors, the display may need to be updated
             RefreshDisplay();

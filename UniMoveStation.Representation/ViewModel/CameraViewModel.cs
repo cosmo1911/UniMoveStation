@@ -348,8 +348,13 @@ namespace UniMoveStation.Representation.ViewModel
             VisualizationService.Stop();
             TrackerService.Destroy();
             CameraService.Destroy();
-            Messenger.Default.Send(new RemoveCameraMessage(Camera));
-            SimpleIoc.Default.Unregister<CameraViewModel>(Camera.GUID);
+            Messenger.Default.Send(new RemoveCameraMessage(Camera, (feedback) =>
+            {
+                if (feedback)
+                {
+                    SimpleIoc.Default.Unregister<CameraViewModel>(Camera.GUID);
+                }
+            }));
             base.Cleanup();
         }
 

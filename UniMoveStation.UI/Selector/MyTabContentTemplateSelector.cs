@@ -36,6 +36,10 @@ namespace UniMoveStation.UI.Selector
                 {
                     return myResourceDictionary["ServerTabContentTemplate"] as DataTemplate;
                 }
+                if (item is ClientViewModel)
+                {
+                    return myResourceDictionary["ClientTabContentTemplate"] as DataTemplate;
+                }
             }
 
             return null;

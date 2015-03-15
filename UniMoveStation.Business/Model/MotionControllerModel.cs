@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using GalaSoft.MvvmLight;
-using UniMoveStation.Common;
 using UniMoveStation.Business.PsMove;
 using UnityEngine;
 

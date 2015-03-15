@@ -1,9 +1,13 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service;
+using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
+using UniMoveStation.Representation.MessengerMessage;
 
 namespace UniMoveStation.Representation.ViewModel
 {
@@ -15,44 +19,37 @@ namespace UniMoveStation.Representation.ViewModel
     /// </summary>
     public class ServerViewModel : ViewModelBase
     {
-        private RelayCommand<object> _toggleServerCommand;
-        private RelayCommand<bool> _disconnectClientsCommand;
-        private RelayCommand<object> _sendMessageCommand;
+        private RelayCommand<bool> _toggleServerCommand;
+        private RelayCommand _disconnectClientsCommand;
+        private RelayCommand _sendMessageCommand;
 
-        public ServerModel Server
-        {
-            get;
-            private set;
-        }
+        public ServerModel Server { get; private set; }
 
-        public IConsoleService ConsoleService
-        {
-            get;
-            private set;
-        }
+        public IConsoleService ConsoleService { get; private set; }
 
-        public ServerService ServerService
-        {
-            get;
-            private set;
-        }
+        public ServerService ServerService { get; private set; }
 
         #region Constructor
-        /// <summary>
-        /// Initializes a new instance of the MotionControllerViewModel class.
-        /// </summary>
-        public ServerViewModel(IConsoleService consoleService, ServerService serverService)
+        public ServerViewModel()
         {
+            ConsoleService = new ConsoleService();
+            ServerService = SimpleIoc.Default.GetInstance<ServerService>();
+
             Server = new ServerModel();
-            ConsoleService = consoleService;
-            ServerService = serverService;
-            serverService.ConsoleService = consoleService;
-        }
+            ServerService.Initialize(ConsoleService, Server);
 
-        [PreferredConstructor]
-        public ServerViewModel() : this(new ConsoleService(), new ServerService())
-        {
+            ServerService.OnClientAddedHandler += delegate(object sender, EventArgs e)
+            {
+                OnClientAddedEventArgs args = (OnClientAddedEventArgs) e;
+                new ClientViewModel(args.Client);
+                Messenger.Default.Send(new AddClientMessage(args.Client));
+            };
 
+            ServerService.OnClientRemovedHandler += delegate(object sender, EventArgs e)
+            {
+                OnClientRemovedEventArgs args = (OnClientRemovedEventArgs)e;
+                Messenger.Default.Send(new RemoveClientMessage(args.Client));
+            };
         }
         #endregion
 
@@ -60,51 +57,48 @@ namespace UniMoveStation.Representation.ViewModel
         /// <summary>
         /// Gets the ToggleServerCommand.
         /// </summary>
-        public RelayCommand<object> ToggleServerCommand
+        public RelayCommand<bool> ToggleServerCommand
         {
             get
             {
                 return _toggleServerCommand
-                    ?? (_toggleServerCommand = new RelayCommand<object>(DoToggleServer));
+                    ?? (_toggleServerCommand = new RelayCommand<bool>(DoToggleServer));
             }
         }
 
         /// <summary>
         /// Gets the DisconnectClientsCommand.
         /// </summary>
-        public RelayCommand<bool> DisconnectClientsCommand
+        public RelayCommand DisconnectClientsCommand
         {
             get
             {
                 return _disconnectClientsCommand
-                    ?? (_disconnectClientsCommand = new RelayCommand<bool>(DoDisconnectClients));
+                    ?? (_disconnectClientsCommand = new RelayCommand(DoDisconnectClients, 
+                        () => Server.Enabled));
             }
         }
 
         /// <summary>
         /// Gets the SendMessageCommand.
         /// </summary>
-        public RelayCommand<object> SendMessageCommand
+        public RelayCommand SendMessageCommand
         {
             get
             {
                 return _sendMessageCommand
-                    ?? (_sendMessageCommand = new RelayCommand<object>(DoSendMessage));
+                    ?? (_sendMessageCommand = new RelayCommand(DoSendMessage,
+                        () => Server.Enabled));
             }
         }
         #endregion
 
         #region Command Executions
-        public void DoToggleServer(object param)
+        public void DoToggleServer(bool enabled)
         {
-            bool enabled = (bool) ((object[]) param)[0];
-            
             if(enabled)
             {
-                string tmp = ((object[])param)[1].ToString().Trim();
-                int port = 3000;
-                if (tmp.Length > 0) port = int.Parse(tmp);
-                ServerService.Start(port);
+                ServerService.Start(Server.Port);
             }
             else
             {
@@ -113,9 +107,9 @@ namespace UniMoveStation.Representation.ViewModel
             
         }
 
-        public void DoDisconnectClients(bool abortively)
+        public void DoDisconnectClients()
         {
-            if(abortively)
+            if(Server.DisconnectAbortively)
             {
                 ServerService.CloseAbortively();
             }
@@ -125,17 +119,15 @@ namespace UniMoveStation.Representation.ViewModel
             }
         }
 
-        public void DoSendMessage(object param)
+        public void DoSendMessage()
         {
-            bool complex = (bool) ((object[]) param)[0];
-            string message = (string) ((object[]) param)[1];
-            if(complex)
+            if(Server.IsMessageComplex)
             {
-                ServerService.SendComplexMessageAll(message);
+                ServerService.SendComplexMessageAll(Server.Message);
             }
             else
             {
-                ServerService.SendMessageAll(message);
+                ServerService.SendMessageAll(Server.Message);
             }
         }
         #endregion
