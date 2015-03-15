@@ -37,7 +37,6 @@ namespace UniMoveStation.Business.JsonConverter
                     {"Data", new JArray(matrix.Data)}
                 };
 
-
                 o.WriteTo(writer);
             }
         }

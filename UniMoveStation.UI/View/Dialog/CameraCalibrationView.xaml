@@ -6,9 +6,13 @@
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          mc:Ignorable="d"
-                         xmlns:viewModel="clr-namespace:UniMoveStation.Representation.ViewModel;assembly=UniMoveStation.Representation"
-                         d:DataContext="{d:DesignInstance Type=viewModel:CameraViewModel, IsDesignTimeCreatable=True}"
+                         xmlns:valueConverter="clr-namespace:UniMoveStation.Representation.ValueConverter;assembly=UniMoveStation.Representation"
+                         xmlns:dialog="clr-namespace:UniMoveStation.Representation.ViewModel.Dialog;assembly=UniMoveStation.Representation"
+                         d:DataContext="{d:DesignInstance Type=dialog:CameraCalibrationViewModel, IsDesignTimeCreatable=True}"
                          Title="Camera Calibration">
+    <dialogs:BaseMetroDialog.Resources>
+        <valueConverter:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </dialogs:BaseMetroDialog.Resources>
     <Grid Margin="0 10 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -63,6 +67,7 @@
                                         Grid.Column="1" 
                                         Minimum="1"
                                         Margin="4"
+                                        IsReadOnly="{Binding Camera.Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
                                         Value="{Binding Camera.Calibration.FrameBufferSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         DataContext="{Binding}"
                                         />
@@ -94,68 +99,7 @@
                           IsChecked="{Binding Camera.Calibration.StartFlag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           DataContext="{Binding}"
                           IsEnabled="False"
-                          />
-                <!--Position-->
-                <TextBlock Grid.Row="4" 
-                           Grid.Column="0"
-                           Text="Position / Index"
-                           VerticalAlignment="Center"
-                           Margin="4"
-                           />
-                <TextBox Grid.Column="1"
-                         Grid.Row="4"
-                         Margin="4"
-                         Text="{Binding Camera.Calibration.Position, Mode=TwoWay}"
-                         DataContext="{Binding}"
-                         />
-                
-                <!--Translation-->
-                <TextBlock Grid.Row="5" 
-                           Grid.Column="0"
-                           Text="Translation"
-                           VerticalAlignment="Center"
-                           Margin="4"
-                           />
-                
-                <Grid Grid.Row="5"
-                      Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0"
-                             Margin="4 4 2 4"
-                             controls:TextboxHelper.Watermark="x"
-                             DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector[0\, 0], Mode=TwoWay}"
-                             />
-                    <TextBox Grid.Column="1"
-                             Margin="2 4 2 4"
-                             controls:TextboxHelper.Watermark="y"
-                             DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector[1\, 0], Mode=TwoWay}"
-                             />
-                    <TextBox Grid.Column="2"
-                             Margin="2 4 4 4"
-                             controls:TextboxHelper.Watermark="z"
-                             DataContext="{Binding}"
-                             Text="{Binding Camera.Calibration.TranslationVector[2\, 0], Mode=TwoWay}"
-                             />
-                </Grid>
-                <!--Y Rotation-->
-                <TextBlock Grid.Row="6" 
-                           Grid.Column="0"
-                           Text="Y Rotation"
-                           VerticalAlignment="Center"
-                           Margin="4"
-                           />
-                <TextBox Grid.Column="1"
-                         Grid.Row="6"
-                         Margin="4"
-                         Text="{Binding Camera.Calibration.YAngle, Mode=TwoWay}"
-                         DataContext="{Binding}"
-                         />
+                          />         
             </Grid>
         </Grid>
 

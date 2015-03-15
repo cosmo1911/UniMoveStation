@@ -104,10 +104,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueConverter\DictionaryTrackingToBoolConverter.cs" />
     <Compile Include="ValueConverter\GreaterThanZeroConverter.cs" />
+    <Compile Include="ValueConverter\InverseBooleanConverter.cs" />
     <Compile Include="ValueConverter\MatrixToStringConverter.cs" />
     <Compile Include="ValueConverter\MultiValueConverter.cs" />
     <Compile Include="ValueConverter\QuaternionToStringConverter.cs" />
     <Compile Include="ValueConverter\Vector3ToStringConverter.cs" />
+    <Compile Include="ViewModel\Dialog\CameraCalibrationViewModel.cs" />
     <Compile Include="ViewModel\Dialog\CameraPositioningCalibrationViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />
     <Compile Include="ViewModel\CameraViewModel.cs" />

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Emgu.CV;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -21,9 +22,6 @@ namespace UniMoveStation.Representation.ViewModel
         private RelayCommand<bool> _toggleAnnotateCommand;
         private RelayCommand<bool> _toggleVisualizationCommand;
         private RelayCommand<bool> _toggleDebugCommand;
-        private RelayCommand _cancelCalibrationCommand;
-        private RelayCommand _startCalibrationCommand;
-        private RelayCommand _saveCalibrationCommand;
 
         public CameraModel Camera
         {
@@ -49,12 +47,6 @@ namespace UniMoveStation.Representation.ViewModel
             private set;
         }
 
-        public CameraCalibrationService CalibrationService
-        {
-            get; 
-            private set;
-        }
-
         public HelixCameraVisualizationService VisualizationService
         {
             get;
@@ -72,46 +64,45 @@ namespace UniMoveStation.Representation.ViewModel
             ITrackerService trackerService, 
             ICameraService cameraService, 
             IConsoleService consoleService,
-            HelixCameraVisualizationService visualizationService,
-            CameraCalibrationService cameraCalibrationService)
+            HelixCameraVisualizationService visualizationService)
         {
             Camera = camera;
             TrackerService = trackerService;
             CameraService = cameraService;
             ConsoleService = consoleService;
             VisualizationService = visualizationService;
-            CalibrationService = cameraCalibrationService;
 
             CameraService.Initialize(Camera);
             TrackerService.Initialize(Camera);
             VisualizationService.Initialize(Camera);
-            CalibrationService.Initialize(Camera);
 
-            Messenger.Default.Register<AddMotionControllerMessage>(this,
-                message =>
-                {
-                    TrackerService.AddMotionController(message.MotionController);
-                });
-
-            Messenger.Default.Register<RemoveMotionControllerMessage>(this,
-                message =>
-                {
-                    TrackerService.RemoveMotionController(message.MotionController);
-                });
-
-            // add existing controllers
-            foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
+            if (!IsInDesignMode)
             {
-                TrackerService.AddMotionController(mcvw.MotionController);
+                Messenger.Default.Register<AddMotionControllerMessage>(this,
+                    message =>
+                    {
+                        TrackerService.AddMotionController(message.MotionController);
+                    });
+
+                Messenger.Default.Register<RemoveMotionControllerMessage>(this,
+                    message =>
+                    {
+                        TrackerService.RemoveMotionController(message.MotionController);
+                    });
+
+                // add existing controllers
+                foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
+                {
+                    TrackerService.AddMotionController(mcvw.MotionController);
+                }
+
+
+                SimpleIoc.Default.Register(() => this, Camera.GUID, true);
+                Messenger.Default.Send(new AddCameraMessage(Camera));
+                // try loading previously saved configurations for this camera
+                SimpleIoc.Default.GetInstance<ISettingsService>().LoadCamera(camera);
+                Camera.Calibration = SimpleIoc.Default.GetInstance<SettingsViewModel>().SettingsService.LoadCalibration(Camera.GUID);
             }
-
-
-            SimpleIoc.Default.Register(() => this, Camera.GUID, true);
-            Messenger.Default.Send(new AddCameraMessage(Camera));
-            // try loading previously saved configurations for this camera
-            SimpleIoc.Default.GetInstance<ISettingsService>().LoadCamera(camera);
-            Camera.Calibration = SimpleIoc.Default.GetInstance<SettingsViewModel>().SettingsService.LoadCalibration(Camera.GUID);
-
         }
 
         /// <summary>
@@ -128,8 +119,7 @@ namespace UniMoveStation.Representation.ViewModel
             new DesignTrackerService(),  
             new DesignClEyeService(), 
             new ConsoleService(),
-            new HelixCameraVisualizationService(), 
-            new CameraCalibrationService(new JsonSettingsService()))
+            new HelixCameraVisualizationService())
         {
 
 #if DEBUG
@@ -138,6 +128,26 @@ namespace UniMoveStation.Representation.ViewModel
                 Camera.Controllers.Add((new MotionControllerModel()));
                 Camera.Controllers.Add((new MotionControllerModel()));
                 Camera.Controllers.Add((new MotionControllerModel()));
+
+                Camera.Calibration = new CameraCalibrationModel
+                {
+                    TranslationToWorld = new Matrix<double>(new[]
+                    {
+                        123.0,
+                        456.0,
+                        789.0
+                    }),
+                    RotationToWorld = new Matrix<double>(new []
+                    {
+                        12.0,
+                        34.0,
+                        56.0
+                    }),
+                    Index = 0,
+                    CurrentMode = CameraCalibrationMode.Calibrated,
+                    FrameBufferSize = 100,
+                    Error = 0.0,
+                };
             }
 #endif
         }
@@ -267,45 +277,7 @@ namespace UniMoveStation.Representation.ViewModel
         }
 
 
-        /// <summary>
-        /// Gets the ButtonCommand.
-        /// </summary>
-        public RelayCommand CancelCalibrationCommand
-        {
-            get
-            {
-                return _cancelCalibrationCommand
-                    ?? (_cancelCalibrationCommand = new RelayCommand(DoCancelCalibration));
-            }
-        }
-
-        /// <summary>
-        /// Gets the StartCalibrationCommand.
-        /// </summary>
-        public RelayCommand StartCalibrationCommand
-        {
-            get
-            {
-                return _startCalibrationCommand
-                    ?? (_startCalibrationCommand = new RelayCommand(
-                        DoStartCalibration,
-                        () => Camera.Calibration.StartFlag == false && Camera.TrackerId == 0));
-            }
-        }
-
-        /// <summary>
-        /// Gets the SaveCommand.
-        /// </summary>
-        public RelayCommand SaveCommand
-        {
-            get
-            {
-                return _saveCalibrationCommand
-                    ?? (_saveCalibrationCommand = new RelayCommand(
-                        DoSaveCalibration,
-                        () => Camera.Calibration.CurrentMode == CameraCalibrationMode.Calibrated));
-            }
-        }
+        
         #endregion
 
         #region Command Executions
@@ -367,22 +339,6 @@ namespace UniMoveStation.Representation.ViewModel
         {
             if (enabled) VisualizationService.Start();
             else VisualizationService.Stop();
-        }
-
-        
-        public void DoCancelCalibration()
-        {
-            CalibrationService.CancelCalibration();
-        }
-
-        public void DoStartCalibration()
-        {
-            CalibrationService.StartCalibration();
-        }
-
-        public void DoSaveCalibration()
-        {
-            CalibrationService.SaveCalibration();
         }
         #endregion
 

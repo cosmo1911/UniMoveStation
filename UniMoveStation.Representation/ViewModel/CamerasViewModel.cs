@@ -137,8 +137,7 @@ namespace UniMoveStation.Representation.ViewModel
                     new TrackerService(consoleService), 
                     new ClEyeService(consoleService), 
                     consoleService, 
-                    new HelixCameraVisualizationService(),
-                    new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>()));
+                    new HelixCameraVisualizationService());
 
             }
             Refresh();

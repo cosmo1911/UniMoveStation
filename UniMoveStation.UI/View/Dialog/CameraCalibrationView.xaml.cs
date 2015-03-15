@@ -1,7 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using UniMoveStation.Representation.ViewModel;
+using UniMoveStation.Representation.ViewModel.Dialog;
 
 namespace UniMoveStation.UI.View.Dialog
 {
@@ -10,7 +10,7 @@ namespace UniMoveStation.UI.View.Dialog
     /// </summary>
     public partial class CameraCalibrationView : BaseMetroDialog
     {
-        private CameraViewModel _viewModel;
+        private CameraCalibrationViewModel _viewModel;
         private RelayCommand _closeCommand;
 
         /// <summary>
@@ -29,7 +29,12 @@ namespace UniMoveStation.UI.View.Dialog
 
         void CameraCalibrationView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
         {
-            _viewModel = (CameraViewModel)e.NewValue;
+            if (_viewModel != null)
+            {
+                _viewModel.CalibrationService.StopCapture();
+            }
+            _viewModel = (CameraCalibrationViewModel)e.NewValue;
+            _viewModel.CalibrationService.StartCapture();
 
             CloseButton.Command = CloseCommand;
         }

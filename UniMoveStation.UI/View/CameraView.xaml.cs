@@ -1,11 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Service;
 using UniMoveStation.Common.Utils;
 using UniMoveStation.Representation.ViewModel;
+using UniMoveStation.Representation.ViewModel.Dialog;
 using UniMoveStation.UI.View.Dialog;
 
 namespace UniMoveStation.UI.View
@@ -116,7 +119,6 @@ namespace UniMoveStation.UI.View
         {
             _viewModel.DoToggleCamera(false);
             _viewModel.DoToggleTracking(false);
-            _viewModel.CalibrationService.StartCapture();
             ShowDialog();
         }
         #endregion
@@ -143,7 +145,10 @@ namespace UniMoveStation.UI.View
         {
             _dialog = new CameraCalibrationView(_parentWindow)
             {
-                DataContext = _viewModel
+                DataContext = new CameraCalibrationViewModel
+                {
+                    Camera = _viewModel.Camera
+                }
             };
 
             await _parentWindow.ShowMetroDialogAsync(_dialog);

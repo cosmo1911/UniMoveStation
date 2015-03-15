@@ -161,33 +161,36 @@ namespace UniMoveStation.Business.Service
                 _helixItems.Add(cube);
             }
 
-            ArrowVisual3D arrow = new ArrowVisual3D
+            if (Cameras.Count == 4)
             {
-                Point1 = new Point3D(
-                    GetCamera(0).Calibration.TranslationToWorld[0, 0],
-                    GetCamera(0).Calibration.TranslationToWorld[2, 0],
-                    GetCamera(0).Calibration.TranslationToWorld[1, 0]),
-                Point2 = new Point3D(
-                    GetCamera(2).Calibration.TranslationToWorld[0, 0],
-                    GetCamera(2).Calibration.TranslationToWorld[2, 0],
-                    GetCamera(2).Calibration.TranslationToWorld[1, 0]),
-                Fill = new SolidColorBrush(Colors.Yellow)
-            };
-            _helixItems.Add(arrow);
+                ArrowVisual3D arrow = new ArrowVisual3D
+                {
+                    Point1 = new Point3D(
+                        GetCamera(0).Calibration.TranslationToWorld[0, 0],
+                        GetCamera(0).Calibration.TranslationToWorld[2, 0],
+                        GetCamera(0).Calibration.TranslationToWorld[1, 0]),
+                    Point2 = new Point3D(
+                        GetCamera(2).Calibration.TranslationToWorld[0, 0],
+                        GetCamera(2).Calibration.TranslationToWorld[2, 0],
+                        GetCamera(2).Calibration.TranslationToWorld[1, 0]),
+                    Fill = new SolidColorBrush(Colors.Yellow)
+                };
+                _helixItems.Add(arrow);
 
-            arrow = new ArrowVisual3D
-            {
-                Point1 = new Point3D(
-                    GetCamera(1).Calibration.TranslationToWorld[0, 0],
-                    GetCamera(1).Calibration.TranslationToWorld[2, 0],
-                    GetCamera(1).Calibration.TranslationToWorld[1, 0]),
-                Point2 = new Point3D(
-                    GetCamera(3).Calibration.TranslationToWorld[0, 0],
-                    GetCamera(3).Calibration.TranslationToWorld[2, 0],
-                    GetCamera(3).Calibration.TranslationToWorld[1, 0]),
-                Fill = new SolidColorBrush(Colors.Yellow)
-            };
-            _helixItems.Add(arrow);
+                arrow = new ArrowVisual3D
+                {
+                    Point1 = new Point3D(
+                        GetCamera(1).Calibration.TranslationToWorld[0, 0],
+                        GetCamera(1).Calibration.TranslationToWorld[2, 0],
+                        GetCamera(1).Calibration.TranslationToWorld[1, 0]),
+                    Point2 = new Point3D(
+                        GetCamera(3).Calibration.TranslationToWorld[0, 0],
+                        GetCamera(3).Calibration.TranslationToWorld[2, 0],
+                        GetCamera(3).Calibration.TranslationToWorld[1, 0]),
+                    Fill = new SolidColorBrush(Colors.Yellow)
+                };
+                _helixItems.Add(arrow);
+            }
 
             ArrowVisual3D axis = new ArrowVisual3D
             {

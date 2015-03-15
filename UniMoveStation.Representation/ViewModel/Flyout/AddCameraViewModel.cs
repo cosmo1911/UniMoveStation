@@ -100,7 +100,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         #region Command Executions
         public void DoCancelCommand()
         {
-            NewCamera = new CameraModel();
+            NewCamera = null;
             IsOpen = false;
         }
 
@@ -108,7 +108,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         {
             if (NewCamera != null)
             {
-                if (!NewCamera.GUID.Contains("9ABC-DEFG-HIJK-LMNOPQRSTUVW"))
+                if (!NewCamera.Design)
                 {
                     IConsoleService consoleService = new ConsoleService();
                     new CameraViewModel(
@@ -116,8 +116,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
                         new TrackerService(consoleService), 
                         new ClEyeService(consoleService), 
                         consoleService,
-                        new HelixCameraVisualizationService(),
-                        new CameraCalibrationService(SimpleIoc.Default.GetInstance<ISettingsService>()));
+                        new HelixCameraVisualizationService());
                 }
                 // add debug design
                 else 
@@ -135,6 +134,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
                 string tmp = NewCamera.Name;
                 NewCamera = (CameraModel) item;
                 NewCamera.Name = tmp;
+                NewCamera.Debug = false;
             }
         }
 
@@ -144,7 +144,8 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
             AvailableCameras.Clear();
             NewCamera = new CameraModel
             {
-                Name = null
+                Name = null,
+                Design = true
             };
             NewCamerasDetected = false;
 
