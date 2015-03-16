@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows.Controls;
 using MahApps.Metro.Controls;
@@ -20,6 +22,7 @@ namespace UniMoveStation.UI.View
         private readonly MetroWindow _parentWindow;
         private readonly CamerasViewModel _viewModel;
         private RelayCommand _positioningCalibrationCommand;
+        private RelayCommand _stereoCameraCalibrationCommand;
         private RelayCommand _applySelectionCommand;
         private RelayCommand _cancelSelectionCommand;
 
@@ -34,6 +37,7 @@ namespace UniMoveStation.UI.View
             _parentWindow = (MetroWindow) Application.Current.MainWindow;
 
             PositioningCalibrationButton.Command = PositioningCalibrationCommand;
+            StereoCameraCalibrationButton.Command = StereoCameraCalibrationCommand;
             ApplySelectionButton.Command = ApplySelectionCommand;
             CancelSelectionButton.Command = CancelSelectionCommand;
         }
@@ -78,6 +82,20 @@ namespace UniMoveStation.UI.View
                     ?? (_positioningCalibrationCommand = new RelayCommand(
                         ShowCameraPositioningDialog,
                         () => _viewModel.CamerasModel.Cameras.Count > 0));
+            }
+        }
+
+        /// <summary>
+        /// Gets the StereoCameraCalibrationCommand.
+        /// </summary>
+        public RelayCommand StereoCameraCalibrationCommand
+        {
+            get
+            {
+                return _stereoCameraCalibrationCommand
+                    ?? (_stereoCameraCalibrationCommand = new RelayCommand(
+                        ShowStereoCameraCalibrationDialog,
+                        () => _viewModel.CamerasModel.Cameras.Count > 1));
             }
         }
         #endregion
@@ -163,6 +181,16 @@ namespace UniMoveStation.UI.View
             _dialog = new CameraPositioningCalibrationView(_parentWindow)
             {
                 DataContext = new CameraPositioningCalibrationViewModel(_viewModel.CameraViewModels)
+            };
+
+            await _parentWindow.ShowMetroDialogAsync(_dialog);
+        }
+
+        public async void ShowStereoCameraCalibrationDialog()
+        {
+            _dialog = new StereoCameraCalibrationView(_parentWindow)
+            {
+                DataContext = new StereoCameraCalibrationViewModel(_viewModel.CamerasModel.Cameras)
             };
 
             await _parentWindow.ShowMetroDialogAsync(_dialog);

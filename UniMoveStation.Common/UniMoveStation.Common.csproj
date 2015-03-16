@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Float3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StereoCameraCalibrationMode.cs" />
     <Compile Include="Utils\AspectRatioLayoutDecorator.cs" />
     <Compile Include="Utils\BitmapHelper.cs" />
     <Compile Include="CameraCalibrationMode.cs" />

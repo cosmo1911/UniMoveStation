@@ -119,6 +119,7 @@
     <Compile Include="Model\CamerasModel.cs" />
     <Compile Include="Model\ServerModel.cs" />
     <Compile Include="Model\SettingsModel.cs" />
+    <Compile Include="Model\StereoCameraCalibrationModel.cs" />
     <Compile Include="Nito\ChildSocketState.cs" />
     <Compile Include="Nito\NitoClient.cs" />
     <Compile Include="Nito\NitoServer.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Service\MotionControllerService.cs" />
     <Compile Include="Service\MultipleViewsService.cs" />
     <Compile Include="Service\ServerService.cs" />
+    <Compile Include="Service\StereoCameraCalibrationService.cs" />
     <Compile Include="Service\TrackerService.cs" />
   </ItemGroup>
   <ItemGroup>

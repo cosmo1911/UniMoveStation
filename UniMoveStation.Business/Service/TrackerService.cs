@@ -21,17 +21,12 @@ namespace UniMoveStation.Business.Service
     public class TrackerService : DependencyObject, ITrackerService
     {
         #region Member
-        private IConsoleService ConsoleService
-        {
-            get;
-            set;
-        }
+        public IConsoleService ConsoleService { get; set; }
+        private CameraModel _camera;
+        public event EventHandler OnImageReady;
 
         private CancellationTokenSource _ctsUpdate;
-        private CameraModel _camera;
         private Task _updateTask;
-
-        public event EventHandler OnImageReady;
         #endregion
 
         #region Constructor
@@ -47,7 +42,7 @@ namespace UniMoveStation.Business.Service
             if (_updateTask != null && _updateTask.Status == TaskStatus.Running) return;
 
             _ctsUpdate = new CancellationTokenSource();
-            StartTracker();
+            StartTracker(1f);
             try
             {
                 _updateTask = Task.Factory.StartNew(() =>
@@ -93,12 +88,12 @@ namespace UniMoveStation.Business.Service
             }
         }
 
-        private void CancelUpdateTask()
+        private async void CancelUpdateTask()
         {
             if(_ctsUpdate != null)
             {
                 _ctsUpdate.Cancel();
-                _updateTask.Wait();
+                await _updateTask;
                 PsMoveApi.delete_PSMoveTracker(_camera.Handle);
                 _camera.Handle = IntPtr.Zero;
             }
@@ -157,9 +152,7 @@ namespace UniMoveStation.Business.Service
                 //display useful information
                 if (_camera.Annotate) PsMoveApi.psmove_tracker_annotate(_camera.Handle);
                 //retrieve and convert image frame
-                IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
-                MIplImage rgb32Image = (MIplImage) Marshal.PtrToStructure(frame, typeof(MIplImage));
-                Image<Bgr, Byte> img = new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
+                Image<Bgr, Byte> img = GetImage();
 
                 if (OnImageReady != null) OnImageReady(this, new OnImageReadyEventArgs(img));
 
@@ -178,6 +171,13 @@ namespace UniMoveStation.Business.Service
                 bitmapSource.Freeze();
                 _camera.ImageSource = bitmapSource;
             }
+        }
+
+        public Image<Bgr, Byte> GetImage()
+        {
+            IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
+            MIplImage rgb32Image = (MIplImage)Marshal.PtrToStructure(frame, typeof(MIplImage));
+            return new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
         }
         #endregion
 
@@ -206,13 +206,13 @@ namespace UniMoveStation.Business.Service
             }
         }
 
-        public bool StartTracker()
+        public bool StartTracker(float dimming)
         {
             if (_camera.Handle == IntPtr.Zero)
             {
                 _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
                 ConsoleService.WriteLine(string.Format("[Tracker, {0}] Started.", _camera.GUID));
-                PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, 1f);
+                PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, dimming);
                 _camera.Fusion = PsMoveApi.new_PSMoveFusion(_camera.Handle, 1.0f, 1000f);
             }
             return _camera.Handle != IntPtr.Zero;
@@ -222,7 +222,7 @@ namespace UniMoveStation.Business.Service
         {
             if (mc.Design) return;
 
-            if (_camera.Handle == IntPtr.Zero) StartTracker();
+            if (_camera.Handle == IntPtr.Zero) StartTracker(1f);
 
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({1}).", _camera.GUID, mc.Serial));
 
@@ -278,6 +278,13 @@ namespace UniMoveStation.Business.Service
                     DisableTracking(mc);
                 }
             }
+        }
+
+        public void StopStracker()
+        {
+            if (_camera.Handle == IntPtr.Zero) return;
+            PsMoveApi.delete_PSMoveTracker(_camera.Handle);
+            _camera.Handle = IntPtr.Zero;
         }
 
         public void Destroy()

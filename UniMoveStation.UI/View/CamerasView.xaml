@@ -224,6 +224,10 @@
                     Margin="4"
                     x:Name="PositioningCalibrationButton"
                     />
+            <Button Content="Stereo Calibration"
+                    Margin="4"
+                    x:Name="StereoCameraCalibrationButton"
+                    />
             <Button Content="Fundamental"
                     Margin="4"
                     Command="{Binding FindFundamentalMatricesCommand}"
