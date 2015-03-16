@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GalaSoft.MvvmLight.Ioc;
 using Nito.Async.Sockets;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
@@ -12,22 +11,15 @@ namespace UniMoveStation.Business.Service
 {
     public class ServerService : NitoServer
     {
-        public override void RefreshDisplay()
-        {
-            // we can only send messages or disconnect if we have connected clients
-            //serverControl.button_sendMessage.IsEnabled = (ChildSockets.Count != 0);
-            //serverControl.button_disconnectClients.IsEnabled = (ChildSockets.Count != 0);
+        private CamerasModel _cameras;
 
-            //if (System.Windows.Application.Current != null)
-            //{
-            //    MainWindow mainWindow = System.Windows.Application.Current.MainWindow as UniMoveStation.MainWindow;
-            //    // Display status
-            //    if (ListeningSocket == null)
-            //        mainWindow.statusBarTextBlock_listeningState.Text = "Stopped";
-            //    else
-            //        mainWindow.statusBarTextBlock_listeningState.Text = "Listening on " + ListeningSocket.LocalEndPoint.ToString();
-            //    mainWindow.statusBarTextBlock_connectionCount.Text = ChildSockets.Count + " Connections";
-            //}
+        public void Initialize(
+            IConsoleService consoleService, 
+            ServerModel server, 
+            CamerasModel cameras)
+        {
+            base.Initialize(consoleService, server);
+            _cameras = cameras;
         }
 
         protected override bool HandleMessage(object message, SimpleServerChildTcpSocket socket)
@@ -87,7 +79,6 @@ namespace UniMoveStation.Business.Service
 
         private Vector3 GetFusionPosition(int trackerIndex, int moveIndex)
         {
-            Vector3 position = Vector3.zero;
             CameraModel camera = GetCamera(trackerIndex);
             MotionControllerModel mc = GetMotionController(moveIndex);
 
@@ -101,12 +92,11 @@ namespace UniMoveStation.Business.Service
                 Console.WriteLine("[Server] Tracker {0} not available.", trackerIndex);
                 return Vector3.zero;
             }
-            return mc.RawPosition[camera];
+            return mc.FusionPosition[camera];
         }
 
         private Vector3 GetFusionPosition(string trackerName, string moveName)
         {
-            Vector3 position = Vector3.zero;
             CameraModel camera = GetCamera(trackerName);
             MotionControllerModel mc = GetMotionController(moveName);
 
@@ -120,58 +110,54 @@ namespace UniMoveStation.Business.Service
                 Console.WriteLine("[Server] Tracker \"{0}\" not available.", trackerName);
                 return Vector3.zero;
             }
-            return mc.RawPosition[camera];
+            return mc.FusionPosition[camera];
         }
 
         private CameraModel GetCamera(int index)
         {
-            // TODO ioc
-            //foreach (CameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-            //{
-            //    if (scvw.Camera.TrackerId == index)
-            //    {
-            //        return scvw.Camera;
-            //    }
-            //}
+            foreach (CameraModel camera in _cameras.Cameras)
+            {
+                if (camera.TrackerId == index)
+                {
+                    return camera;
+                }
+            }
             return null;
         }
 
         private CameraModel GetCamera(string name)
         {
-            // TODO ioc
-            //foreach (CameraViewModel scvw in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
-            //{
-            //    if (scvw.Camera.Name.Equals(name))
-            //    {
-            //        return scvw.Camera;
-            //    }
-            //}
+            foreach (CameraModel camera in _cameras.Cameras)
+            {
+                if (camera.Name.Equals(name))
+                {
+                    return camera;
+                }
+            }
             return null;
         }
 
         private MotionControllerModel GetMotionController(int index)
         {
-            // TODO ioc
-            //foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
-            //{
-            //    if (mcvw.MotionController.Id == index)
-            //    {
-            //        return mcvw.MotionController;
-            //    }
-            //}
+            foreach (MotionControllerModel controller in _cameras.Controllers)
+            {
+                if (controller.Id == index)
+                {
+                    return controller;
+                }
+            }
             return null;
         }
 
         private MotionControllerModel GetMotionController(string name)
         {
-            // TODO ioc
-            //foreach (MotionControllerViewModel mcvw in SimpleIoc.Default.GetAllCreatedInstances<MotionControllerViewModel>())
-            //{
-            //    if (mcvw.MotionController.Name.Equals(name))
-            //    {
-            //        return mcvw.MotionController;
-            //    }
-            //}
+            foreach (MotionControllerModel controller in _cameras.Controllers)
+            {
+                if (controller.Name.Equals(name))
+                {
+                    return controller;
+                }
+            }
             return null;
         }
     } // ServerService
