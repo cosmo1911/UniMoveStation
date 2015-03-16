@@ -36,7 +36,10 @@ namespace UniMoveStation.Representation.ViewModel
             ServerService = SimpleIoc.Default.GetInstance<ServerService>();
 
             Server = new ServerModel();
-            ServerService.Initialize(ConsoleService, Server);
+            ServerService.Initialize(
+                ConsoleService, 
+                Server, 
+                SimpleIoc.Default.GetInstance<CamerasViewModel>().CamerasModel);
 
             ServerService.OnClientAddedHandler += delegate(object sender, EventArgs e)
             {

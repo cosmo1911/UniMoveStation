@@ -145,11 +145,11 @@ namespace UniMoveStation.Business.Service
                     _cornersPointsList, 
                     _grayFrame.Size, 
                     _camera.Calibration.IntrinsicParameters, 
-                    CALIB_TYPE.DEFAULT, 
+                    CALIB_TYPE.CV_CALIB_RATIONAL_MODEL, 
                     new MCvTermCriteria(30, 0.1), 
                     out ex);
 
-                _camera.Calibration.ExtrinsicParameters = ex;
+                //_camera.Calibration.ExtrinsicParameters = ex;
 
                 //set up to allow another calculation
                 //SetButtonState(true);

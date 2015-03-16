@@ -384,19 +384,32 @@ namespace UniMoveStation.Business.Service
                         imgPts,
                         _camera.Calibration.IntrinsicParameters);
 
+                    Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(new double[]
+                    {
+                        ex.TranslationVector[0, 0],
+                        ex.TranslationVector[1, 0],
+                        ex.TranslationVector[2, 0],
+                        1
+                    });
+                    mc.CameraPosition[_camera] = new Vector3(
+                        (float)coordinatesInCameraSpace_homo[0, 0], 
+                        (float)coordinatesInCameraSpace_homo[1, 0], 
+                        (float)coordinatesInCameraSpace_homo[2, 0]);
+                    
+
                     ex.RotationVector[0, 0] += (Math.PI / 180) * (_camera.Calibration.RotX + _camera.Calibration.XAngle);
                     ex.RotationVector[1, 0] += (Math.PI / 180) * (_camera.Calibration.RotY + _camera.Calibration.YAngle);
                     ex.RotationVector[2, 0] += (Math.PI / 180) * (_camera.Calibration.RotZ + _camera.Calibration.ZAngle);
 
                     _camera.Calibration.ExtrinsicParameters[mc.Id] = ex;
-                    Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
-                    R3x3_cameraToWorld = CvHelper.Rotate(
+                    Matrix<double> minusRotation = new Matrix<double>(3, 3);
+                    minusRotation = CvHelper.Rotate(
                         -_camera.Calibration.RotX - _camera.Calibration.XAngle,
                         -_camera.Calibration.RotY - _camera.Calibration.YAngle,
                         -_camera.Calibration.RotZ - _camera.Calibration.ZAngle);
 
-                    Matrix<double> minus = new Matrix<double>(3, 3);
-                    minus = CvHelper.Rotate(
+                    Matrix<double> R3x3_cameraToWorld = new Matrix<double>(3, 3);
+                    R3x3_cameraToWorld = CvHelper.Rotate(
                         _camera.Calibration.RotX,
                         _camera.Calibration.RotY + _camera.Calibration.YAngle,
                         _camera.Calibration.RotZ);
@@ -411,8 +424,6 @@ namespace UniMoveStation.Business.Service
                         _camera.Calibration.ExtrinsicParameters[mc.Id],
                         _camera.Calibration.IntrinsicParameters);
 
-
-
                     Matrix<double> cameraPositionInWorldSpace4x4 = new Matrix<double>(new double[,]
                     {
                         {1, 0, 0, _camera.Calibration.TranslationToWorld[0, 0]},
@@ -421,17 +432,8 @@ namespace UniMoveStation.Business.Service
                         {0, 0, 0, 1},
                     });
 
-                    Matrix<double> coordinatesInCameraSpace_homo = new Matrix<double>(new double[]
-                    {
-                        ex.TranslationVector[0, 0],
-                        ex.TranslationVector[1, 0],
-                        ex.TranslationVector[2, 0],
-                        1
-                    });
-
-                    mc.CameraPosition[_camera] = new Vector3((float)coordinatesInCameraSpace_homo[0, 0], (float)coordinatesInCameraSpace_homo[1, 0], (float)coordinatesInCameraSpace_homo[2, 0]);
-                    Matrix<double> Rt_homo = CvHelper.ConvertToHomogenous(minus);
-                    Matrix<double> x_world_homo = CvHelper.ConvertToHomogenous(R3x3_cameraToWorld) * coordinatesInCameraSpace_homo;
+                    Matrix<double> Rt_homo = CvHelper.ConvertToHomogenous(R3x3_cameraToWorld);
+                    Matrix<double> x_world_homo = CvHelper.ConvertToHomogenous(minusRotation) * coordinatesInCameraSpace_homo;
                     Rt_homo[0, 3] = x_world_homo[0, 0];
                     Rt_homo[1, 3] = x_world_homo[1, 0];
                     Rt_homo[2, 3] = x_world_homo[2, 0];

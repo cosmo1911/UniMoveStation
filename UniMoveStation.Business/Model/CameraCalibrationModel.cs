@@ -97,8 +97,8 @@ namespace UniMoveStation.Business.Model
             {
                 if (_objectPoints2D == null)
                 {
-                    const float radiusCm = (int)((14.0 / Math.PI) * 100) / 200f;
-                    const float diameterCm = (int)((14.0 / Math.PI) * 100) / 100f;
+                    const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
+                    const float diameterCm = (int)((13.5 / Math.PI) * 100) / 100f;
 
                     _objectPoints2D = new MCvPoint3D32f[4];
                     _objectPoints2D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, 0);
@@ -132,8 +132,8 @@ namespace UniMoveStation.Business.Model
             {
                 if (_objectPoints3D == null)
                 {
-                    const float radiusCm = (int)((14.0 / Math.PI) * 100) / 200f;
-                    const float diameterCm = (int)((14.0 / Math.PI) * 100) / 100f;
+                    const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
+                    const float diameterCm = (int)((13.5 / Math.PI) * 100) / 100f;
 
                     _objectPoints3D = new MCvPoint3D32f[8];
                     _objectPoints3D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);

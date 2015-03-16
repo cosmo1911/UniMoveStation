@@ -35,14 +35,42 @@
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   PreviewMouseWheel="DataGrid_PreviewMouseWheel">
+            <!--<DataGrid.Resources>
+                <Style x:Key="DataGridBase" TargetType="Control">
+                    <Setter Property="LayoutTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90" />
+                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                </Style >
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridBase}"/>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridBase}"/>
+                <Style TargetType="DataGridRowHeader" BasedOn="{StaticResource DataGridBase}"/>
+            </DataGrid.Resources>
+
+            <DataGrid.LayoutTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="90" />
+                    <MatrixTransform Matrix="-1, 0, 0, 1, 0, 0" />
+                </TransformGroup>
+            </DataGrid.LayoutTransform>
             
-            <!--<Style TargetType="{x:Type DataGridRow}">
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding}" Value="{x:Static CollectionView.NewItemPlaceholder}">
-                        
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>-->
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel.LayoutTransform>
+                            <TransformGroup>
+                                <RotateTransform Angle="90" />
+                                <MatrixTransform Matrix="-1, 0, 0, 1, 0, 0" />
+                            </TransformGroup>
+                        </StackPanel.LayoutTransform>
+                    </StackPanel>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>-->
             <DataGrid.Columns>
                 <!--Name-->
                 <DataGridTextColumn Header="Name"

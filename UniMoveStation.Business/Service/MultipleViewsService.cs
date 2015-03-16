@@ -163,7 +163,7 @@ namespace UniMoveStation.Business.Service
 
             if (controllers.Count == 0) return;
 
-            const float radiusCm = (int)((14.0 / Math.PI) * 100) / 200f;
+            const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
             int cameraCount = _cameras.Cameras.Count;
             int pointCount = 8;
             MCvPoint3D64f[] objectPoints = new MCvPoint3D64f[controllers.Count * pointCount];
@@ -182,6 +182,9 @@ namespace UniMoveStation.Business.Service
                 visibility[camera.Calibration.Index] = new int[controllers.Count * pointCount];
                 cameraMatrix[camera.Calibration.Index] = camera.Calibration.IntrinsicParameters.IntrinsicMatrix.Clone();
                 distCoefficients[camera.Calibration.Index] = camera.Calibration.IntrinsicParameters.DistortionCoeffs.Clone();
+                imagePoints[camera.Calibration.Index] = new MCvPoint2D64f[controllers.Count * pointCount];
+                R[camera.Calibration.Index] = camera.Calibration.RotationToWorld.Clone();
+                T[camera.Calibration.Index] = camera.Calibration.TranslationToWorld.Clone();
 
                 foreach (MotionControllerModel controller in controllers)
                 {
@@ -229,10 +232,6 @@ namespace UniMoveStation.Business.Service
 
                         //imagePoints[scvm.Camera.Calibration.Index] = Utils.GetImagePoints(mcvm.MotionController.RawPosition[scvm.Camera]);
                         imagePoints[camera.Calibration.Index] = Array.ConvertAll(camera.Calibration.ObjectPointsProjected, CvHelper.PointFtoPoint2D);
-
-                        R[camera.Calibration.Index] = camera.Calibration.RotationToWorld.Clone();
-                        T[camera.Calibration.Index] = camera.Calibration.TranslationToWorld.Clone();
-
                     }
                 } // foreach controller
             } // foreach camera
@@ -275,16 +274,24 @@ namespace UniMoveStation.Business.Service
             {
                 if (visibility[camera.Calibration.Index][0] == 1)
                 {
+                    RotationVector3D rot1 = new RotationVector3D();
+                    rot1.RotationMatrix = camera.Calibration.RotationToWorld;
+
+                    RotationVector3D rot2 = new RotationVector3D();
+                    rot2.RotationMatrix = R[camera.Calibration.Index];
+
+                    Console.WriteLine((int)(rot1[0, 0] * (180 / Math.PI)) + " " + (int)(rot2[0, 0] * (180 / Math.PI)));
+                    Console.WriteLine((int)(rot1[1, 0] * (180 / Math.PI)) + " " + (int)(rot2[1, 0] * (180 / Math.PI)));
+                    Console.WriteLine((int)(rot1[2, 0] * (180 / Math.PI)) + " " + (int)(rot2[2, 0] * (180 / Math.PI)) + Environment.NewLine);
+
                     camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
                     camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
                     camera.Calibration.TranslationToWorld = T[camera.Calibration.Index];
                     //camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[camera.Calibration.Index];
 
-                    //RotationVector3D rot = new RotationVector3D();
-                    //rot.RotationMatrix = R[camera.Calibration.Index];
-                    //camera.Calibration.XAngle = (int)(rot[0, 0] * (180 / Math.PI));
-                    //camera.Calibration.YAngle = (int)(rot[1, 0] * (180 / Math.PI));
-                    //camera.Calibration.ZAngle = (int)(rot[2, 0] * (180 / Math.PI));
+                    //camera.Calibration.XAngle = (int)(rot2[0, 0] * (180 / Math.PI));
+                    //camera.Calibration.YAngle = (int)(rot2[1, 0] * (180 / Math.PI));
+                    //camera.Calibration.ZAngle = (int)(rot2[2, 0] * (180 / Math.PI));
                 }
             }
 
