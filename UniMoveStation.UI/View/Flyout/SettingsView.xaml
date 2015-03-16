@@ -4,8 +4,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ignore="http://www.ignore.com"
-             xmlns:utils="clr-namespace:UniMoveStation.Common.Utils;assembly=UniMoveStation.Common"
              xmlns:flyout="clr-namespace:UniMoveStation.Representation.ViewModel.Flyout;assembly=UniMoveStation.Representation"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d ignore"
              DataContext="{Binding Settings, Source={StaticResource ViewModelLocator}}"
              d:DataContext="{d:DesignInstance Type=flyout:SettingsViewModel, IsDesignTimeCreatable=True}">
@@ -16,152 +16,172 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical">
-                <!--Window Position-->
-                <Grid Margin="0 0 0 4">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.ColumnSpan="4"
-                               Margin="0 0 0 2"
-                               Text="Window Position"
-                               />
-                    <TextBlock Grid.Row="1" 
-                               Grid.Column="0"
-                               Text="Left"
-                               Margin="0 4 4 4"
-                               VerticalAlignment="Center"
-                               />
-                    <TextBox Grid.Row="1"
-                             Grid.Column="1"
-                             Text="{Binding Settings.Left, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
-                             />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="2"
-                               Text="Top"
-                               Margin="4"
-                               VerticalAlignment="Center"
-                               />
-                    <TextBox Grid.Row="1"
-                             Grid.Column="3"
-                             Text="{Binding Settings.Top, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
-                             />
-                </Grid>
-                <!--Window Size-->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.ColumnSpan="4"
-                               Margin="0 4 0 2"
-                               Text="Window Size"
-                               />
-                    <TextBlock Grid.Row="1" 
-                               Grid.Column="0"
-                               Text="Width"
-                               Margin="0 4 4 4"
-                               VerticalAlignment="Center"
-                               />
-                    <TextBox Grid.Row="1" 
-                             Text="{Binding Settings.Width,
-                                            Mode=TwoWay,
-                                            UpdateSourceTrigger=Explicit,
-                                            ValidatesOnDataErrors=True,
-                                            NotifyOnValidationError=True}"
-                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
-                             Grid.Column="1"
-                             />
-                    <TextBlock Grid.Row="1" 
-                               Grid.Column="2"
-                               Text="Height"
-                               Margin="4"
-                               VerticalAlignment="Center"
-                               />
-                    <TextBox Grid.Row="1" 
-                             Grid.Column="3"
-                             Text="{Binding Settings.Height, UpdateSourceTrigger=Explicit}"
-                             utils:InputBindingsManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"
-                             />
-                </Grid>
-                <!--Load Controllers on Start Up-->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock VerticalAlignment="Center"
-                               Text="Load Controllers on Start Up"
-                               Margin="0 4 2 4"
-                               />
-                    <CheckBox Grid.Row="0" 
-                              Grid.Column="1"
-            	              IsChecked="{Binding Settings.LoadControllersOnStartUp, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center"
-            	              VerticalAlignment="Center" 
-                              Margin="2 4 0 4"
-                              />
-                    <!--Load Cameras on Start Up-->
-                    <TextBlock Grid.Row="1" 
-                               Grid.Column="0"
-                               VerticalAlignment="Center"
-                               Text="Load Cameras on Start Up"
-                               Margin="0 4 2 4"
-                               />
-                    <CheckBox Grid.Row="1"
-                              Grid.Column="1"
-            	              IsChecked="{Binding Settings.LoadCamerasOnStartUp, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center"
-            	              VerticalAlignment="Center" 
-                              Margin="2 4 0 4"
-                              />
-                    <TextBlock Grid.Row="2" 
-                               Grid.Column="0"
-                               VerticalAlignment="Center"
-                               Text="Debug"
-                               Margin="0 4 2 4"
-                               />
-                    <CheckBox Grid.Row="2"
-                              Grid.Column="1"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              Margin="2 4 0 4"
-                              IsChecked="{Binding Settings.Settings.Debug, 
-                                          Mode=TwoWay, 
-                                          Source={StaticResource ViewModelLocator},
-                                          UpdateSourceTrigger=PropertyChanged}"
-                                          />
-                </Grid>
-
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="0"
+                    Margin="4">
+            <!--Window-->
+            <TextBlock Text="Window"
+                       Margin="0 4 4 4"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       FontFamily="Segoe UI Semibold"
+                       FontSize="16"
+                       FontWeight="Normal"
+                       Opacity="0.65"
+                       Foreground="{DynamicResource BlackBrush}"
+                       />
+            <Grid Margin="0 0 0 4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="0"
+                           Text="Position X"
+                           Margin="0 4 4 4"
+                           VerticalAlignment="Center"
+                           />
+                <controls:NumericUpDown Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="4"
+                                        Value="{Binding Settings.Left, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Minimum="0"
+                                        />
+                <TextBlock Grid.Row="1"
+                           Grid.Column="2"
+                           Text="Position Y"
+                           Margin="16 4 4 4"
+                           VerticalAlignment="Center"
+                           />
+                <controls:NumericUpDown Grid.Row="1"
+                                        Grid.Column="3"
+                                        Margin="4"
+                                        Value="{Binding Settings.Top, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Minimum="0"
+                                        />
+                <TextBlock Grid.Row="2" 
+                           Grid.Column="0"
+                           Text="Width"
+                           Margin="0 4 4 4"
+                           VerticalAlignment="Center"
+                           />
+                <controls:NumericUpDown Grid.Row="2" 
+                                        Grid.Column="1"
+                                        Margin="4"
+                                        Value="{Binding Settings.Width,
+                                                        Mode=TwoWay,
+                                                        UpdateSourceTrigger=PropertyChanged,
+                                                        ValidatesOnDataErrors=True,
+                                                        NotifyOnValidationError=True}"
+                                        Minimum="480"
+                                        />
+                <TextBlock Grid.Row="2" 
+                           Grid.Column="2"
+                           Text="Height"
+                           Margin="16 4 4 4"
+                           VerticalAlignment="Center"
+                           />
+                <controls:NumericUpDown Grid.Row="2" 
+                                        Grid.Column="3"
+                                        Margin="4"
+                                        Value="{Binding Settings.Height, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+            </Grid>
+            <StackPanel Orientation="Horizontal"
+                        Margin="0 4 0 4">
+                <TextBlock Text="Bluetooth Hosts"
+                           Margin="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           FontFamily="Segoe UI Semibold"
+                           FontSize="16"
+                           FontWeight="Normal"
+                           Opacity="0.65"
+                           Foreground="{DynamicResource BlackBrush}"
+                           />
+                <TextBlock Text="(moved_hosts.txt)"
+                           Margin="4 0 0 0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           FontFamily="Segoe UI Semibold"
+                           FontSize="16"
+                           FontWeight="Normal"
+                           Opacity="0.33"
+                           Foreground="{DynamicResource BlackBrush}"
+                           />
             </StackPanel>
-            
-        </ScrollViewer>
+
+            <TextBox Margin="0 4 0 4"
+                         Text="{Binding Settings.MovedHostsFile, 
+                                        Mode=TwoWay}"
+                         Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}"
+                         MinWidth="451"
+                         MinHeight="58"
+                         controls:TextboxHelper.Watermark="{Binding Settings.MovedHostsWaterMark}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         />
+            <TextBlock Text="Miscellaneous"
+                           Margin="0 4 4 4"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           FontFamily="Segoe UI Semibold"
+                           FontSize="16"
+                           FontWeight="Normal"
+                           Opacity="0.65"
+                           Foreground="{DynamicResource BlackBrush}"
+                           />
+            <StackPanel>
+
+                <CheckBox IsChecked="{Binding Settings.LoadControllersOnStartUp, 
+                                              UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Left"
+            	          VerticalAlignment="Center" 
+                          Margin="0 4 4 4">
+                    
+                        <TextBlock Text="Load Controllers on Start Up"/>
+                    
+                    </CheckBox>
+                <!--Load Cameras on Start Up-->
+                <CheckBox IsChecked="{Binding Settings.LoadCamerasOnStartUp, 
+                                              UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Left"
+            	          VerticalAlignment="Center" 
+                          Margin="0 4 4 4">
+                    <TextBlock Text="Load Cameras on Start Up"/>
+                    </CheckBox>
+                <CheckBox HorizontalAlignment="Left"
+                          VerticalAlignment="Center"
+                          Margin="0 4 4 4"
+                          IsChecked="{Binding Settings.Settings.Debug, 
+                                              Mode=TwoWay, 
+                                              Source={StaticResource ViewModelLocator},
+                                               UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock Text="Debug"/>
+                    </CheckBox>
+                
+            </StackPanel>
+
+        </StackPanel>
+
         <UniformGrid Columns="3"
-                     Grid.Row="2"
-                     Margin="8">
+                     Grid.Row="2" 
+                     Grid.Column="0"
+                     Margin="8"
+                     Grid.ColumnSpan="2">
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
                     Content="save"

@@ -151,6 +151,9 @@
     <Compile Include="Service\TrackerService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="moved.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

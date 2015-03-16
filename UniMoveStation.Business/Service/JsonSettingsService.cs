@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 using UniMoveStation.Business.JsonConverter;
 using UniMoveStation.Business.Model;
@@ -25,8 +24,8 @@ namespace UniMoveStation.Business.Service
                     writer.Close();
             }
 
-            File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".psmoveapi\\moved_hosts.txt"),
-                settings.MovedHosts);
+            File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".psmoveapi\\moved_hosts.txt"),
+                settings.MovedHostsFile);
         } // SaveSettings
 
         public void SaveCamera(CameraModel cameraModel)
@@ -102,6 +101,7 @@ namespace UniMoveStation.Business.Service
             TextReader reader;
             string defaultPath = AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\default.conf.json";
             string userPath = AppDomain.CurrentDomain.BaseDirectory + "\\cfg\\user.conf.json";
+            string movedMdPath = AppDomain.CurrentDomain.BaseDirectory + "\\moved.md";
             string movedHostsPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 ".psmoveapi\\moved_hosts.txt");
@@ -121,7 +121,16 @@ namespace UniMoveStation.Business.Service
             }
             if (File.Exists(movedHostsPath))
             {
-                settings.MovedHosts = File.ReadAllLines(movedHostsPath).ToList();
+                settings.MovedHostsFile = File.ReadAllText(movedHostsPath);
+                //string[] lines = File.ReadAllLines(movedHostsPath);
+                //foreach (string line in lines)
+                //{
+                //    settings.MovedHostsFile += line + "&#10;";
+                //}
+            }
+            if (File.Exists(movedMdPath))
+            {
+                settings.MovedHostsWaterMark = File.ReadAllText(movedMdPath);
             }
             return settings;
         } // ReloadSettings

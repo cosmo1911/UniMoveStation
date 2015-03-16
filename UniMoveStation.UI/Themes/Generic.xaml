@@ -334,17 +334,19 @@
                TargetType="{x:Type controls:Flyout}">
 
         <Setter Property="IsOpen"
-                    Value="{Binding IsOpen}"
-                    />
+                Value="{Binding IsOpen}"
+                />
         <Setter Property="Position"
-                    Value="{Binding Position}"
-                    />
+                Value="{Binding Position}"
+                />
         <Setter Property="Header"
-                    Value="{Binding Header}"
-                    />
+                Value="{Binding Header}"
+                />
         <Setter Property="MinWidth"
-                    Value="300"
-                    />
+                Value="300"
+                />
+        <Setter Property="CloseCommand"
+                Value="{Binding CloseCommand}"/>
     </Style>
     <Style x:Key="AddMotionControllerFlyoutStyle"
                BasedOn="{StaticResource DefaultFlyoutStyle}"

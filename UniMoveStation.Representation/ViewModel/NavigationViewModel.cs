@@ -181,10 +181,15 @@ namespace UniMoveStation.Representation.ViewModel
                         }
                         else if (tag.ToString().Equals("server"))
                         {
-                            if(SimpleIoc.Default.GetInstance<ServerViewModel>().Server.Enabled)
+                            if(SimpleIoc.Default.GetInstance<ServerService>().Server.Enabled)
                             {
                                 NitoClient client = new NitoClient();
                                 client.Connect("127.0.0.1", SimpleIoc.Default.GetInstance<ServerService>().Server.Port);
+                            }
+                            else
+                            {
+                                SimpleIoc.Default.GetInstance<ServerService>()
+                                    .ConsoleService.WriteLine("Client could not connect to server. Check if the server is running.");
                             }
                         }
                     }));

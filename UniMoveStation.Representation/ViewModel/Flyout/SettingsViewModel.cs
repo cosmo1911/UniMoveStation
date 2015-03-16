@@ -154,7 +154,13 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         {
  	        Settings = SettingsService.ReloadSettings();
         }
-       
+
+        protected override void DoClose()
+        {
+            DoReloadSettings();
+            base.DoClose();
+        }
+
         #endregion
     }
 

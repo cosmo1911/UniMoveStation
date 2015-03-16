@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using MahApps.Metro.Controls;
+using UniMoveStation.Representation.MessengerMessage;
 
 namespace UniMoveStation.Representation.ViewModel.Flyout
 {
@@ -11,6 +14,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         private bool _isOpen;
         private string _header = "None";
         private Position _position = Position.Right;
+        private RelayCommand _closeCommand;
 
         #region Properties
         /// <summary>
@@ -59,6 +63,16 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         {
             get { return _isOpen; }
             set { Set(() => IsOpen, ref _isOpen, value, true); }
+        }
+
+        public RelayCommand CloseCommand
+        {
+            get { return _closeCommand ?? (_closeCommand = new RelayCommand(DoClose)); }
+        }
+
+        protected virtual void DoClose()
+        {
+
         }
         #endregion
     } // FlyoutBaseViewModel

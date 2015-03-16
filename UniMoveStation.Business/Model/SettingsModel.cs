@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using GalaSoft.MvvmLight;
@@ -16,7 +17,8 @@ namespace UniMoveStation.Business.Model
         private bool _debug;
         private bool _loadCamerasOnStartUp;
         private bool _loadControllersOnStartUp;
-        private List<string> _movedHosts;
+        private string _movedHostsFile;
+        private string _movedHostsFileWaterMark;
 
         public SettingsModel()
         {
@@ -27,7 +29,6 @@ namespace UniMoveStation.Business.Model
             LoadCamerasOnStartUp = true;
             LoadControllersOnStartUp = true;
             Debug = false;
-            _movedHosts = new List<string>();
         }
 
         [JsonProperty]
@@ -37,10 +38,16 @@ namespace UniMoveStation.Business.Model
             set { Set(() => Debug, ref _debug, value); }
         }
 
-        public List<string> MovedHosts
+        public string MovedHostsFile
         {
-            get { return _movedHosts; }
-            set { Set(() => MovedHosts, ref _movedHosts, value); }
+            get { return _movedHostsFile; }
+            set { Set(() => MovedHostsFile, ref _movedHostsFile, value); }
+        }
+
+        public string MovedHostsWaterMark
+        {
+            get { return _movedHostsFileWaterMark; }
+            set { Set(() => MovedHostsWaterMark, ref _movedHostsFileWaterMark, value); }
         }
 
         [JsonProperty]
