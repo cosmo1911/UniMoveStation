@@ -68,8 +68,8 @@ namespace UniMoveStation.Business.Service
                                 }
                             }
                         }
-                        UpdateImage();
                         UpdateTracker();
+                        UpdateImage();
                         sw.Stop();
                         Thread.Sleep((int) (Math.Max((1000.0 / _camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
                     }
@@ -149,7 +149,6 @@ namespace UniMoveStation.Business.Service
         {
             if (_camera.Handle != IntPtr.Zero)
             {
-                PsMoveApi.psmove_tracker_update_image(_camera.Handle);
                 if (!_camera.ShowImage) return;
 
                 //display useful information
@@ -189,10 +188,11 @@ namespace UniMoveStation.Business.Service
         #region Tracker
         public void UpdateTracker()
         {
-            if (_camera.Handle != IntPtr.Zero && !_ctsUpdate.IsCancellationRequested)
+            if (_camera.Handle != IntPtr.Zero)
             {
                 try
                 {
+                    PsMoveApi.psmove_tracker_update_image(_camera.Handle);
                     foreach (MotionControllerModel mc in _camera.Controllers)
                     {
                         if (mc.Tracking[_camera])

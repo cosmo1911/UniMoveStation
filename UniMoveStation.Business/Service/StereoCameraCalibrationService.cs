@@ -94,7 +94,9 @@ namespace UniMoveStation.Business.Service
                     {
                         while (!token.IsCancellationRequested)
                         {
+                            _capture1.UpdateTracker();
                             _capture1.UpdateImage();
+                            _capture2.UpdateTracker();
                             _capture2.UpdateImage();
                             #region Frame Aquasition
                             //Aquire the frames or calculate two frames from one camera
