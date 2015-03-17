@@ -42,7 +42,7 @@ namespace UniMoveStation.Business.Service
             if (_updateTask != null && _updateTask.Status == TaskStatus.Running) return;
 
             _ctsUpdate = new CancellationTokenSource();
-            StartTracker(1f);
+            StartTracker(PSMoveTrackerExposure.Low);
             try
             {
                 _updateTask = Task.Factory.StartNew(() =>
@@ -68,8 +68,8 @@ namespace UniMoveStation.Business.Service
                                 }
                             }
                         }
-                        UpdateTracker();
                         UpdateImage();
+                        UpdateTracker();
                         sw.Stop();
                         Thread.Sleep((int) (Math.Max((1000.0 / _camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
                     }
@@ -88,12 +88,12 @@ namespace UniMoveStation.Business.Service
             }
         }
 
-        private async void CancelUpdateTask()
+        private void CancelUpdateTask()
         {
             if(_ctsUpdate != null)
             {
                 _ctsUpdate.Cancel();
-                await _updateTask;
+                _updateTask.Wait();
                 PsMoveApi.delete_PSMoveTracker(_camera.Handle);
                 _camera.Handle = IntPtr.Zero;
             }
@@ -147,8 +147,11 @@ namespace UniMoveStation.Business.Service
 
         public void UpdateImage()
         {
-            if (_camera.ShowImage && _camera.Handle != IntPtr.Zero)
+            if (_camera.Handle != IntPtr.Zero)
             {
+                PsMoveApi.psmove_tracker_update_image(_camera.Handle);
+                if (!_camera.ShowImage) return;
+
                 //display useful information
                 if (_camera.Annotate) PsMoveApi.psmove_tracker_annotate(_camera.Handle);
                 //retrieve and convert image frame
@@ -175,6 +178,8 @@ namespace UniMoveStation.Business.Service
 
         public Image<Bgr, Byte> GetImage()
         {
+            if (_camera.Handle == IntPtr.Zero) return null;
+
             IntPtr frame = PsMoveApi.psmove_tracker_get_frame(_camera.Handle);
             MIplImage rgb32Image = (MIplImage)Marshal.PtrToStructure(frame, typeof(MIplImage));
             return new Image<Bgr, byte>(rgb32Image.width, rgb32Image.height, rgb32Image.widthStep, rgb32Image.imageData);
@@ -188,7 +193,6 @@ namespace UniMoveStation.Business.Service
             {
                 try
                 {
-                    PsMoveApi.psmove_tracker_update_image(_camera.Handle);
                     foreach (MotionControllerModel mc in _camera.Controllers)
                     {
                         if (mc.Tracking[_camera])
@@ -206,13 +210,15 @@ namespace UniMoveStation.Business.Service
             }
         }
 
-        public bool StartTracker(float dimming)
+        public bool StartTracker(PSMoveTrackerExposure exposure)
         {
             if (_camera.Handle == IntPtr.Zero)
             {
                 _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
                 ConsoleService.WriteLine(string.Format("[Tracker, {0}] Started.", _camera.GUID));
-                PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, dimming);
+                PsMoveApi.psmove_tracker_set_exposure(_camera.Handle, exposure);
+                // full led intensity
+                PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, 1f);
                 _camera.Fusion = PsMoveApi.new_PSMoveFusion(_camera.Handle, 1.0f, 1000f);
             }
             return _camera.Handle != IntPtr.Zero;
@@ -222,7 +228,7 @@ namespace UniMoveStation.Business.Service
         {
             if (mc.Design) return;
 
-            if (_camera.Handle == IntPtr.Zero) StartTracker(1f);
+            if (_camera.Handle == IntPtr.Zero) StartTracker(PSMoveTrackerExposure.Low);
 
             ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({1}).", _camera.GUID, mc.Serial));
 

@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Emgu.CV;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -18,6 +21,7 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
     /// </summary>
     public class StereoCameraCalibrationViewModel  : ViewModelBase
     {
+        #region Member
         private ObservableCollection<CameraModel> _cameras;
         private StereoCameraCalibrationModel _calibration;
         private StereoCameraCalibrationService _calibrationService;
@@ -29,8 +33,57 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
         private RelayCommand _startCalibrationCommand;
         private RelayCommand _saveCalibrationCommand;
 
-        public ObservableCollection<CameraModel> _cameras1;
-        public ObservableCollection<CameraModel> _cameras2;
+        private ObservableCollection<CameraModel> _cameras1;
+        private ObservableCollection<CameraModel> _cameras2;
+        #endregion
+
+        #region Constructor
+        public StereoCameraCalibrationViewModel(ObservableCollection<CameraModel> cameras)
+        {
+            Cameras = cameras;
+            if (IsInDesignMode)
+            {
+
+            }
+            else
+            {
+                CalibrationService = new StereoCameraCalibrationService();
+                ConsoleService = new ConsoleService();
+                
+                Calibration = new StereoCameraCalibrationModel()
+                {
+                    Camera1 = Cameras[0],
+                    Camera2 = Cameras[1],
+                };
+                CalibrationService.Initialize(Calibration, ConsoleService);
+            }
+        }
+        #endregion
+
+        #region Properties
+        public ObservableCollection<CameraModel> Cameras
+        {
+            get { return _cameras; }
+            set { Set(() => Cameras, ref _cameras, value); }
+        }
+
+        public StereoCameraCalibrationModel Calibration
+        {
+            get { return _calibration; }
+            set { Set(() => Calibration, ref _calibration, value); }
+        }
+
+        public IConsoleService ConsoleService
+        {
+            get { return _consoleService; }
+            set { Set(() => ConsoleService, ref _consoleService, value); }
+        }
+
+        public StereoCameraCalibrationService CalibrationService
+        {
+            get { return _calibrationService; }
+            set { Set(() => CalibrationService, ref _calibrationService, value); }
+        }
 
         public ObservableCollection<CameraModel> Cameras1
         {
@@ -58,50 +111,15 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             }
         }
 
-        public StereoCameraCalibrationViewModel(ObservableCollection<CameraModel> cameras)
+        public IEnumerable<StereoSGBM.Mode> StereoSgbmValues
         {
-            Cameras = cameras;
-            if (IsInDesignMode)
+            get
             {
-
-            }
-            else
-            {
-                CalibrationService = new StereoCameraCalibrationService();
-                ConsoleService = new ConsoleService();
-                
-                Calibration = new StereoCameraCalibrationModel()
-                {
-                    Camera1 = Cameras[0],
-                    Camera2 = Cameras[1],
-                };
-                CalibrationService.Initialize(Calibration, ConsoleService);
+                return Enum.GetValues(typeof(StereoSGBM.Mode))
+                    .Cast<StereoSGBM.Mode>();
             }
         }
-
-        public ObservableCollection<CameraModel> Cameras
-        {
-            get { return _cameras; }
-            set { Set(() => Cameras, ref _cameras, value); }
-        }
-
-        public StereoCameraCalibrationModel Calibration
-        {
-            get { return _calibration; }
-            set { Set(() => Calibration, ref _calibration, value); }
-        }
-
-        public IConsoleService ConsoleService
-        {
-            get { return _consoleService; }
-            set { Set(() => ConsoleService, ref _consoleService, value); }
-        }
-
-        public StereoCameraCalibrationService CalibrationService
-        {
-            get { return _calibrationService; }
-            set { Set(() => CalibrationService, ref _calibrationService, value); }
-        }
+        #endregion
 
         #region Commands
         /// <summary>
@@ -112,7 +130,8 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             get
             {
                 return _cancelCalibrationCommand
-                    ?? (_cancelCalibrationCommand = new RelayCommand(DoCancelCalibration));
+                    ?? (_cancelCalibrationCommand = new RelayCommand(DoCancelCalibration,
+                        () => Calibration.StartFlag));
             }
         }
 
@@ -126,7 +145,7 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
                 return _startCalibrationCommand
                     ?? (_startCalibrationCommand = new RelayCommand(
                         DoStartCalibration,
-                        () => true));
+                        () => !Calibration.StartFlag));
             }
         }
 
@@ -140,7 +159,7 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
                 return _saveCalibrationCommand
                     ?? (_saveCalibrationCommand = new RelayCommand(
                         DoSaveCalibration,
-                        () => true));
+                        () => false));
             }
         }
 
@@ -173,13 +192,13 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
 
         public void DoCancelCalibration()
         {
-            _calibrationService.StopCapture();
+            _calibrationService.CancelCalibration();
         }
 
         public void DoStartCalibration()
         {
             _calibrationService.Initialize(Calibration, new ConsoleService());
-            _calibrationService.StartCapture();
+            _calibrationService.StartCalibration();
         }
 
         public void DoSaveCalibration()
@@ -192,9 +211,12 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             CameraModel model = obj as CameraModel;
             if (model != null)
             {
+                CalibrationService.StopCapture();
                 Cameras2.Add(Calibration.Camera1);
                 Cameras2.Remove(model);
                 Calibration.Camera1 = model;
+                CalibrationService.Initialize(Calibration, ConsoleService);
+                CalibrationService.StartCapture();
             }
         }
 
@@ -203,12 +225,14 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             CameraModel model = obj as CameraModel;
             if (model != null)
             {
+                CalibrationService.StopCapture();
                 Cameras1.Add(Calibration.Camera2);
                 Cameras1.Remove(model);
                 Calibration.Camera2 = model;
+                CalibrationService.Initialize(Calibration, ConsoleService);
+                CalibrationService.StartCapture();
             }
         }
-
         #endregion
     }
 }

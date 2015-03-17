@@ -188,6 +188,9 @@ namespace UniMoveStation.UI.View
 
         public async void ShowStereoCameraCalibrationDialog()
         {
+            _viewModel.DoToggleCamera(false);
+            _viewModel.DoToggleTracking(false);
+
             _dialog = new StereoCameraCalibrationView(_parentWindow)
             {
                 DataContext = new StereoCameraCalibrationViewModel(_viewModel.CamerasModel.Cameras)

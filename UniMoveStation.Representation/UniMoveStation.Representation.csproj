@@ -112,7 +112,7 @@
     <Compile Include="ValueConverter\QuaternionToStringConverter.cs" />
     <Compile Include="ValueConverter\Vector3ToStringConverter.cs" />
     <Compile Include="ViewModel\ClientViewModel.cs" />
-    <Compile Include="ViewModel\Dialog\StereoCameraCalibrationViewModel .cs" />
+    <Compile Include="ViewModel\Dialog\StereoCameraCalibrationViewModel.cs" />
     <Compile Include="ViewModel\Dialog\CameraCalibrationViewModel.cs" />
     <Compile Include="ViewModel\Dialog\CameraPositioningCalibrationViewModel.cs" />
     <Compile Include="ViewModel\CamerasViewModel.cs" />

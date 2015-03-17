@@ -74,7 +74,8 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             get
             {
                 return _cancelCalibrationCommand
-                    ?? (_cancelCalibrationCommand = new RelayCommand(DoCancelCalibration));
+                    ?? (_cancelCalibrationCommand = new RelayCommand(DoCancelCalibration,
+                        () => Camera.Calibration.StartFlag));
             }
         }
 
@@ -88,7 +89,7 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
                 return _startCalibrationCommand
                     ?? (_startCalibrationCommand = new RelayCommand(
                         DoStartCalibration,
-                        () => Camera.Calibration.StartFlag == false && Camera.TrackerId == 0));
+                        () => !Camera.Calibration.StartFlag && Camera.TrackerId == 0));
             }
         }
 
@@ -124,5 +125,5 @@ namespace UniMoveStation.Representation.ViewModel.Dialog
             _calibrationService.SaveCalibration();
         }
         #endregion
-    }
-}
+    } // CameraCalibrationViewModel
+} // namespace

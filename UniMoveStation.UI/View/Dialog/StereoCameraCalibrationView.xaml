@@ -29,19 +29,39 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Vertical"
-                        DataContext="{Binding}">
+                        VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Image Width="160"
+                           Height="120"
+                           DataContext="{Binding}"
+                           Source="{Binding Calibration.Camera1.ImageSource}"
+                           />
+                    <Image Width="160"
+                           Height="120"
+                           DataContext="{Binding}"
+                           Source="{Binding Calibration.Camera2.ImageSource, Mode=TwoWay}"
+                           />
+                </StackPanel>
                 <Image Width="320"
                        Height="240"
-                       Source="{Binding Calibration.Camera1.ImageSource, UpdateSourceTrigger=PropertyChanged}"
-                       />
-                <Image Width="320"
-                       Height="240"
-                       Source="{Binding Calibration.Camera2.ImageSource, UpdateSourceTrigger=PropertyChanged}"
+                       DataContext="{Binding}"
+                       Source="{Binding Calibration.DisparityImageSource}"
                        />
             </StackPanel>
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -61,7 +81,9 @@
                            />
                 <ContentControl Grid.Column="1"
                                 Grid.Row="0" 
-                                Content="{Binding Cameras1}">
+                                Content="{Binding Cameras1}"
+                                IsEnabled="{Binding Calibration.StartFlag,
+                                                    Converter={StaticResource InverseBooleanConverter}}">
 
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
@@ -120,7 +142,9 @@
                            />
                 <ContentControl Grid.Column="1"
                                 Grid.Row="1" 
-                                Content="{Binding Cameras2}">
+                                Content="{Binding Cameras2}"
+                                IsEnabled="{Binding Calibration.StartFlag, 
+                                                    Converter={StaticResource InverseBooleanConverter}}">
 
                     <ContentControl.ContentTemplate>
                         <DataTemplate>
@@ -183,6 +207,7 @@
                 <TextBox Grid.Row="2" 
                          Grid.Column="1"
                          Margin="4"
+                         DataContext="{Binding}"
                          Text="{Binding Calibration.CurrentMode}"
                          IsReadOnly="True"
                          />
@@ -197,37 +222,229 @@
                                         Grid.Column="1" 
                                         Minimum="1"
                                         Margin="4"
-                                        IsReadOnly="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
                                         Value="{Binding Calibration.FrameBufferSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         />
-                <!--Error-->
+                <!--Square Size X-->
                 <TextBlock Grid.Row="4" 
+                           Grid.Column="0"
+                           Text="Square Size X (mm)"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <controls:NumericUpDown Grid.Row="4" 
+                                        Grid.Column="1" 
+                                        Minimum="1"
+                                        Margin="4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.SquareSizeX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                <!--Square Size Y-->
+                <TextBlock Grid.Row="5" 
+                           Grid.Column="0"
+                           Text="Square Size Y (mm)"
+                           VerticalAlignment="Center"
+                           Margin="4"
+                           />
+                <controls:NumericUpDown Grid.Row="5" 
+                                        Grid.Column="1" 
+                                        Minimum="1"
+                                        Margin="4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.SquareSizeY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                <!--Error-->
+                <TextBlock Grid.Row="6" 
                            Grid.Column="0"
                            Text="Error"
                            VerticalAlignment="Center"
                            Margin="4"
                            />
                 <TextBox Grid.Column="1"
-                         Grid.Row="4"
+                         Grid.Row="6"
                          Margin="4"
                          Text="{Binding Calibration.Error}"
                          DataContext="{Binding}"
                          IsReadOnly="True"
                          />
                 <!--Start Flag-->
-                <TextBlock Grid.Row="5" 
+                <TextBlock Grid.Row="7" 
                            Grid.Column="0"
                            Text="StartFlag"
                            VerticalAlignment="Center"
                            Margin="4"
                            />
                 <CheckBox Grid.Column="1"
-                          Grid.Row="5"
+                          Grid.Row="7"
                           Margin="4"
                           HorizontalAlignment="Center"
+                          DataContext="{Binding}"
                           IsChecked="{Binding Calibration.StartFlag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           IsEnabled="False"
-                          />         
+                          />
+
+                <!--NumDisparities-->
+                <TextBlock Grid.Row="8" 
+                           Grid.Column="0"
+                           Text="NumDisparities"
+                           VerticalAlignment="Center"
+                           Margin="4 16 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="8" 
+                                        Grid.Column="1" 
+                                        Minimum="16"
+                                        Maximum="160"
+                                        Interval="16"
+                                        Margin="4 16 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.NumDisparities, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--MinDisparities-->
+                <TextBlock Grid.Row="9" 
+                           Grid.Column="0"
+                           Text="MinDisparities"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="9" 
+                                        Grid.Column="1" 
+                                        Minimum="0"
+                                        Maximum="159"
+                                        Interval="16"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.MinDisparities, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--SAD-->
+                <TextBlock Grid.Row="10" 
+                           Grid.Column="0"
+                           Text="SAD"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="10" 
+                                        Grid.Column="1" 
+                                        Minimum="1"
+                                        Maximum="19"
+                                        Interval="2"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.SAD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--Max Diff-->
+                <TextBlock Grid.Row="11" 
+                           Grid.Column="0"
+                           Text="Max Diff"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="11" 
+                                        Grid.Column="1" 
+                                        Minimum="-1"
+                                        Maximum="100"
+                                        Interval="10"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.MaxDiff, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--Prefilter Cap-->
+                <TextBlock Grid.Row="12" 
+                           Grid.Column="0"
+                           Text="Prefilter Cap"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="12" 
+                                        Grid.Column="1" 
+                                        Minimum="0"
+                                        Maximum="1000"
+                                        Interval="100"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.PrefilterCap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--Uniqueness Ratio-->
+                <TextBlock Grid.Row="13" 
+                           Grid.Column="0"
+                           Text="Uniqueness Ratio"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="13" 
+                                        Grid.Column="1" 
+                                        Minimum="0"
+                                        Maximum="30"
+                                        Interval="2"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.UniquenessRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+
+                <!--Speckle-->
+                <TextBlock Grid.Row="14" 
+                           Grid.Column="0"
+                           Text="Speckle"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="14" 
+                                        Grid.Column="1" 
+                                        Minimum="0"
+                                        Maximum="64"
+                                        Interval="8"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.Speckle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                <!--Speckle Range-->
+                <TextBlock Grid.Row="15" 
+                           Grid.Column="0"
+                           Text="Speckle Range"
+                           VerticalAlignment="Center"
+                           Margin="4 16 4 4"
+                           />
+                <controls:NumericUpDown Grid.Row="15" 
+                                        Grid.Column="1" 
+                                        Minimum="0"
+                                        Maximum="160"
+                                        Interval="16"
+                                        Margin="4 4 4 4"
+                                        DataContext="{Binding}"
+                                        IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                                        Value="{Binding Calibration.SpeckleRange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        />
+                <!--Disparity Mode-->
+                <TextBlock Grid.Row="16" 
+                           Grid.Column="0"
+                           Text="Disparity Mode"
+                           VerticalAlignment="Center"
+                           Margin="4 4 4 4"
+                           />
+                <ComboBox Grid.Row="16" 
+                          Grid.Column="1" 
+                          ItemsSource="{Binding StereoSgbmValues}"
+                          SelectedItem="{Binding Calibration.DisparityMode, 
+                                                 Mode=TwoWay, 
+                                                 UpdateSourceTrigger=PropertyChanged}"
+                          Margin="4 4 4 4"
+                          DataContext="{Binding}"
+                          IsEnabled="{Binding Calibration.StartFlag, Converter={StaticResource InverseBooleanConverter}}"
+                          />
             </Grid>
         </Grid>
 
