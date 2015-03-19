@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight.Threading;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Interfaces;
 
@@ -27,11 +28,15 @@ namespace UniMoveStation.Business.Service
                 : DateTime.Now.TimeOfDay.Seconds.ToString();
             string time = hours + ":" + minutes + ":" + seconds;
 
-            Entries.Add(new ConsoleEntry
+            DispatcherHelper.RunAsync(() =>
             {
-                Text = text,
-                Time = time
+                Entries.Add(new ConsoleEntry
+                {
+                    Text = text,
+                    Time = time
+                });
             });
+
         }
     } // ConsoleService
 } // namespace
