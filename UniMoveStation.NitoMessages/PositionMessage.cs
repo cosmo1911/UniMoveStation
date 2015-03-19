@@ -1,17 +1,18 @@
 ﻿using System;
-using UniMoveStation.Common;
 
 namespace UniMoveStation.NitoMessages
 {
     [Serializable]
     public class PositionMessage
     {
-        public Float3 Message { get; set; }
+        public PositionType Type { get; set; }
+
+        public Float3 Position { get; set; }
 
         public long StartTick { get; set; }
 
-        public int TrackerIndex { get; set; }
+        public int CameraIndex { get; set; }
 
-        public int MoveIndex { get; set; }
+        public int ControllerIndex { get; set; }
     }
 }

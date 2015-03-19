@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UniMoveStation.NitoMessages</RootNamespace>
     <AssemblyName>UniMoveStation.NitoMessages</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -54,6 +54,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Nito.Async">
+      <HintPath>..\UniMoveStationMvvm\plugins\ref\Nito.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.Async.Sockets">
+      <HintPath>..\UniMoveStationMvvm\plugins\ref\Nito.Async.Sockets.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
@@ -62,15 +68,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComplexMessage.cs" />
+    <Compile Include="Float3.cs" />
     <Compile Include="PositionMessage.cs" />
+    <Compile Include="PositionRequest.cs" />
+    <Compile Include="PositionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializationHelper.cs" />
     <Compile Include="StringMessage.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UniMoveStation.Common\UniMoveStation.Common.csproj">
-      <Project>{f8f14469-54e7-4536-8354-91c6598a0bc2}</Project>
-      <Name>UniMoveStation.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

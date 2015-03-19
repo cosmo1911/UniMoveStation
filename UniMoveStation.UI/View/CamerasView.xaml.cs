@@ -180,7 +180,7 @@ namespace UniMoveStation.UI.View
         {
             _dialog = new CameraPositioningCalibrationView(_parentWindow)
             {
-                DataContext = new CameraPositioningCalibrationViewModel(_viewModel.CameraViewModels)
+                DataContext = new CameraPositioningCalibrationViewModel(_viewModel.CamerasModel)
             };
 
             await _parentWindow.ShowMetroDialogAsync(_dialog);

@@ -10,7 +10,7 @@ using Nito.Async.Sockets;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
-using UniMoveStation.Common.Utils;
+using UniMoveStation.NitoMessages;
 
 namespace UniMoveStation.Business.Nito
 {
@@ -157,14 +157,14 @@ namespace UniMoveStation.Business.Nito
 
         protected virtual bool HandleMessage(object message, SimpleServerChildTcpSocket socket)
         {
-            NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
+            StringMessage stringMessage = message as StringMessage;
             if (stringMessage != null)
             {
                 ConsoleService.WriteLine("Socket read got a string message from " + socket.RemoteEndPoint + ": " + stringMessage.Message);
                 return true;
             }
 
-            NitoMessages.ComplexMessage complexMessage = message as NitoMessages.ComplexMessage;
+            ComplexMessage complexMessage = message as ComplexMessage;
             if (complexMessage != null)
             {
                 ConsoleService.WriteLine("Socket read got a complex message from " + socket.RemoteEndPoint + ": (UniqueID = " + complexMessage.UniqueID +
@@ -255,7 +255,7 @@ namespace UniMoveStation.Business.Nito
         public void SendMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, string message)
         {
             // This function sends a simple (string) message to all connected clients
-            NitoMessages.StringMessage msg = new NitoMessages.StringMessage();
+            StringMessage msg = new StringMessage();
             msg.Message = message;
 
             string description = "<string message: " + msg.Message + ">";
@@ -328,7 +328,7 @@ namespace UniMoveStation.Business.Nito
         public void SendComplexMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, string message)
         {
             // This function sends a complex message to all connected clients
-            NitoMessages.ComplexMessage msg = new NitoMessages.ComplexMessage();
+            ComplexMessage msg = new ComplexMessage();
             msg.UniqueID = Guid.NewGuid();
             msg.Time = DateTimeOffset.Now;
             msg.Message = message;

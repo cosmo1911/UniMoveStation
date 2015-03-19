@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows.Controls;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
 using UniMoveStation.Business.Service;
 using UniMoveStation.Representation.MessengerMessage;

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nito.Async.Sockets;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
 using UniMoveStation.Business.Service.Interfaces;
-using UniMoveStation.Common.Utils;
+using UniMoveStation.NitoMessages;
 using UnityEngine;
 
 namespace UniMoveStation.Business.Service
@@ -28,48 +29,83 @@ namespace UniMoveStation.Business.Service
             Server.ChildSockets.TryGetValue(socket, out socketState);
             KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket = new KeyValuePair<SimpleServerChildTcpSocket,ChildSocketState>(socket, socketState);
 
-            NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
-            if (stringMessage != null)
+            PositionRequest positionRequest = message as PositionRequest;
+            if (positionRequest != null)
             {
-                ConsoleService.WriteLine("Socket read got a string message from " + socket.RemoteEndPoint + ": " + stringMessage.Message);
-                if (stringMessage.Message.Contains("GetFusionPosition"))
+                string consoleString;
+                Float3 position = Float3.Zero;
+
+                if (positionRequest.Type != PositionType.Bundled)
                 {
-                    String[] splitMessage = null;
-                    char[] splitCharacters = { '(', ')', ',', ' ' };
-
-                    splitMessage = stringMessage.Message.Split(splitCharacters, StringSplitOptions.RemoveEmptyEntries);
-
-                    int trackerIndex = Convert.ToInt32(splitMessage[1]);
-                    int moveIndex = Convert.ToInt32(splitMessage[2]);
-                    Vector3 position = GetFusionPosition(trackerIndex, moveIndex);
-
-                    SendPositionMessage(childSocket, position, trackerIndex, moveIndex);
+                    consoleString = String.Format("{0} requests {1} position of controller {2} from camera {3}.", 
+                        socket.RemoteEndPoint,
+                        Enum.GetName(typeof(PositionType), positionRequest.Type),
+                        positionRequest.ControllerIndex,
+                        positionRequest.CameraIndex);
                 }
-                return true;
-            }
+                else
+                {
+                    consoleString = String.Format("{0} requests {1} position of controller {2}.", 
+                        socket.RemoteEndPoint,
+                        Enum.GetName(typeof(PositionType), positionRequest.Type),
+                        positionRequest.ControllerIndex);
+                }
 
-            NitoMessages.ComplexMessage complexMessage = message as NitoMessages.ComplexMessage;
-            if (complexMessage != null)
-            {
-                ConsoleService.WriteLine("Socket read got a complex message from " + socket.RemoteEndPoint + ": (UniqueID = " + complexMessage.UniqueID +
-                    ", Time = " + complexMessage.Time + ", Message = " + complexMessage.Message + ")");
-                ConsoleService.WriteLine(DateTime.Now.Millisecond.ToString());
+                switch (positionRequest.Type)
+                {
+                    case PositionType.Bundled:
+                        position = GetBundledPosition(positionRequest.ControllerIndex);
+                        break;
+                    case PositionType.Camera:
+                        break;
+                    case PositionType.Fusion:
+                        position = GetFusionPosition(positionRequest.CameraIndex, positionRequest.ControllerIndex);
+                        break;
+                    case PositionType.Raw:
+                        break;
+                    case PositionType.World:
+                        position = GetWorldPosition(positionRequest.CameraIndex, positionRequest.ControllerIndex);
+                        break;
+                }
+
+                ConsoleService.WriteLine(consoleString);
+
+                SendPositionMessage(childSocket, new PositionMessage()
+                {
+                    Position = position,
+                    Type = positionRequest.Type,
+                    StartTick = positionRequest.StartTick,
+                    CameraIndex = positionRequest.CameraIndex,
+                    ControllerIndex = positionRequest.CameraIndex
+                });
                 return true;
             }
 
             return base.HandleMessage(message, socket);
         }
 
-        public void SendPositionMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, Vector3 position, int trackerIndex, int moveIndex)
+        private Float3 GetBundledPosition(int controllerIndex)
         {
-            NitoMessages.PositionMessage msg = new NitoMessages.PositionMessage();
-            msg.Message = position;
-            msg.StartTick = DateTimeOffset.Now.Ticks;
-            msg.TrackerIndex = trackerIndex;
-            msg.MoveIndex = moveIndex;
+            Float3 position = Float3.Zero;
+            int visibleCount = 0;
+            MotionControllerModel mc = GetController(controllerIndex);
 
+            foreach (CameraModel camera in _cameras.Cameras)
+            {
+                if (mc.Tracking[camera])
+                {
+                    visibleCount++;
+                    position += mc.WorldPosition[camera];
+                }
+            }
+
+            return new Float3(position.X / visibleCount, position.Y / visibleCount, position.Z / visibleCount);
+        }
+
+        public void SendPositionMessage(KeyValuePair<SimpleServerChildTcpSocket, ChildSocketState> childSocket, PositionMessage msg)
+        {
             string description = string.Format("<{0} message: {1}, StartTick={2}, TrackerIndex={3}, MoveIndex={4}>", 
-                msg.Message.GetType(), msg.Message, msg.StartTick, msg.TrackerIndex, msg.MoveIndex);
+                msg.Position.GetType(), msg.Position, msg.StartTick, msg.CameraIndex, msg.ControllerIndex);
 
             // Serialize it to a binary array
             byte[] binaryObject = SerializationHelper.Serialize(msg);
@@ -77,28 +113,34 @@ namespace UniMoveStation.Business.Service
             SendSerializedMessage(childSocket, binaryObject, description);
         }
 
-        private Vector3 GetFusionPosition(int trackerIndex, int moveIndex)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cameraIndex">calibration index</param>
+        /// <param name="moveIndex"></param>
+        /// <returns></returns>
+        private Float3 GetFusionPosition(int cameraIndex, int moveIndex)
         {
-            CameraModel camera = GetCamera(trackerIndex);
-            MotionControllerModel mc = GetMotionController(moveIndex);
+            CameraModel camera = GetCamera(cameraIndex);
+            MotionControllerModel mc = GetController(moveIndex);
 
-            if(mc == null)
+            if (mc == null)
             {
                 Console.WriteLine("[Server] Controller {0} not available.", moveIndex);
                 return Vector3.zero;
             }
-            if(camera == null)
+            if (camera == null)
             {
-                Console.WriteLine("[Server] Tracker {0} not available.", trackerIndex);
+                Console.WriteLine("[Server] Tracker {0} not available.", cameraIndex);
                 return Vector3.zero;
             }
             return mc.FusionPosition[camera];
         }
 
-        private Vector3 GetFusionPosition(string trackerName, string moveName)
+        private Float3 GetFusionPosition(string trackerName, string moveName)
         {
             CameraModel camera = GetCamera(trackerName);
-            MotionControllerModel mc = GetMotionController(moveName);
+            MotionControllerModel mc = GetController(moveName);
 
             if (mc == null)
             {
@@ -113,52 +155,66 @@ namespace UniMoveStation.Business.Service
             return mc.FusionPosition[camera];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cameraIndex">calibration index</param>
+        /// <param name="moveIndex"></param>
+        /// <returns></returns>
+        private Float3 GetWorldPosition(int cameraIndex, int moveIndex)
+        {
+            CameraModel camera = GetCamera(cameraIndex);
+            MotionControllerModel mc = GetController(moveIndex);
+
+            if (mc == null)
+            {
+                Console.WriteLine("[Server] Controller {0} not available.", moveIndex);
+                return Float3.Zero;
+            }
+            if (camera == null)
+            {
+                Console.WriteLine("[Server] Tracker {0} not available.", cameraIndex);
+                return Float3.Zero;
+            }
+            return mc.WorldPosition[camera];
+        }
+
+        private Float3 GetWorldPosition(string trackerName, string moveName)
+        {
+            CameraModel camera = GetCamera(trackerName);
+            MotionControllerModel mc = GetController(moveName);
+
+            if (mc == null)
+            {
+                Console.WriteLine("[Server] Controller \"{0}\" not available.", moveName);
+                return Float3.Zero;
+            }
+            if (camera == null)
+            {
+                Console.WriteLine("[Server] Tracker \"{0}\" not available.", trackerName);
+                return Float3.Zero;
+            }
+            return mc.FusionPosition[camera];
+        }
+
         private CameraModel GetCamera(int index)
         {
-            foreach (CameraModel camera in _cameras.Cameras)
-            {
-                if (camera.TrackerId == index)
-                {
-                    return camera;
-                }
-            }
-            return null;
+            return _cameras.Cameras.FirstOrDefault(camera => camera.Calibration.Index == index);
         }
 
         private CameraModel GetCamera(string name)
         {
-            foreach (CameraModel camera in _cameras.Cameras)
-            {
-                if (camera.Name.Equals(name))
-                {
-                    return camera;
-                }
-            }
-            return null;
+            return _cameras.Cameras.FirstOrDefault(camera => camera.Name.Equals(name));
         }
 
-        private MotionControllerModel GetMotionController(int index)
+        private MotionControllerModel GetController(int index)
         {
-            foreach (MotionControllerModel controller in _cameras.Controllers)
-            {
-                if (controller.Id == index)
-                {
-                    return controller;
-                }
-            }
-            return null;
+            return _cameras.Controllers.FirstOrDefault(controller => controller.Id == index);
         }
 
-        private MotionControllerModel GetMotionController(string name)
+        private MotionControllerModel GetController(string name)
         {
-            foreach (MotionControllerModel controller in _cameras.Controllers)
-            {
-                if (controller.Name.Equals(name))
-                {
-                    return controller;
-                }
-            }
-            return null;
+            return _cameras.Controllers.FirstOrDefault(controller => controller.Name.Equals(name));
         }
     } // ServerService
 } // namespace

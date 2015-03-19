@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.Nito;
 using UniMoveStation.Business.Service;
 using UniMoveStation.Representation.MessengerMessage;
 
@@ -26,6 +27,17 @@ namespace UniMoveStation.Representation.ViewModel
             Client = client;
             client.Name = "Client";
 
+            Messenger.Default.Register<RemoveClientMessage>(this, (message) =>
+            {
+                if (message.Client.RemoteEndPoint == Client.RemoteEndPoint)
+                {
+                    if (Client.ClientSocketState == ChildSocketState.Connected)
+                    {
+                        SimpleIoc.Default.GetInstance<ServerService>().Disconnect(Client);
+                    }
+                    SimpleIoc.Default.Unregister(this);
+                }
+            });
             SimpleIoc.Default.Register(() => this, client.RemoteEndPoint);
         }
         #endregion

@@ -4,11 +4,34 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using UniMoveStation.NitoMessages;
 
 namespace UniMoveStation.Common.Utils
 {
     public static class CvHelper
     {
+        public static MCvPoint3D64f GetCubeCenter(MCvPoint3D64f[] cubeObjectPoints)
+        {
+            double mx = 0, my = 0, mz = 0;
+            for (int i = 0; i < cubeObjectPoints.Length; i++)
+            {
+                mx += cubeObjectPoints[i].x / cubeObjectPoints.Length;
+                my += cubeObjectPoints[i].y / cubeObjectPoints.Length;
+                mz += cubeObjectPoints[i].z / cubeObjectPoints.Length;
+            }
+            return new MCvPoint3D64f(mx, my, mz);
+        }
+
+        public static double GetDistanceToPoint(MCvPoint3D64f origin, MCvPoint3D64f destination)
+        {
+            return GetPoint3dMagnitude(destination - origin);
+        }
+
+        public static double GetPoint3dMagnitude(MCvPoint3D64f point)
+        {
+            return Math.Sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
+        }
+
         public static Matrix<double> GetTranslationVector(double x, double y, double z)
         {
             double[,] data = new double[3, 1];

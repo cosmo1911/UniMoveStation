@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UniMoveStation.Common
+namespace UniMoveStation.NitoMessages
 {
     [Serializable]
     public class Float3

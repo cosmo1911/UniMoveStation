@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Ioc;
@@ -306,6 +307,7 @@ namespace UniMoveStation.Representation.ViewModel
             foreach (CameraModel camera in CamerasModel.Cameras)
             {
                 SimpleIoc.Default.GetInstance<CameraViewModel>(camera.GUID).DoToggleCamera(enabled);
+                Task.Delay(100).Wait();
             }
             CamerasModel.ShowImage = enabled;
         }

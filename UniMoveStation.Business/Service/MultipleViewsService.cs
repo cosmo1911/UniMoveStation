@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -18,8 +19,11 @@ namespace UniMoveStation.Business.Service
 {
     public class MultipleViewsService
     {
-        private CamerasModel _cameras { get; set; }
-        public List<ITrackerService> TrackerServices { get; set; }
+        private Stopwatch _stopwatch;
+
+        private CamerasModel _cameras;
+
+
         private CancellationTokenSource _ctsBundle;
         private Task _bundleTask;
 
@@ -27,9 +31,11 @@ namespace UniMoveStation.Business.Service
         private Task _fcpTask;
         private bool _fcpFinished;
 
+        public List<ITrackerService> TrackerServices { get; set; }
+
         public MultipleViewsService()
         {
-
+            _stopwatch = new Stopwatch();
         }
 
         public void Initialize(CamerasModel cameras, List<ITrackerService> trackerServices)
@@ -39,7 +45,7 @@ namespace UniMoveStation.Business.Service
 
             foreach (CameraModel cameraModel in _cameras.Cameras)
             {
-                TrackerServices[_cameras.Cameras.IndexOf(cameraModel)].OnImageReady += TrackerService_OnImageReady;
+                //TrackerServices[_cameras.Cameras.IndexOf(cameraModel)].OnImageReady += TrackerService_OnImageReady;
             }
         }
 
@@ -65,14 +71,14 @@ namespace UniMoveStation.Business.Service
                     Matrix<double> fundamentalMatrix = new Matrix<double>(3, 3);
 
                     IntPtr fundamentalMatrixPtr = CvInvoke.cvCreateMat(3, 3, MAT_DEPTH.CV_32F);
-                    CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix.Ptr, CV_FM.CV_FM_RANSAC, 3,
+                    CvInvoke.cvFindFundamentalMat(points1Ptr, points2Ptr, fundamentalMatrix, CV_FM.CV_FM_RANSAC, 3,
                         0.99, IntPtr.Zero);
 
                     Matrix<double> lines1 = new Matrix<double>(8, 3);
-                    CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix.Ptr, lines1.Ptr);
+                    CvInvoke.cvComputeCorrespondEpilines(points2Ptr, 2, fundamentalMatrix, lines1);
 
                     Matrix<double> lines2 = new Matrix<double>(8, 3);
-                    CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix.Ptr, lines2.Ptr);
+                    CvInvoke.cvComputeCorrespondEpilines(points1Ptr, 1, fundamentalMatrix, lines2);
 
                     for (int i = 0; i < cameraModel1.Calibration.ObjectPointsProjected.Length; i++)
                     {
@@ -163,7 +169,7 @@ namespace UniMoveStation.Business.Service
 
             if (controllers.Count == 0) return;
 
-            const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
+            float radius = CameraCalibrationModel.SPHERE_RADIUS_CM;
             int cameraCount = _cameras.Cameras.Count;
             int pointCount = 8;
             MCvPoint3D64f[] objectPoints = new MCvPoint3D64f[controllers.Count * pointCount];
@@ -193,48 +199,59 @@ namespace UniMoveStation.Business.Service
 
                     //if (x == 0 && y == 0) return;
 
-                    if (x == 0 && y == 0)
+                    // controller is not visible
+                    if (!controller.Tracking[camera])
                     {
                         for (int i = 0; i < pointCount; i++)
                         {
                             visibility[camera.Calibration.Index][i + controller.Id * pointCount] = 0;
                         }
                     }
+                    // controller is visible
                     else
                     {
                         visible++;
-                        for (int i = controller.Id * pointCount; i < pointCount * controllers.Count; i++)
+                        double distance = 0.0;
+                        int startIndex = controller.Id * pointCount;
+
+                        MCvPoint3D64f cameraPositionInWorld = new MCvPoint3D64f
                         {
-                            visibility[camera.Calibration.Index][i] = 1; 
-                        }
+                            x = camera.Calibration.TranslationToWorld[0, 0],
+                            y = camera.Calibration.TranslationToWorld[1, 0],
+                            z = camera.Calibration.TranslationToWorld[2, 0]
+                        };
 
-                        double distance = Math.Abs(objectPoints[0].z) -
-                                             Math.Abs(controller.WorldPosition[camera].z - radiusCm);
-                        // camera which is closest to the controller should be most precise
-                        // TODO: replace with average / kalman / ...?
-                        if (objectPoints[0].x == 0 || distance > 0)
+                        // set visibility and calculate distance of the controller relative to the camera
+                        for (int i = startIndex; i < pointCount * controllers.Count; i++)
                         {
-                            float wx = controller.WorldPosition[camera].x;
-                            float wy = controller.WorldPosition[camera].y;
-                            float wz = controller.WorldPosition[camera].z;
-
-
-                            objectPoints[0] += new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz - radiusCm);
-                            objectPoints[1] += new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz - radiusCm);
-                            objectPoints[2] += new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz - radiusCm);
-                            objectPoints[3] += new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz - radiusCm);
-
-                            objectPoints[4] += new MCvPoint3D32f(wx - radiusCm, wy + radiusCm, wz + radiusCm);
-                            objectPoints[5] += new MCvPoint3D32f(wx + radiusCm, wy + radiusCm, wz + radiusCm);
-                            objectPoints[6] += new MCvPoint3D32f(wx + radiusCm, wy - radiusCm, wz + radiusCm);
-                            objectPoints[7] += new MCvPoint3D32f(wx - radiusCm, wy - radiusCm, wz + radiusCm);
+                            visibility[camera.Calibration.Index][i] = 1;
+                            double d = CvHelper.GetDistanceToPoint(cameraPositionInWorld,objectPoints[i]);
+                            distance += d / pointCount;
                         }
+                        // initialize object's world coordinates
+                        // calculate world coordinate as the average of each camera's transformed world coordinate
+                        // TODO: replace with  kalman filter...?
+                        float wx = controller.WorldPosition[camera].x;
+                        float wy = controller.WorldPosition[camera].y;
+                        float wz = controller.WorldPosition[camera].z;
 
+                        objectPoints[startIndex]     += new MCvPoint3D32f(wx - radius, wy - radius, wz - radius);
+                        objectPoints[startIndex + 1] += new MCvPoint3D32f(wx + radius, wy - radius, wz - radius);
+                        objectPoints[startIndex + 2] += new MCvPoint3D32f(wx + radius, wy + radius, wz - radius);
+                        objectPoints[startIndex + 3] += new MCvPoint3D32f(wx - radius, wy + radius, wz - radius);
+
+                        objectPoints[startIndex + 4] += new MCvPoint3D32f(wx - radius, wy + radius, wz + radius);
+                        objectPoints[startIndex + 5] += new MCvPoint3D32f(wx + radius, wy + radius, wz + radius);
+                        objectPoints[startIndex + 6] += new MCvPoint3D32f(wx + radius, wy - radius, wz + radius);
+                        objectPoints[startIndex + 7] += new MCvPoint3D32f(wx - radius, wy - radius, wz + radius);
+                        
                         //imagePoints[scvm.Camera.Calibration.Index] = Utils.GetImagePoints(mcvm.MotionController.RawPosition[scvm.Camera]);
                         imagePoints[camera.Calibration.Index] = Array.ConvertAll(camera.Calibration.ObjectPointsProjected, CvHelper.PointFtoPoint2D);
                     }
                 } // foreach controller
             } // foreach camera
+
+            if (visible == 0) return;
 
             // average object points
             for (int i = 0; i < objectPoints.Length; i++)
@@ -244,29 +261,16 @@ namespace UniMoveStation.Business.Service
                 objectPoints[i].z /= visible;
             }
 
-            // check for calucation error
-            for (int i = 0; i < objectPoints.Length; i++)
-            {
-                if (objectPoints[i].x.ToString().Equals("NaN")) return;
-                else if (objectPoints[i].y.ToString().Equals("NaN")) return;
-                else if (objectPoints[i].z.ToString().Equals("NaN")) return;
-            }
-
-            //Stopwatch sw = new Stopwatch();
-            //sw.Start();
-
             Console.WriteLine("Input: ({0}, {1}, {2})", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
             LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
             Console.WriteLine("Output: ({0}, {1}, {2})\n", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
-            //sw.Stop();
-            //ConsoleService.WriteLine("bundle adjust: " + sw.Elapsed.ToString());
 
             // check for calucation error
             for (int i = 0; i < objectPoints.Length; i++)
             {
                 if (objectPoints[i].x.ToString().Equals("NaN")) return;
-                else if (objectPoints[i].y.ToString().Equals("NaN")) return;
-                else if (objectPoints[i].z.ToString().Equals("NaN")) return;
+                if (objectPoints[i].y.ToString().Equals("NaN")) return;
+                if (objectPoints[i].z.ToString().Equals("NaN")) return;
             }
 
             // save changed matrices
@@ -285,7 +289,7 @@ namespace UniMoveStation.Business.Service
                     Console.WriteLine((int)(rot1[2, 0] * (180 / Math.PI)) + " " + (int)(rot2[2, 0] * (180 / Math.PI)) + Environment.NewLine);
 
                     camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
-                    camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
+                    //camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
                     camera.Calibration.TranslationToWorld = T[camera.Calibration.Index];
                     //camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[camera.Calibration.Index];
 
@@ -295,6 +299,7 @@ namespace UniMoveStation.Business.Service
                 }
             }
 
+            // calculate object's middle
             float posx = 0, posy = 0, posz = 0;
             for (int i = 0; i < objectPoints.Length; i++)
             {
@@ -389,7 +394,10 @@ namespace UniMoveStation.Business.Service
                 {
                     while (!token.IsCancellationRequested)
                     {
+                        _stopwatch.Restart();
                         DoBundleAdjust();
+                        _stopwatch.Stop();
+                        //ConsoleService.WriteLine("bundle adjust: " + sw.Elapsed.ToString());
                     }
                 });
                 await _bundleTask;

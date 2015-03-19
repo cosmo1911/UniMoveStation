@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace UniMoveStation.Common.Utils
+namespace UniMoveStation.NitoMessages
 {
     /// <summary>
     /// Helper functions for message serialization and deserialization.

@@ -13,6 +13,8 @@ namespace UniMoveStation.Business.Model
     [JsonObject(MemberSerialization.OptIn)]
     public class CameraCalibrationModel : ViewModelBase
     {
+        public static float SPHERE_RADIUS_CM = (int) ((13.5/Math.PI)*100)/200f;
+
         private string _cameraGuid;
         private double _error;
         private int _frameBufferSize;
@@ -97,14 +99,11 @@ namespace UniMoveStation.Business.Model
             {
                 if (_objectPoints2D == null)
                 {
-                    const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
-                    const float diameterCm = (int)((13.5 / Math.PI) * 100) / 100f;
-
                     _objectPoints2D = new MCvPoint3D32f[4];
-                    _objectPoints2D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, 0);
-                    _objectPoints2D[1] = new MCvPoint3D32f(radiusCm, -radiusCm, 0);
-                    _objectPoints2D[2] = new MCvPoint3D32f(radiusCm, radiusCm, 0);
-                    _objectPoints2D[3] = new MCvPoint3D32f(-radiusCm, radiusCm, 0);
+                    _objectPoints2D[0] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, 0);
+                    _objectPoints2D[1] = new MCvPoint3D32f(SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, 0);
+                    _objectPoints2D[2] = new MCvPoint3D32f(SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, 0);
+                    _objectPoints2D[3] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, 0);
 
                     //_objectPoints2d[0] = new MCvPoint3D32f(-radiusCm, 0, -radiusCm);
                     //_objectPoints2d[1] = new MCvPoint3D32f(radiusCm, 0, -radiusCm);
@@ -132,19 +131,16 @@ namespace UniMoveStation.Business.Model
             {
                 if (_objectPoints3D == null)
                 {
-                    const float radiusCm = (int)((13.5 / Math.PI) * 100) / 200f;
-                    const float diameterCm = (int)((13.5 / Math.PI) * 100) / 100f;
-
                     _objectPoints3D = new MCvPoint3D32f[8];
-                    _objectPoints3D[0] = new MCvPoint3D32f(-radiusCm, -radiusCm, -radiusCm);
-                    _objectPoints3D[1] = new MCvPoint3D32f(radiusCm, -radiusCm, -radiusCm);
-                    _objectPoints3D[2] = new MCvPoint3D32f(radiusCm, radiusCm, -radiusCm);
-                    _objectPoints3D[3] = new MCvPoint3D32f(-radiusCm, radiusCm, -radiusCm);
+                    _objectPoints3D[0] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM);
+                    _objectPoints3D[1] = new MCvPoint3D32f(SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM);
+                    _objectPoints3D[2] = new MCvPoint3D32f(SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM);
+                    _objectPoints3D[3] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM);
 
-                    _objectPoints3D[4] = new MCvPoint3D32f(-radiusCm, radiusCm, radiusCm);
-                    _objectPoints3D[5] = new MCvPoint3D32f(radiusCm, radiusCm, radiusCm);
-                    _objectPoints3D[6] = new MCvPoint3D32f(radiusCm, -radiusCm, radiusCm);
-                    _objectPoints3D[7] = new MCvPoint3D32f(-radiusCm, -radiusCm, radiusCm);
+                    _objectPoints3D[4] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, SPHERE_RADIUS_CM);
+                    _objectPoints3D[5] = new MCvPoint3D32f(SPHERE_RADIUS_CM, SPHERE_RADIUS_CM, SPHERE_RADIUS_CM);
+                    _objectPoints3D[6] = new MCvPoint3D32f(SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, SPHERE_RADIUS_CM);
+                    _objectPoints3D[7] = new MCvPoint3D32f(-SPHERE_RADIUS_CM, -SPHERE_RADIUS_CM, SPHERE_RADIUS_CM);
 
                     //_objectPoints3d[0] = new MCvPoint3D32f(0, 0, 0);
                     //_objectPoints3d[1] = new MCvPoint3D32f(diameterCm, 0, 0);

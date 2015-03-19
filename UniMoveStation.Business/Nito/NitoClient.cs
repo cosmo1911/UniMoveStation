@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using Nito.Async;
 using Nito.Async.Sockets;
-using UniMoveStation.Common.Utils;
+using UniMoveStation.NitoMessages;
 
 namespace UniMoveStation.Business.Nito
 {
@@ -15,7 +15,7 @@ namespace UniMoveStation.Business.Nito
         /// <summary>
         /// The connected state of the socket.
         /// </summary>
-        protected enum SocketState
+        public enum SocketState
         {
             /// <summary>
             /// The socket is closed; we are not trying to connect.
@@ -46,12 +46,12 @@ namespace UniMoveStation.Business.Nito
         /// <summary>
         /// The connected state of the socket. If this is SocketState.Closed, then ClientSocket is null.
         /// </summary>
-        protected SocketState ClientSocketState;
+        public SocketState ClientSocketState;
 
         /// <summary>
         /// Closes and clears the socket, without causing exceptions.
         /// </summary>
-        private void ResetSocket()
+        protected void ResetSocket()
         {
             // Close the socket
             ClientSocket.Close();
@@ -211,7 +211,7 @@ namespace UniMoveStation.Business.Nito
         protected virtual bool HandleMessages(object message)
         {
             // Handle the message
-            NitoMessages.StringMessage stringMessage = message as NitoMessages.StringMessage;
+            StringMessage stringMessage = message as StringMessage;
             if (stringMessage != null)
             {
                 Console.WriteLine("Socket read got a string message: " + stringMessage.Message);
@@ -222,7 +222,7 @@ namespace UniMoveStation.Business.Nito
                 return true;
             }
 
-            NitoMessages.ComplexMessage complexMessage = message as NitoMessages.ComplexMessage;
+            ComplexMessage complexMessage = message as ComplexMessage;
             if (complexMessage != null)
             {
                 Console.WriteLine("Socket read got a complex message: (UniqueID = " + complexMessage.UniqueID +
@@ -310,7 +310,7 @@ namespace UniMoveStation.Business.Nito
             try
             {
                 // Create the message to send
-                NitoMessages.StringMessage msg = new NitoMessages.StringMessage
+                StringMessage msg = new StringMessage
                 {
                     Message = message
                 };
@@ -340,7 +340,7 @@ namespace UniMoveStation.Business.Nito
             try
             {
                 // Create the message to send
-                NitoMessages.ComplexMessage msg = new NitoMessages.ComplexMessage
+                ComplexMessage msg = new ComplexMessage
                 {
                     UniqueID = Guid.NewGuid(),
                     Time = DateTimeOffset.Now,
