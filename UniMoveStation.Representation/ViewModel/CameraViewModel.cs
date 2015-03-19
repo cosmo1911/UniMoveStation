@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.Windows;
 using Emgu.CV;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -118,16 +121,36 @@ namespace UniMoveStation.Representation.ViewModel
             }, 
             new DesignTrackerService(),  
             new DesignClEyeService(), 
-            new ConsoleService(),
+            new ConsoleService
+            {
+                Entries = new ObservableCollection<ConsoleEntry>
+                {
+                    new ConsoleEntry
+                    {
+                        Time = DateTime.Now.ToShortTimeString(),
+                        Text = "design text"
+                    },
+                    new ConsoleEntry
+                    {
+                        Time = DateTime.Now.ToShortTimeString(),
+                        Text = "design text 2"
+                    }
+                }
+            },
             new HelixCameraVisualizationService())
         {
 
 #if DEBUG
             if (IsInDesignMode)
             {
-                Camera.Controllers.Add((new MotionControllerModel()));
-                Camera.Controllers.Add((new MotionControllerModel()));
-                Camera.Controllers.Add((new MotionControllerModel()));
+                Camera.Controllers.Add((new MotionControllerModel
+                {
+                    Name = "Design",
+                    Tracking = new ObservableConcurrentDictionary<CameraModel, bool>()
+                    {
+                        {Camera, true}
+                    }
+                }));
 
                 Camera.Calibration = new CameraCalibrationModel
                 {
@@ -284,13 +307,13 @@ namespace UniMoveStation.Representation.ViewModel
         public void DoToggleAnnotate(bool annotate)
         {
             Camera.Annotate = annotate;
-            ConsoleService.WriteLine("Annotate: " + annotate);
+            ConsoleService.Write("Annotate: " + annotate);
         }
 
         public void DoToggleDebug(bool debug)
         {
             Camera.Debug = debug;
-            ConsoleService.WriteLine("Debug: " + debug);
+            ConsoleService.Write("Debug: " + debug);
         }
 
         public void DoToggleCamera(bool enabled)
@@ -311,7 +334,7 @@ namespace UniMoveStation.Representation.ViewModel
                 if (CameraService.Enabled) Camera.ShowImage = CameraService.Stop();
                 else if (TrackerService.Enabled) Camera.ShowImage = false;
             }
-            ConsoleService.WriteLine("Show Image: " + Camera.ShowImage);
+            ConsoleService.Write("Show Image: " + Camera.ShowImage);
         }
 
         public void DoToggleTracking(bool enabled)
@@ -332,7 +355,7 @@ namespace UniMoveStation.Representation.ViewModel
                     CameraService.Start();
                 }
             }
-            ConsoleService.WriteLine("Tracking: " + enabled);
+            ConsoleService.Write("Tracking: " + enabled);
         }
 
         public void DoToggleVisualization(bool enabled)

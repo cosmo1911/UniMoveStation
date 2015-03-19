@@ -68,7 +68,7 @@ namespace UniMoveStation.Business.Service
                         break;
                 }
 
-                ConsoleService.WriteLine(consoleString);
+                ConsoleService.Write(consoleString);
 
                 SendPositionMessage(childSocket, new PositionMessage()
                 {

@@ -25,11 +25,12 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="7*"/>
             <RowDefinition Height="Auto" 
                            MinHeight="5"
                            />
-            <RowDefinition Height="Auto"
+            <RowDefinition Height="3*"
+                           MaxHeight="{Binding }"
                            MinHeight="80"
                            />
         </Grid.RowDefinitions>
@@ -291,29 +292,28 @@
                       />
 
         <!--All Cameras Console-->
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!--Console-->
+        <DataGrid Grid.Row="2" 
+                  BorderThickness="1"
+                  BorderBrush="{DynamicResource AccentColorBrush}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding ConsoleService.Entries}">
 
-            <!--Console Label-->
-            <TextBlock Grid.Row="0"
-                       Text="Console"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Bottom"
-                       Margin="8 0 0 0"
-                       />
-
-            <!--Console-->
-            <TextBox Grid.Row="1"
-                     BorderThickness="1"
-                     BorderBrush="{StaticResource AccentColorBrush}"
-                     VerticalScrollBarVisibility="Visible"
-                     IsReadOnly="True"
-                     Text="{Binding ConsoleService.Console.Text}"
-                     />
-        </Grid>
+            <DataGrid.Columns>
+                <!--Time-->
+                <DataGridTextColumn Header="Time"
+                                    Binding="{Binding Time}"
+                                    IsReadOnly="True"
+                                    />
+                <!--Message-->
+                <DataGridTextColumn Header="Message"
+                                    Binding="{Binding Text}"
+                                    IsReadOnly="True"
+                                    />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
     
 </UserControl>

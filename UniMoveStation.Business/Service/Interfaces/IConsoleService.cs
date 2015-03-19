@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using UniMoveStation.Business.Model;
 
 namespace UniMoveStation.Business.Service.Interfaces
 {
     public interface IConsoleService
     {
-        TextBox Console
-        {
-            get;
-            set;
-        }
+        ObservableCollection<ConsoleEntry> Entries { get; set; }
 
         void Write(String text);
-
-        void WriteLine(String text);
     }
 }

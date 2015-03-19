@@ -98,7 +98,7 @@ namespace UniMoveStation.UI.View
                 {
                     mc.Tracking[_viewModel.Camera] = false;
                 }
-                _viewModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, isChecked));
+                _viewModel.ConsoleService.Write(string.Format("Tracking ({0}): {1}", mc.Name, isChecked));
             }
         } // DoApplySelection
 
@@ -111,7 +111,7 @@ namespace UniMoveStation.UI.View
                 DataTemplate dataTemplate = contentPresenter.ContentTemplate;
                 CheckBox checkBox = (CheckBox)dataTemplate.FindName("CheckBox", contentPresenter);
                 checkBox.IsChecked = mc.Tracking[_viewModel.Camera];
-                _viewModel.ConsoleService.WriteLine(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
+                _viewModel.ConsoleService.Write(string.Format("Tracking ({0}): {1}", mc.Name, checkBox.IsChecked));
             }
         }
 

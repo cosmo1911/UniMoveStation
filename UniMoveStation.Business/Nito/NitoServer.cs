@@ -77,7 +77,7 @@ namespace UniMoveStation.Business.Nito
             if (e.Error != null)
             {
                 ResetListeningSocket();
-                ConsoleService.WriteLine("Socket error during Accept: [" + e.Error.GetType().Name + "] " + e.Error.Message);
+                ConsoleService.Write("Socket error during Accept: [" + e.Error.GetType().Name + "] " + e.Error.Message);
                 RefreshDisplay();
                 return;
             }
@@ -99,12 +99,12 @@ namespace UniMoveStation.Business.Nito
                 socket.ShutdownCompleted += args => ChildSocket_ShutdownCompleted(socket, args);
 
                 // Display the connection information
-                ConsoleService.WriteLine("Connection established to " + socket.RemoteEndPoint);
+                ConsoleService.Write("Connection established to " + socket.RemoteEndPoint);
             }
             catch (Exception ex)
             {
                 ResetChildSocket(socket);
-                ConsoleService.WriteLine("Socket error accepting connection: [" + ex.GetType().Name + "] " + ex.Message);
+                ConsoleService.Write("Socket error accepting connection: [" + ex.GetType().Name + "] " + ex.Message);
             }
             finally
             {
@@ -119,13 +119,13 @@ namespace UniMoveStation.Business.Nito
                 // Check for errors
                 if (e.Error != null)
                 {
-                    ConsoleService.WriteLine("Client socket error during Read from " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
+                    ConsoleService.Write("Client socket error during Read from " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
                     ResetChildSocket(socket);
                 }
                 else if (e.Result == null)
                 {
                     // PacketArrived completes with a null packet when the other side gracefully closes the connection
-                    ConsoleService.WriteLine("Socket graceful close detected from " + socket.RemoteEndPoint);
+                    ConsoleService.Write("Socket graceful close detected from " + socket.RemoteEndPoint);
 
                     // Close the socket and remove it from the list
                     ResetChildSocket(socket);
@@ -140,13 +140,13 @@ namespace UniMoveStation.Business.Nito
                     // Handle the message
                     if(HandleMessage(message, socket) == false)
                     {
-                        ConsoleService.WriteLine("Socket read got an unknown message from " + socket.RemoteEndPoint + " of type " + message.GetType().Name);
+                        ConsoleService.Write("Socket read got an unknown message from " + socket.RemoteEndPoint + " of type " + message.GetType().Name);
                     }
                 }
             }
             catch (Exception ex)
             {
-                ConsoleService.WriteLine("Error reading from socket " + socket.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                ConsoleService.Write("Error reading from socket " + socket.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
                 ResetChildSocket(socket);
             }
             finally
@@ -160,14 +160,14 @@ namespace UniMoveStation.Business.Nito
             StringMessage stringMessage = message as StringMessage;
             if (stringMessage != null)
             {
-                ConsoleService.WriteLine("Socket read got a string message from " + socket.RemoteEndPoint + ": " + stringMessage.Message);
+                ConsoleService.Write("Socket read got a string message from " + socket.RemoteEndPoint + ": " + stringMessage.Message);
                 return true;
             }
 
             ComplexMessage complexMessage = message as ComplexMessage;
             if (complexMessage != null)
             {
-                ConsoleService.WriteLine("Socket read got a complex message from " + socket.RemoteEndPoint + ": (UniqueID = " + complexMessage.UniqueID +
+                ConsoleService.Write("Socket read got a complex message from " + socket.RemoteEndPoint + ": (UniqueID = " + complexMessage.UniqueID +
                     ", Time = " + complexMessage.Time + ", Message = " + complexMessage.Message + ")");
                 return true;
             }
@@ -182,12 +182,12 @@ namespace UniMoveStation.Business.Nito
             // Check for errors
             if (e.Error != null)
             {
-                ConsoleService.WriteLine("Socket error during Shutdown of " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
+                ConsoleService.Write("Socket error during Shutdown of " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
                 ResetChildSocket(socket);
             }
             else
             {
-                ConsoleService.WriteLine("Socket shutdown completed on " + socket.RemoteEndPoint);
+                ConsoleService.Write("Socket shutdown completed on " + socket.RemoteEndPoint);
 
                 // Close the socket and remove it from the list
                 ResetChildSocket(socket);
@@ -209,16 +209,16 @@ namespace UniMoveStation.Business.Nito
                 // If you want to get fancy, you can tell if the error is the result of a write failure or a keepalive
                 //  failure by testing e.UserState, which is set by normal writes.
                 if (e.UserState is string)
-                    ConsoleService.WriteLine("Socket error during Write to " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
+                    ConsoleService.Write("Socket error during Write to " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
                 else
-                    ConsoleService.WriteLine("Socket error detected by keepalive to " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
+                    ConsoleService.Write("Socket error detected by keepalive to " + socket.RemoteEndPoint + ": [" + e.Error.GetType().Name + "] " + e.Error.Message);
 
                 ResetChildSocket(socket);
             }
             else
             {
                 string description = (string)e.UserState;
-                ConsoleService.WriteLine("Socket write completed to " + socket.RemoteEndPoint + " for message " + description);
+                ConsoleService.Write("Socket write completed to " + socket.RemoteEndPoint + " for message " + description);
             }
 
             RefreshDisplay();
@@ -233,12 +233,12 @@ namespace UniMoveStation.Business.Nito
                 ListeningSocket.ConnectionArrived += ListeningSocket_ConnectionArrived;
                 ListeningSocket.Listen(port);
 
-                ConsoleService.WriteLine("Listening on port " + port);
+                ConsoleService.Write("Listening on port " + port);
             }
             catch (Exception ex)
             {
                 ResetListeningSocket();
-                ConsoleService.WriteLine("Error creating listening socket on port " + port + ": [" + ex.GetType().Name + "] " + ex.Message);
+                ConsoleService.Write("Error creating listening socket on port " + port + ": [" + ex.GetType().Name + "] " + ex.Message);
             }
 
             RefreshDisplay();
@@ -246,7 +246,7 @@ namespace UniMoveStation.Business.Nito
 
         public void Stop()
         {
-            ConsoleService.WriteLine("Stopped listening.");
+            ConsoleService.Write("Stopped listening.");
             // Close the listening socket cleanly
             ResetListeningSocket();
             RefreshDisplay();
@@ -270,13 +270,13 @@ namespace UniMoveStation.Business.Nito
             {
                 try
                 {
-                    ConsoleService.WriteLine("Sending to " + childSocket.Key.RemoteEndPoint + ": " + description);
+                    ConsoleService.Write("Sending to " + childSocket.Key.RemoteEndPoint + ": " + description);
                     childSocket.Key.WriteAsync(binaryObject, description);
                 }
                 catch (Exception ex)
                 {
                     // Handle error
-                    ConsoleService.WriteLine("Child Socket error sending message to " + childSocket.Key.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                    ConsoleService.Write("Child Socket error sending message to " + childSocket.Key.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
                     ResetChildSocket(childSocket.Key);
                 }
             }
@@ -310,13 +310,13 @@ namespace UniMoveStation.Business.Nito
             {
                 try
                 {
-                    ConsoleService.WriteLine("Sending to " + childSocket.Key.RemoteEndPoint + ": " + description);
+                    ConsoleService.Write("Sending to " + childSocket.Key.RemoteEndPoint + ": " + description);
                     childSocket.Key.WriteAsync(binaryObject, description);
                 }
                 catch (Exception ex)
                 {
                     // Handle error
-                    ConsoleService.WriteLine("Child Socket error sending message to " + childSocket.Key.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                    ConsoleService.Write("Child Socket error sending message to " + childSocket.Key.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
                     ResetChildSocket(childSocket.Key);
                 }
             }
@@ -356,7 +356,7 @@ namespace UniMoveStation.Business.Nito
                     }
                     catch (Exception ex)
                     {
-                        ConsoleService.WriteLine("Child Socket error disconnecting from " + child.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                        ConsoleService.Write("Child Socket error disconnecting from " + child.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
                         ResetChildSocket(child);
                     }
                 }
@@ -377,7 +377,7 @@ namespace UniMoveStation.Business.Nito
                 }
                 catch (Exception ex)
                 {
-                    ConsoleService.WriteLine("Child Socket error disconnecting from " + child.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
+                    ConsoleService.Write("Child Socket error disconnecting from " + child.RemoteEndPoint + ": [" + ex.GetType().Name + "] " + ex.Message);
                     ResetChildSocket(child);
                 }
             }
@@ -409,7 +409,7 @@ namespace UniMoveStation.Business.Nito
             //  error recovery will remove the socket from the list of child sockets.
             foreach (KeyValuePair<SimpleServerChildTcpSocket, Exception> error in SocketErrors)
             {
-                ConsoleService.WriteLine("Child Socket error aborting " + error.Key.RemoteEndPoint + ": [" + error.Value.GetType().Name + "] " + error.Value.Message);
+                ConsoleService.Write("Child Socket error aborting " + error.Key.RemoteEndPoint + ": [" + error.Value.GetType().Name + "] " + error.Value.Message);
                 ResetChildSocket(error.Key);
             }
 
@@ -446,7 +446,7 @@ namespace UniMoveStation.Business.Nito
                 }
             }
 
-            ConsoleService.WriteLine(sb.ToString());
+            ConsoleService.Write(sb.ToString());
         }
     } // TCPServerNito
 } // namespace

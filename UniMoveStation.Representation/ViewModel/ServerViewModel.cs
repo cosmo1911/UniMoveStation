@@ -25,7 +25,7 @@ namespace UniMoveStation.Representation.ViewModel
 
         public ServerModel Server { get; private set; }
 
-        public IConsoleService ConsoleService { get; private set; }
+        public ConsoleService ConsoleService { get; private set; }
 
         public ServerService ServerService { get; private set; }
 

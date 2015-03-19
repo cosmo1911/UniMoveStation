@@ -215,7 +215,7 @@ namespace UniMoveStation.Business.Service
             if (_camera.Handle == IntPtr.Zero)
             {
                 _camera.Handle = PsMoveApi.psmove_tracker_new_with_camera(_camera.TrackerId);
-                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Started.", _camera.GUID));
+                ConsoleService.Write(string.Format("[Tracker, {0}] Started.", _camera.GUID));
                 PsMoveApi.psmove_tracker_set_exposure(_camera.Handle, exposure);
                 // full led intensity
                 PsMoveApi.psmove_tracker_set_dimming(_camera.Handle, 1f);
@@ -230,7 +230,7 @@ namespace UniMoveStation.Business.Service
 
             if (_camera.Handle == IntPtr.Zero) StartTracker(PSMoveTrackerExposure.Low);
 
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Calibrating Motion Controller ({1}).", _camera.GUID, mc.Serial));
+            ConsoleService.Write(string.Format("[Tracker, {0}] Calibrating Motion Controller ({1}).", _camera.GUID, mc.Serial));
 
             byte r = (byte)((mc.Color.r * 255) + 0.5f);
             byte g = (byte)((mc.Color.g * 255) + 0.5f);
@@ -260,7 +260,7 @@ namespace UniMoveStation.Business.Service
 
             //mc.ProjectionMatrix[_camera] = proj;
 
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker Status of {1} = {2}",
+            ConsoleService.Write(string.Format("[Tracker, {0}] Tracker Status of {1} = {2}",
                 _camera.GUID, mc.Name, Enum.GetName(typeof(PSMoveTrackerStatus), mc.TrackerStatus[_camera])));
             
         }
@@ -271,7 +271,7 @@ namespace UniMoveStation.Business.Service
             PsMoveApi.psmove_tracker_disable(_camera.Handle, mc.Handle);
             mc.Tracking[_camera] = false;
             mc.TrackerStatus[_camera] = PSMoveTrackerStatus.NotCalibrated;
-            ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracking of Motion Controller ({1}) disabled.", 
+            ConsoleService.Write(string.Format("[Tracker, {0}] Tracking of Motion Controller ({1}) disabled.", 
                 _camera.GUID, mc.Serial));
         }
 
@@ -299,13 +299,13 @@ namespace UniMoveStation.Business.Service
             {
                 DisableTracking();
                 CancelUpdateTask();
-                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Tracker destroyed.", _camera.GUID));
+                ConsoleService.Write(string.Format("[Tracker, {0}] Tracker destroyed.", _camera.GUID));
             }
             if (_camera.Fusion != IntPtr.Zero)
             {
                 PsMoveApi.psmove_fusion_free(_camera.Fusion);
                 _camera.Fusion = IntPtr.Zero;
-                ConsoleService.WriteLine(string.Format("[Tracker, {0}] Fusion destroyed.", _camera.GUID));
+                ConsoleService.Write(string.Format("[Tracker, {0}] Fusion destroyed.", _camera.GUID));
             }
         }
 

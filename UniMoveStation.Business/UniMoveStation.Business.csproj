@@ -114,6 +114,7 @@
     <Compile Include="Model\CameraCalibrationModel.cs" />
     <Compile Include="Model\CameraModel.cs" />
     <Compile Include="Model\ClientModel.cs" />
+    <Compile Include="Model\ConsoleEntry.cs" />
     <Compile Include="Model\MotionControllersModel.cs" />
     <Compile Include="Model\MotionControllerModel.cs" />
     <Compile Include="Model\CamerasModel.cs" />

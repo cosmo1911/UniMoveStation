@@ -41,13 +41,13 @@ namespace UniMoveStation.Business.Service
             Device.Framerate = 60;
             _camera.GUID = CLEyeCameraDevice.CameraUUID(_camera.TrackerId).ToString();
             
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Initialized", _camera.GUID));
+            ConsoleService.Write(string.Format("[Camera, {0}] Initialized", _camera.GUID));
             
         }
 
         public int GetConnectedCount()
         {
-            ConsoleService.WriteLine("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
+            ConsoleService.Write("Camera Count: " + CLEyeCameraDevice.CLEyeGetCameraCount());
             
             return CLEyeCameraDevice.CLEyeGetCameraCount();
         }
@@ -60,8 +60,8 @@ namespace UniMoveStation.Business.Service
             Device.AutoWhiteBalance = true;
             Device.Start();
             
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Started", _camera.GUID));
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
+            ConsoleService.Write(string.Format("[Camera, {0}] Started", _camera.GUID));
+            ConsoleService.Write(string.Format("[Camera, {0}] Resolution={1}, ColorMode={2}", _camera.GUID, Device.Resolution, Device.ColorMode));
             
             return Enabled = true;
         }
@@ -75,7 +75,7 @@ namespace UniMoveStation.Business.Service
         {
             Device.Stop();
             
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
+            ConsoleService.Write(string.Format("[Camera, {0}] Stopped.", _camera.GUID));
             
             return Enabled = false;
         }
@@ -84,7 +84,7 @@ namespace UniMoveStation.Business.Service
         {
             Device.Dispose();
             
-            ConsoleService.WriteLine(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
+            ConsoleService.Write(string.Format("[Camera, {0}] Destroyed.", _camera.GUID));
         }
 
         #region Dependency Properties

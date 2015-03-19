@@ -187,7 +187,7 @@ namespace UniMoveStation.Representation.ViewModel
                             else
                             {
                                 SimpleIoc.Default.GetInstance<ServerService>()
-                                    .ConsoleService.WriteLine("Client could not connect to server. Check if the server is running.");
+                                    .ConsoleService.Write("Client could not connect to server. Check if the server is running.");
                             }
                         }
                     }));
