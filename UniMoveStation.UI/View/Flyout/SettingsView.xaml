@@ -60,26 +60,26 @@
                                         Value="{Binding Settings.Left, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Minimum="0"
                                         />
-                <TextBlock Grid.Row="1"
-                           Grid.Column="2"
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
                            Text="Position Y"
-                           Margin="16 4 4 4"
+                           Margin="0 4 4 4"
                            VerticalAlignment="Center"
                            />
-                <controls:NumericUpDown Grid.Row="1"
-                                        Grid.Column="3"
+                <controls:NumericUpDown Grid.Row="2"
+                                        Grid.Column="1"
                                         Margin="4"
                                         Value="{Binding Settings.Top, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Minimum="0"
                                         />
-                <TextBlock Grid.Row="2" 
-                           Grid.Column="0"
+                <TextBlock Grid.Row="1" 
+                           Grid.Column="2"
                            Text="Width"
-                           Margin="0 4 4 4"
+                           Margin="16 4 4 4"
                            VerticalAlignment="Center"
                            />
-                <controls:NumericUpDown Grid.Row="2" 
-                                        Grid.Column="1"
+                <controls:NumericUpDown Grid.Row="1" 
+                                        Grid.Column="3"
                                         Margin="4"
                                         Value="{Binding Settings.Width,
                                                         Mode=TwoWay,
@@ -99,6 +99,13 @@
                                         Margin="4"
                                         Value="{Binding Settings.Height, UpdateSourceTrigger=PropertyChanged}"
                                         />
+                <Button Grid.Row="3" 
+                        Grid.Column="1"
+                        Style="{DynamicResource SquareButtonStyle}"
+                        Margin="4"
+                        Content="center"
+                        x:Name="CenterWindowButton"
+                        />
             </Grid>
             <StackPanel Orientation="Horizontal"
                         Margin="0 4 0 4">
@@ -170,31 +177,48 @@
                                               Mode=TwoWay, 
                                               Source={StaticResource ViewModelLocator},
                                                UpdateSourceTrigger=PropertyChanged}">
-                        <TextBlock Text="Debug"/>
-                    </CheckBox>
+                    <TextBlock Text="Debug"/>
+                </CheckBox>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                </Grid>
                 
+
             </StackPanel>
 
         </StackPanel>
 
-        <UniformGrid Columns="3"
+        <UniformGrid Columns="2"
                      Grid.Row="2" 
                      Grid.Column="0"
                      Margin="8"
                      Grid.ColumnSpan="2">
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
-                    Content="save"
+                    Content="save camera configurations"
+                    Command="{Binding SaveCameraConfigurationsCommand}"
+                    />
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
+                    Content="show camera configurations"
+                    Command="{Binding ShowCameraConfigurationsCommand}"
+                    Width="Auto"
+                    />
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
+                    Content="save settings"
                     Command="{Binding SaveSettingsCommand}"
                     />
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
-                    Content="save cams"
-                    Command="{Binding SaveCamerasCommand}"
-                    />
-            <Button Style="{DynamicResource SquareButtonStyle}"
-                    Margin="8"
-                    Content="reload"
+                    Content="reload settings"
                     Command="{Binding ReloadSettingsCommand}"
                     />
         </UniformGrid>

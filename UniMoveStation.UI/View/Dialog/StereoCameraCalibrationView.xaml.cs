@@ -1,9 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using UniMoveStation.Business.Model;
 using UniMoveStation.Representation.ViewModel.Dialog;
 
 namespace UniMoveStation.UI.View.Dialog

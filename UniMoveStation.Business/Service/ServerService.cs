@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GalaSoft.MvvmLight.Ioc;
 using Nito.Async.Sockets;
 using UniMoveStation.Business.Model;
 using UniMoveStation.Business.Nito;
+using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.NitoMessages;
 using UnityEngine;
@@ -13,11 +15,21 @@ namespace UniMoveStation.Business.Service
     public class ServerService : NitoServer
     {
         private CamerasModel _cameras;
+        public OnClientAddedEventArgs _clientAddedEventArgs { get; set; }
+        public OnClientRemovedEventArgs _clientRemovedEventArgs { get; set; }
 
-        public void Initialize(
-            IConsoleService consoleService, 
-            ServerModel server, 
-            CamerasModel cameras)
+        [PreferredConstructor]
+        public ServerService()
+        {
+            
+        }
+
+        public ServerService(IConsoleService consoleService, ServerModel server, CamerasModel cameras)
+        {
+            Initialize(consoleService, server, cameras);
+        }
+
+        public void Initialize(IConsoleService consoleService,  ServerModel server, CamerasModel cameras)
         {
             base.Initialize(consoleService, server);
             _cameras = cameras;

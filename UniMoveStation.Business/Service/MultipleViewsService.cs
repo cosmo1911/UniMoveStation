@@ -38,6 +38,11 @@ namespace UniMoveStation.Business.Service
             _stopwatch = new Stopwatch();
         }
 
+        public MultipleViewsService(CamerasModel cameras, List<ITrackerService> trackerServices)
+        {
+            Initialize(cameras, trackerServices);
+        }
+
         public void Initialize(CamerasModel cameras, List<ITrackerService> trackerServices)
         {
             _cameras = cameras;

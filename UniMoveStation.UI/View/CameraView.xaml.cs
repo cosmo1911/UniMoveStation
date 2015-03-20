@@ -1,11 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Business.Model;
-using UniMoveStation.Business.Service;
 using UniMoveStation.Common.Utils;
 using UniMoveStation.Representation.ViewModel;
 using UniMoveStation.Representation.ViewModel.Dialog;

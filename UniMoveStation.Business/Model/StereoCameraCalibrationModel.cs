@@ -11,6 +11,7 @@ namespace UniMoveStation.Business.Model
     {
         private CameraModel _camera1;
         private CameraModel _camera2;
+
         private bool _startFlag;
         private CameraCalibrationMode _currentMode;
         private int _frameBufferSize;
@@ -54,7 +55,6 @@ namespace UniMoveStation.Business.Model
             bs.Freeze();
             _disparityImageSource = bs;
 
-            
             _numDisparities = 64;
             _minDispatities = 0;
             _sad = 3;

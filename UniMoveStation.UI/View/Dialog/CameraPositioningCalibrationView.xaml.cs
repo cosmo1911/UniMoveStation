@@ -2,7 +2,6 @@
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Business.Model;
-using UniMoveStation.Representation.ViewModel;
 using UniMoveStation.Representation.ViewModel.Dialog;
 
 namespace UniMoveStation.UI.View.Dialog

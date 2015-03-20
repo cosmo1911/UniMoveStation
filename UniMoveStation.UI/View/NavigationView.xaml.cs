@@ -12,6 +12,8 @@ namespace UniMoveStation.UI.View
         /// </summary>
         public NavigationView()
         {
+
+
             InitializeComponent();
         }
     }

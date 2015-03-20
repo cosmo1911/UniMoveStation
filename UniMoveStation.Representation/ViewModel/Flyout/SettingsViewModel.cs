@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -14,7 +16,8 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
     public class SettingsViewModel : FlyoutBaseViewModel
     {
         private RelayCommand _saveSettingsCommand;
-        private RelayCommand _saveCamerasCommand;
+        private RelayCommand _saveCameraConfigurationsCommand;
+        private RelayCommand _showCameraConfigurationsCommand;
         private RelayCommand _reloadSettingsCommand;
         private SettingsModel _settings;
 
@@ -123,14 +126,26 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         }
 
         /// <summary>
-        /// Gets the SaveCamerasCommand.
+        /// Gets the SaveCameraConfigurationsCommand.
         /// </summary>
-        public RelayCommand SaveCamerasCommand
+        public RelayCommand SaveCameraConfigurationsCommand
         {
             get
             {
-                return _saveCamerasCommand
-                    ?? (_saveCamerasCommand = new RelayCommand(DoSaveCameras));
+                return _saveCameraConfigurationsCommand
+                    ?? (_saveCameraConfigurationsCommand = new RelayCommand(DoSaveCameraConfigurations));
+            }
+        }
+
+        /// <summary>
+        /// Gets the ShowCameraConfigurationsCommand.
+        /// </summary>
+        public RelayCommand ShowCameraConfigurationsCommand
+        {
+            get
+            {
+                return _showCameraConfigurationsCommand
+                    ?? (_showCameraConfigurationsCommand = new RelayCommand(DoShowCameraConfigurations));
             }
         }
         #endregion Commands
@@ -141,13 +156,18 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
             SettingsService.SaveSettings(Settings);
         }
 
-        public void DoSaveCameras()
+        public void DoSaveCameraConfigurations()
         {
             foreach (CameraViewModel cvm in SimpleIoc.Default.GetAllCreatedInstances<CameraViewModel>())
             {
                 SimpleIoc.Default.GetInstance<ISettingsService>().SaveCamera(cvm.Camera);
             }
             SettingsService.SaveSettings(Settings);
+        }
+
+        private void DoShowCameraConfigurations()
+        {
+            Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\cfg");
         }
 
         private void DoReloadSettings()

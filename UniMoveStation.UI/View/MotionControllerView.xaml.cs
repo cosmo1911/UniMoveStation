@@ -1,11 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
 using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 using UniMoveStation.Representation.ViewModel;
 
 namespace UniMoveStation.UI.View
