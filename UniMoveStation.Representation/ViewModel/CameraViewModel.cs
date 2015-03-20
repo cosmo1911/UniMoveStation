@@ -117,7 +117,7 @@ namespace UniMoveStation.Representation.ViewModel
                 TrackerId = CameraModel.COUNTER,
                 Name = "Camera " + CameraModel.COUNTER,
                 GUID = CameraModel.COUNTER-- + "1245678-9ABC-DEFG-HIJK-LMNOPQRSTUVW",
-                Debug = true
+                Design = true
             }, 
             new DesignTrackerService(),  
             new DesignClEyeService(), 
@@ -308,6 +308,12 @@ namespace UniMoveStation.Representation.ViewModel
         {
             Camera.Annotate = annotate;
             ConsoleService.Write("Annotate: " + annotate);
+
+            // reload image
+            if (Camera.Design)
+            {
+                TrackerService.Start();
+            }
         }
 
         public void DoToggleDebug(bool debug)
