@@ -213,6 +213,12 @@
                     />
             <Button Style="{DynamicResource SquareButtonStyle}"
                     Margin="8"
+                    Content="show psmoveapi configurations"
+                    Command="{Binding ShowPsMoveApiConfigurationsCommand}"
+                    Width="Auto"
+                    />
+            <Button Style="{DynamicResource SquareButtonStyle}"
+                    Margin="8"
                     Content="save settings"
                     Command="{Binding SaveSettingsCommand}"
                     />

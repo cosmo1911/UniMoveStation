@@ -30,7 +30,6 @@
                            MinHeight="5"
                            />
             <RowDefinition Height="3*"
-                           MaxHeight="{Binding }"
                            MinHeight="80"
                            />
         </Grid.RowDefinitions>

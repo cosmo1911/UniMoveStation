@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -18,6 +19,7 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
         private RelayCommand _saveSettingsCommand;
         private RelayCommand _saveCameraConfigurationsCommand;
         private RelayCommand _showCameraConfigurationsCommand;
+        private RelayCommand _showPsMoveApiConfigurationsCommand;
         private RelayCommand _reloadSettingsCommand;
         private SettingsModel _settings;
 
@@ -148,6 +150,18 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
                     ?? (_showCameraConfigurationsCommand = new RelayCommand(DoShowCameraConfigurations));
             }
         }
+
+        /// <summary>
+        /// Gets the ShowCameraConfigurationsCommand.
+        /// </summary>
+        public RelayCommand ShowPsMoveApiConfigurationsCommand
+        {
+            get
+            {
+                return _showPsMoveApiConfigurationsCommand
+                    ?? (_showPsMoveApiConfigurationsCommand = new RelayCommand(DoShowPsMoveApiConfigurations));
+            }
+        }
         #endregion Commands
 
         #region Command Executions
@@ -165,14 +179,32 @@ namespace UniMoveStation.Representation.ViewModel.Flyout
             SettingsService.SaveSettings(Settings);
         }
 
+        /// <summary>
+        /// opens the folder of the configuration files in the explorer
+        /// </summary>
         private void DoShowCameraConfigurations()
         {
-            Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\cfg");
+            string path = AppDomain.CurrentDomain.BaseDirectory + "cfg";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            Process.Start(path);
+        }
+
+        /// <summary>
+        /// opens the folder of the psmoveapi configuration files in the explorer
+        /// </summary>
+        private void DoShowPsMoveApiConfigurations()
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                ".psmoveapi");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            Process.Start(path);
         }
 
         private void DoReloadSettings()
         {
- 	        Settings = SettingsService.ReloadSettings();
+            Settings = SettingsService.ReloadSettings();
+            Application.Current.MainWindow.Top = Settings.Top;
+            Application.Current.MainWindow.Left = Settings.Left;
         }
 
         protected override void DoClose()

@@ -70,14 +70,10 @@ namespace UniMoveStation.UI.View.Flyout
                 if (SystemParameters.VirtualScreenHeight == SystemParameters.PrimaryScreenHeight 
                     && SystemParameters.VirtualScreenHeight == screen.Bounds.Height)
                 {
-                    _viewModel.Settings.Top = screen.WorkingArea.Height / 2 - _viewModel.Settings.Height / 2;
                     _viewModel.Settings.Left = SystemParameters.PrimaryScreenWidth + screen.Bounds.Width / 2 - _viewModel.Settings.Width / 2;
+                    _viewModel.Settings.Top = screen.WorkingArea.Height / 2 - _viewModel.Settings.Height / 2;
                 }
-
-                
             }
-
-            
-        }
-    }
-}
+        } // DoCenterView
+    } // SettingsView
+} // namespace

@@ -10,8 +10,8 @@
                       SaveWindowPosition="False"
                       Width="{Binding Settings.Settings.Width, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
                       Height="{Binding Settings.Settings.Height, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
-                      Left="{Binding Settings.Settings.Left, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
-                      Top="{Binding Settings.Settings.Top, Source={StaticResource ViewModelLocator}, Mode=TwoWay}"
+                      Top="{Binding Settings.Settings.Top, Source={StaticResource ViewModelLocator}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Left="{Binding Settings.Settings.Left, Source={StaticResource ViewModelLocator}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       DataContext="{Binding Main, Source={StaticResource ViewModelLocator}}"
                       ShowTitleBar="True"
                       ResizeMode="CanResizeWithGrip">

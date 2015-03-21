@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
@@ -10,10 +8,10 @@ namespace UniMoveStation.Business.Model
     [JsonObject(MemberSerialization.OptIn)]
     public class SettingsModel : ObservableObject, IDataErrorInfo
     {
-        private double? _width;
-        private double? _height;
-        private double? _left;
-        private double? _top;
+        private double _width;
+        private double _height;
+        private double _left;
+        private double _top;
         private bool _debug;
         private bool _loadCamerasOnStartUp;
         private bool _loadControllersOnStartUp;
@@ -51,28 +49,28 @@ namespace UniMoveStation.Business.Model
         }
 
         [JsonProperty]
-        public double? Width
+        public double Width
         {
             get { return _width; }
             set { Set(() => Width, ref _width, value); }
         }
 
         [JsonProperty]
-        public double? Height
+        public double Height
         {
             get { return _height; }
             set { Set(() => Height, ref _height, value); }
         }
 
         [JsonProperty]
-        public double? Left
+        public double Left
         {
             get { return _left; }
             set { Set(() => Left, ref _left, value); }
         }
 
         [JsonProperty]
-        public double? Top
+        public double Top
         {
             get { return _top; }
             set { Set(() => Top, ref _top, value); }
