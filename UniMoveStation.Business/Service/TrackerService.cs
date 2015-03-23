@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,12 +22,27 @@ namespace UniMoveStation.Business.Service
     public class TrackerService : DependencyObject, ITrackerService
     {
         #region Member
+        static PerformanceCounter cpuTotal = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+        static PerformanceCounter cpuProcess = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
+        static PerformanceCounter cpu0 = new PerformanceCounter("Processor", "% Processor Time", "0");
+        static PerformanceCounter cpu1 = new PerformanceCounter("Processor", "% Processor Time", "1");
+        static PerformanceCounter cpu2 = new PerformanceCounter("Processor", "% Processor Time", "2");
+        static PerformanceCounter cpu3 = new PerformanceCounter("Processor", "% Processor Time", "3");
+        static PerformanceCounter mem = new PerformanceCounter("Process", "Working Set", Process.GetCurrentProcess().ProcessName);
         public IConsoleService ConsoleService { get; set; }
         private CameraModel _camera;
         public event EventHandler OnImageReady;
 
         private CancellationTokenSource _ctsUpdate;
         private Task _updateTask;
+
+        Stopwatch swTask = new Stopwatch();
+        Stopwatch swTracker = new Stopwatch();
+        Stopwatch swImage = new Stopwatch();
+        Stopwatch swGrab = new Stopwatch();
+        Stopwatch swController1 = new Stopwatch();
+        Stopwatch swController2 = new Stopwatch();
+
         #endregion
 
         #region Constructor
@@ -47,10 +63,10 @@ namespace UniMoveStation.Business.Service
             {
                 _updateTask = Task.Factory.StartNew(() =>
                 {
-                    Stopwatch sw = new Stopwatch();
+                    int iteration = 0;
                     while (!_ctsUpdate.Token.IsCancellationRequested)
                     {
-                        sw.Restart();
+                        swTask.Restart();
                         foreach (MotionControllerModel mc in _camera.Controllers)
                         {
                             if(mc.Tracking[_camera])
@@ -68,10 +84,28 @@ namespace UniMoveStation.Business.Service
                                 }
                             }
                         }
+                        swTracker.Restart();
                         UpdateTracker();
+                        swTracker.Stop();
+                        swImage.Restart();
                         UpdateImage();
-                        sw.Stop();
-                        Thread.Sleep((int) (Math.Max((1000.0 / _camera.FPS) - sw.ElapsedMilliseconds, 0) + 0.5));
+                        swImage.Stop();
+                        swTask.Stop();
+                        Thread.Sleep((int) (Math.Max((1000.0 / _camera.FPS) - swTask.ElapsedMilliseconds, 0) + 0.5));
+                        if (iteration%10 == 0 && _camera.Debug && _camera.TrackerId == 0)
+                        {
+                            ConsoleService.Write(
+                            String.Format(new CultureInfo("en-US"),"{0},{1},{2},{3},{4},{5},{6},{7}",
+                            iteration,
+                            cpuTotal.NextValue(), 
+                            cpuProcess.NextValue(),
+                            cpu0.NextValue(), 
+                            cpu1.NextValue(), 
+                            cpu2.NextValue(), 
+                            cpu3.NextValue(), 
+                            mem.NextValue() / 1024 / 1024));
+                        }
+                        if(_camera.Debug) iteration++;
                     }
                 }, _ctsUpdate.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 await _updateTask;
@@ -162,7 +196,7 @@ namespace UniMoveStation.Business.Service
                 {
                     DrawCubeToImage(img);
                     // draw center of image for calibration
-                    img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
+                    //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
                 }
                 
                 BitmapSource bitmapSource = BitmapHelper.ToBitmapSource(img);
@@ -192,14 +226,20 @@ namespace UniMoveStation.Business.Service
             {
                 try
                 {
+                    swGrab.Restart();
                     PsMoveApi.psmove_tracker_update_image(_camera.Handle);
+                    swGrab.Stop();
                     foreach (MotionControllerModel mc in _camera.Controllers)
                     {
+                        if (mc.Id == 0) swController1.Restart();
+                        if (mc.Id == 1) swController2.Restart();
                         if (mc.Tracking[_camera])
                         {
                             PsMoveApi.psmove_tracker_update(_camera.Handle, mc.Handle);
                             ProcessData(mc);
                         }
+                        if (mc.Id == 0) swController1.Stop();
+                        if (mc.Id == 1) swController2.Stop();
                     }
                 }
                 catch(AccessViolationException e)
@@ -509,10 +549,10 @@ namespace UniMoveStation.Business.Service
                     img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
                     break;
                 case 1:
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
                     img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
                     break;
                 case 2:
                     img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
@@ -521,10 +561,10 @@ namespace UniMoveStation.Business.Service
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
                     break;
                 case 3:
+                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
+                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
                     img.DrawPolyline(cubeRight, true, new Bgr(255, 255, 0), 2);
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
-                    img.DrawPolyline(cubeFront, true, new Bgr(255, 0, 0), 2);
-                    img.DrawPolyline(cubeLeft, true, new Bgr(0, 0, 255), 2);
                     break;
             }
         }

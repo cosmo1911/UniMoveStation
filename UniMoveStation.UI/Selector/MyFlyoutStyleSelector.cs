@@ -12,22 +12,19 @@ namespace UniMoveStation.UI.Selector
             FrameworkElement element = container as FrameworkElement;
 
             var myResourceDictionary = new ResourceDictionary();
-            myResourceDictionary.Source = new Uri("/UniMoveStation.UI;component/Themes/Generic.xaml", UriKind.RelativeOrAbsolute);  
+            myResourceDictionary.Source = new Uri("/UniMoveStation.UI;component/Themes/Generic.xaml", UriKind.RelativeOrAbsolute);
 
-            if (item != null)
+            if (item == null) return null;
+
+            if (item is AddMotionControllerViewModel)
             {
-                if (item is AddMotionControllerViewModel)
-                {
-                    return myResourceDictionary["AddMotionControllerFlyoutStyle"] as Style;
-                }
-                if (item is AddCameraViewModel)
-                {
-                    return myResourceDictionary["AddCameraFlyoutStyle"] as Style;
-                }
-                return myResourceDictionary["DefaultFlyoutStyle"] as Style;
+                return myResourceDictionary["AddMotionControllerFlyoutStyle"] as Style;
             }
-
-            return null;
+            if (item is AddCameraViewModel)
+            {
+                return myResourceDictionary["AddCameraFlyoutStyle"] as Style;
+            }
+            return myResourceDictionary["DefaultFlyoutStyle"] as Style;
         }
     }
 }

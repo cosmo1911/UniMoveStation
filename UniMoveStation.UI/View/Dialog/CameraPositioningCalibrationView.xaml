@@ -23,9 +23,8 @@
 		</Grid.RowDefinitions>
 		<Grid>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"
-                                  MinWidth="100"
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"
                                   />
 			</Grid.ColumnDefinitions>
             
@@ -167,8 +166,6 @@
             <helix:HelixViewport3D x:Name="viewport"
 				                   ShowViewCube="False"
 				                   Grid.Column="1"
-				                   Height="Auto"
-				                   Width="Auto"
 				                   Background="{helix:LinearGradientBrush Gray, LightGray}"
 				                   Margin="4 4 0 4"
 				                   ItemsSource="{Binding PositioningService.HelixItems}">

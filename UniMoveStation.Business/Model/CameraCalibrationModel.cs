@@ -13,7 +13,7 @@ namespace UniMoveStation.Business.Model
     [JsonObject(MemberSerialization.OptIn)]
     public class CameraCalibrationModel : ViewModelBase
     {
-        public static float SPHERE_RADIUS_CM = (int) ((13.5/Math.PI)*100)/200f;
+        public static float SPHERE_RADIUS_CM = (int) ((13.5/Math.PI)*100)/20f;
 
         private string _cameraGuid;
         private double _error;
