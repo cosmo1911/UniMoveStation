@@ -3,5 +3,7 @@
   "Height": 720.0,
   "X": 370.0,
   "Y": 192.0,
-  "LoadCamerasOnStartUp": true
+  "LoadCamerasOnStartup": true,
+  "LoadControllersOnStartup": true,
+  "Debug": true
 }

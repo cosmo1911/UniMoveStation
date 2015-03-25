@@ -13,8 +13,8 @@ namespace UniMoveStation.Business.Model
         private double _left;
         private double _top;
         private bool _debug;
-        private bool _loadCamerasOnStartUp;
-        private bool _loadControllersOnStartUp;
+        private bool _loadCamerasOnStartup;
+        private bool _loadControllersOnStartup;
         private string _movedHostsFile;
         private string _movedHostsFileWaterMark;
 
@@ -24,8 +24,8 @@ namespace UniMoveStation.Business.Model
             Height = 720;
             Left = 0;
             Top = 0;
-            LoadCamerasOnStartUp = true;
-            LoadControllersOnStartUp = true;
+            LoadCamerasOnStartup = true;
+            LoadControllersOnStartup = true;
             Debug = false;
         }
 
@@ -77,17 +77,17 @@ namespace UniMoveStation.Business.Model
         }
 
         [JsonProperty]
-        public bool LoadCamerasOnStartUp
+        public bool LoadCamerasOnStartup
         {
-            get { return _loadCamerasOnStartUp; }
-            set { Set(() => LoadCamerasOnStartUp, ref _loadCamerasOnStartUp, value); }
+            get { return _loadCamerasOnStartup; }
+            set { Set(() => LoadCamerasOnStartup, ref _loadCamerasOnStartup, value); }
         }
 
         [JsonProperty]
-        public bool LoadControllersOnStartUp
+        public bool LoadControllersOnStartup
         {
-            get { return _loadControllersOnStartUp; }
-            set { Set(() => LoadControllersOnStartUp, ref _loadControllersOnStartUp, value); }
+            get { return _loadControllersOnStartup; }
+            set { Set(() => LoadControllersOnStartup, ref _loadControllersOnStartup, value); }
         }
 
         // TODO or custom validation rule

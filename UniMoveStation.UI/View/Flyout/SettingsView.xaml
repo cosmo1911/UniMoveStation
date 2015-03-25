@@ -153,22 +153,22 @@
                            />
             <StackPanel>
 
-                <CheckBox IsChecked="{Binding Settings.LoadControllersOnStartUp, 
+                <CheckBox IsChecked="{Binding Settings.LoadControllersOnStartup, 
                                               UpdateSourceTrigger=PropertyChanged}"
                           HorizontalAlignment="Left"
             	          VerticalAlignment="Center" 
                           Margin="0 4 4 4">
                     
-                        <TextBlock Text="Load Controllers on Start Up"/>
+                        <TextBlock Text="Load Controllers on Startup"/>
                     
                     </CheckBox>
                 <!--Load Cameras on Start Up-->
-                <CheckBox IsChecked="{Binding Settings.LoadCamerasOnStartUp, 
+                <CheckBox IsChecked="{Binding Settings.LoadCamerasOnStartup, 
                                               UpdateSourceTrigger=PropertyChanged}"
                           HorizontalAlignment="Left"
             	          VerticalAlignment="Center" 
                           Margin="0 4 4 4">
-                    <TextBlock Text="Load Cameras on Start Up"/>
+                    <TextBlock Text="Load Cameras on Startup"/>
                     </CheckBox>
                 <CheckBox HorizontalAlignment="Left"
                           VerticalAlignment="Center"

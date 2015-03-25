@@ -107,7 +107,7 @@ namespace UniMoveStation.Representation.ViewModel
             }
             else
             {
-                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartUp)
+                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadCamerasOnStartup)
                 {
                     AddAvailableCameras();
                 }

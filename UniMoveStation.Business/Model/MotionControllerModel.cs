@@ -56,6 +56,7 @@ namespace UniMoveStation.Business.Model
         private ObservableConcurrentDictionary<CameraModel, Vector3> _fusionPosition;
         private ObservableConcurrentDictionary<CameraModel, Vector3> _cameraPosition;
         private ObservableConcurrentDictionary<CameraModel, Vector3> _worldPosition;
+        private ObservableConcurrentDictionary<CameraModel, Vector3[]> _positionHistory;
         #endregion
 
 #if DEBUG
@@ -135,6 +136,12 @@ namespace UniMoveStation.Business.Model
         {
             get { return _trackerStatus ?? (_trackerStatus = new ObservableConcurrentDictionary<CameraModel, PSMoveTrackerStatus>()); }
             set { Set(() => TrackerStatus, ref _trackerStatus, value); }
+        }
+
+        public ObservableConcurrentDictionary<CameraModel, Vector3[]> PositionHistory
+        {
+            get { return _positionHistory ?? (_positionHistory = new ObservableConcurrentDictionary<CameraModel, Vector3[]>()); }
+            set { Set(() => PositionHistory, ref _positionHistory, value); }
         }
 
         public IntPtr Handle

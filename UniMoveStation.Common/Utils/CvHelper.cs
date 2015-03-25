@@ -187,7 +187,7 @@ namespace UniMoveStation.Common.Utils
         {
             MCvPoint2D64f[] imgPts = new MCvPoint2D64f[4];
 
-            float radiusPx = rawPosition.Z * 5;
+            float radiusPx = rawPosition.Z;
 
             imgPts[0] = new MCvPoint2D64f(rawPosition.X - radiusPx, rawPosition.Y - radiusPx);
             imgPts[1] = new MCvPoint2D64f(rawPosition.X + radiusPx, rawPosition.Y - radiusPx);
@@ -200,7 +200,7 @@ namespace UniMoveStation.Common.Utils
         public static PointF[] GetImagePointsF(Float3 rawPosition)
         {
             PointF[] imgPts = new PointF[4];
-            float radiusPx = rawPosition.Z * 8;
+            float radiusPx = rawPosition.Z;
 
             imgPts[0] = new PointF(rawPosition.X - radiusPx, rawPosition.Y - radiusPx);
             imgPts[1] = new PointF(rawPosition.X + radiusPx, rawPosition.Y - radiusPx);

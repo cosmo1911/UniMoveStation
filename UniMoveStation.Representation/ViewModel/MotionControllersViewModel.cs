@@ -65,7 +65,7 @@ namespace UniMoveStation.Representation.ViewModel
             }
             else
             {
-                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadControllersOnStartUp)
+                if (SimpleIoc.Default.GetInstance<SettingsViewModel>().Settings.LoadControllersOnStartup)
                 {
                     AddAvailableMotionControllers();
                 }

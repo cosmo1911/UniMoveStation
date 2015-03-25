@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +12,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using UniMoveStation.Business.Model;
+using UniMoveStation.Business.PsMove;
 using UniMoveStation.Business.Service.Event;
 using UniMoveStation.Business.Service.Interfaces;
 using UniMoveStation.Common.Utils;
@@ -19,10 +22,19 @@ namespace UniMoveStation.Business.Service
 {
     public class MultipleViewsService
     {
-        private Stopwatch _stopwatch;
+        private Stopwatch _stopwatchGet;
+        private Stopwatch _stopwatchSet;
+        private Stopwatch _stopwatchBA;
+        private int iteration = 0;
+        private List<string> csvTime;
+        private List<string> csvBA;
+        private List<string> csv0;
+        private List<string> csv1;
+        private List<string> csv2;
+        private List<string> csv3;
+        private Vector3[] _positionHistory;
 
         private CamerasModel _cameras;
-
 
         private CancellationTokenSource _ctsBundle;
         private Task _bundleTask;
@@ -31,12 +43,85 @@ namespace UniMoveStation.Business.Service
         private Task _fcpTask;
         private bool _fcpFinished;
 
+        private Kalman _kalmanXYZ;
+
+        //Setup Kalman Filter and predict methods
+        public void InitializeKalmanFilter()
+        {
+            _kalmanXYZ = new Kalman(6, 3, 0);
+            Matrix<float> state = new Matrix<float>(new float[]
+                {
+                    0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+                });
+            _kalmanXYZ.CorrectedState = state;
+            _kalmanXYZ.TransitionMatrix = new Matrix<float>(new float[,]
+                    {
+                        // x-pos, y-pos, z-pos, x-velocity, y-velocity, z-velocity
+                        {1, 0, 0, 1, 0, 0},
+                        {0, 1, 0, 0, 1, 0},
+                        {0, 0, 1, 0, 0, 1},
+                        {0, 0, 0, 1, 0, 0},
+                        {0, 0, 0, 0, 1, 0},
+                        {0, 0, 0, 0, 0, 1}
+                    });
+            _kalmanXYZ.MeasurementNoiseCovariance = new Matrix<float>(3, 3); //Fixed accordiong to input data 
+            _kalmanXYZ.MeasurementNoiseCovariance.SetIdentity(new MCvScalar(1.0e-1));
+
+            _kalmanXYZ.ProcessNoiseCovariance = new Matrix<float>(6, 6); //Linked to the size of the transition matrix
+            _kalmanXYZ.ProcessNoiseCovariance.SetIdentity(new MCvScalar(1.0e-4)); //The smaller the value the more resistance to noise 
+
+            _kalmanXYZ.ErrorCovariancePost = new Matrix<float>(6, 6); //Linked to the size of the transition matrix
+            _kalmanXYZ.ErrorCovariancePost.SetIdentity();
+            _kalmanXYZ.MeasurementMatrix = new Matrix<float>(new float[,]
+                    {
+                        { 1, 0, 0, 0, 0, 0 },
+                        { 0, 1, 0, 0, 0, 0 },
+                        { 0, 0, 1, 0, 0, 0 }
+                    });
+        }
+
+        public Matrix<float> FilterPoints(Kalman kalman, float x, float y, float z)
+        {
+            Matrix<float> prediction = kalman.Predict();
+            Matrix<float> estimated = kalman.Correct(new Matrix<float>(new[] { x, y, z }));
+            Matrix<float> results = new Matrix<float>(new[,]
+            {
+                { prediction[0, 0], prediction[1, 0], prediction[2, 0] },
+                { estimated[0, 0], estimated[1, 0], estimated[2, 0] }
+            });
+            return results;
+        }
+
         public List<ITrackerService> TrackerServices { get; set; }
 
         public MultipleViewsService()
         {
-            _stopwatch = new Stopwatch();
+            _stopwatchBA = new Stopwatch();
+            _stopwatchGet = new Stopwatch();
+            _stopwatchSet = new Stopwatch();
+            
         }
+
+        public void Reinit()
+        {
+            iteration = 0;
+            csvTime = new List<string>();
+            csvBA = new List<string>();
+            csv0 = new List<string>();
+            csv1 = new List<string>();
+            csv2 = new List<string>();
+            csv3 = new List<string>();
+
+            csvTime.Add("iteration,get,ba,set");
+            csvBA.Add("iteration,prex,prey,prez,pred,kx,ky,kz,kd");
+            csv0.Add("iteration,xr,yr,zr,rd,xc,yx,zc,cd");
+            csv1.Add("iteration,xr,yr,zr,rd,xc,yx,zc,cd");
+            csv2.Add("iteration,xr,yr,zr,rd,xc,yx,zc,cd");
+            csv3.Add("iteration,xr,yr,zr,rd,xc,yx,zc,cd");
+
+            InitializeKalmanFilter();
+        }
+            
 
         public MultipleViewsService(CamerasModel cameras, List<ITrackerService> trackerServices)
         {
@@ -52,6 +137,7 @@ namespace UniMoveStation.Business.Service
             {
                 //TrackerServices[_cameras.Cameras.IndexOf(cameraModel)].OnImageReady += TrackerService_OnImageReady;
             }
+            _positionHistory = new Vector3[5];
         }
 
 
@@ -166,14 +252,14 @@ namespace UniMoveStation.Business.Service
             //                                Matrix<double>[N] T,                  // translation vector of all cameras (input and output), values will be modified by bundle adjustment
             //                                Matrix<double>[N] distCoefficients,   // distortion coefficients of all cameras (input and output), values will be modified by bundle adjustment
             //                                MCvTermCriteria termCrit)             // Termination criteria, a reasonable value will be (30, 1.0e-12)
-
+            _stopwatchGet.Restart();
             if (_cameras.Cameras.Count == 0) return;
 
             IEnumerable<CameraModel> orderedCameras = _cameras.Cameras.OrderBy(camera => camera.Calibration.Index);
             ObservableCollection<MotionControllerModel> controllers = _cameras.Cameras[0].Controllers;
 
             if (controllers.Count == 0) return;
-
+            
             float radius = CameraCalibrationModel.SPHERE_RADIUS_CM;
             int cameraCount = _cameras.Cameras.Count;
             int pointCount = 8;
@@ -205,7 +291,7 @@ namespace UniMoveStation.Business.Service
                     //if (x == 0 && y == 0) return;
 
                     // controller is not visible
-                    if (!controller.Tracking[camera])
+                    if (controller.TrackerStatus[camera] != PSMoveTrackerStatus.Tracking)
                     {
                         for (int i = 0; i < pointCount; i++)
                         {
@@ -215,23 +301,38 @@ namespace UniMoveStation.Business.Service
                     // controller is visible
                     else
                     {
+                        Vector3[] history = controller.PositionHistory[camera];
+                        float avgMagnitude = 0f;
+                        for (int i = 1; i < history.Length; i++)
+                        {
+                            avgMagnitude += history[i].magnitude/(history.Length - 1);
+                        }
+                        // check deviation
+                        if ((Math.Abs(((history[0].magnitude*100)/avgMagnitude)) - 100) > 5)
+                        {
+                            for (int i = 0; i < pointCount; i++)
+                            {
+                                visibility[camera.Calibration.Index][i + controller.Id * pointCount] = 0;
+                            }
+                            continue;
+                        }
                         visible++;
-                        double distance = 0.0;
+                        //double distance = 0.0;
                         int startIndex = controller.Id * pointCount;
 
-                        MCvPoint3D64f cameraPositionInWorld = new MCvPoint3D64f
-                        {
-                            x = camera.Calibration.TranslationToWorld[0, 0],
-                            y = camera.Calibration.TranslationToWorld[1, 0],
-                            z = camera.Calibration.TranslationToWorld[2, 0]
-                        };
+                        //MCvPoint3D64f cameraPositionInWorld = new MCvPoint3D64f
+                        //{
+                        //    x = camera.Calibration.TranslationToWorld[0, 0],
+                        //    y = camera.Calibration.TranslationToWorld[1, 0],
+                        //    z = camera.Calibration.TranslationToWorld[2, 0]
+                        //};
 
                         // set visibility and calculate distance of the controller relative to the camera
                         for (int i = startIndex; i < pointCount * controllers.Count; i++)
                         {
                             visibility[camera.Calibration.Index][i] = 1;
-                            double d = CvHelper.GetDistanceToPoint(cameraPositionInWorld,objectPoints[i]);
-                            distance += d / pointCount;
+                            //double d = CvHelper.GetDistanceToPoint(cameraPositionInWorld,objectPoints[i]);
+                            //distance += d / pointCount;
                         }
                         // initialize object's world coordinates
                         // calculate world coordinate as the average of each camera's transformed world coordinate
@@ -265,10 +366,19 @@ namespace UniMoveStation.Business.Service
                 objectPoints[i].y /= visible;
                 objectPoints[i].z /= visible;
             }
-
-            Console.WriteLine("Input: ({0}, {1}, {2})", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
-            LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
-            Console.WriteLine("Output: ({0}, {1}, {2})\n", objectPoints[0].x, objectPoints[0].y, objectPoints[0].z);
+            // calculate object's middle
+            float prex = 0, prey = 0, prez = 0;
+            for (int i = 0; i < objectPoints.Length; i++)
+            {
+                prex += (float)objectPoints[i].x / objectPoints.Length;
+                prey += (float)objectPoints[i].y / objectPoints.Length;
+                prez += (float)objectPoints[i].z / objectPoints.Length;
+            }
+            _stopwatchGet.Stop();
+            _stopwatchBA.Restart();
+            //LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
+            _stopwatchBA.Stop();
+            _stopwatchSet.Restart();
 
             // check for calucation error
             for (int i = 0; i < objectPoints.Length; i++)
@@ -293,9 +403,9 @@ namespace UniMoveStation.Business.Service
                     Console.WriteLine((int)(rot1[1, 0] * (180 / Math.PI)) + " " + (int)(rot2[1, 0] * (180 / Math.PI)));
                     Console.WriteLine((int)(rot1[2, 0] * (180 / Math.PI)) + " " + (int)(rot2[2, 0] * (180 / Math.PI)) + Environment.NewLine);
 
-                    camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
+                    //camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
                     //camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
-                    camera.Calibration.TranslationToWorld = T[camera.Calibration.Index];
+                    //camera.Calibration.TranslationToWorld = T[camera.Calibration.Index];
                     //camera.Calibration.IntrinsicParameters.DistortionCoeffs = distCoefficients[camera.Calibration.Index];
 
                     //camera.Calibration.XAngle = (int)(rot2[0, 0] * (180 / Math.PI));
@@ -305,15 +415,106 @@ namespace UniMoveStation.Business.Service
             }
 
             // calculate object's middle
-            float posx = 0, posy = 0, posz = 0;
+            float preCenterX = 0, preCenterY = 0, preCenterZ = 0;
             for (int i = 0; i < objectPoints.Length; i++)
             {
-                posx += (float)objectPoints[i].x / objectPoints.Length;
-                posy += (float)objectPoints[i].y / objectPoints.Length;
-                posz += (float)objectPoints[i].z / objectPoints.Length;
+                preCenterX += (float)objectPoints[i].x / objectPoints.Length;
+                preCenterY += (float)objectPoints[i].y / objectPoints.Length;
+                preCenterZ += (float)objectPoints[i].z / objectPoints.Length;
+            }
+            Vector3 prePosition = new Vector3(preCenterX, -preCenterY, preCenterZ);
+
+            if (prePosition != _positionHistory[0])
+            {
+                for (int i = _positionHistory.Length - 1; i > 0; --i)
+                {
+                    _positionHistory[i] = _positionHistory[i - 1];
+                }
+                _positionHistory[0] = prePosition;
             }
 
-            _cameras.Position = new Vector3(posx, posy, posz);
+            //Vector3 avgPosition = Vector3.zero;
+            //for (int i = 0; i < _positionHistory.Length; i++)
+            //{
+            //    avgPosition += _positionHistory[i] / _positionHistory.Length;
+            //}
+
+            // 0 predition, 1 correction / estimated
+
+            Matrix<float> kalmanResults = FilterPoints(_kalmanXYZ, prePosition.x, prePosition.y, prePosition.z);
+
+            Vector3 kalmanPosition = new Vector3(kalmanResults[1,0], kalmanResults[1,1], kalmanResults[1,2]);
+            _cameras.Position = kalmanPosition;
+
+            _stopwatchSet.Stop();
+            for (int i = 0; i < 4; i++)
+            {
+                CameraModel camera = _cameras.Cameras[i];
+                float xr = controllers[0].RawPosition[camera].x;
+                float yr = controllers[0].RawPosition[camera].y;
+                float zr = controllers[0].RawPosition[camera].z;
+                float xc = controllers[0].CameraPosition[camera].x;
+                float yc = controllers[0].CameraPosition[camera].y;
+                float zc = controllers[0].CameraPosition[camera].z;
+                string str = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                    iteration,
+                    xr,
+                    yr,
+                    zr,
+                    PsMoveApi.psmove_tracker_distance_from_radius(camera.Handle, controllers[0].RawPosition[camera].z),
+                    xc,
+                    yc,
+                    zc,
+                    Math.Sqrt(xc * xc + yc * yc + zc * zc)
+                    );
+                if (camera.Calibration.Index == 0)
+                {
+                    if (csv0.Count > 0 && csv0[csv0.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+                    else csv0.Add(str);
+                }
+                else if (camera.Calibration.Index == 1)
+                {
+                    if (csv1.Count > 0 && csv1[csv1.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+                    else csv1.Add(str);
+                }
+                else if (camera.Calibration.Index == 2)
+                {
+                    if (csv2.Count > 0 && csv2[csv2.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+                    else csv2.Add(str);
+                }
+                else if (camera.Calibration.Index == 3)
+                {
+                    if (csv3.Count > 0 && csv3[csv3.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+                    else csv3.Add(str);
+                }
+            }
+            //output.Add(String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3}",
+            //        iteration,
+            //        _stopwatchGet.ElapsedMilliseconds,
+            //        _stopwatchBA.ElapsedMilliseconds,
+            //        _stopwatchSet.ElapsedMilliseconds));
+            string strBA = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+                iteration,
+                prePosition.x,
+                prePosition.y,
+                prePosition.z,
+                Math.Sqrt(prePosition.x * prePosition.x + prePosition.y * prePosition.y + prePosition.z * prePosition.z),
+                kalmanPosition.x,
+                kalmanPosition.y,
+                kalmanPosition.z,
+                Math.Sqrt(kalmanPosition.x * kalmanPosition.x + kalmanPosition.y * kalmanPosition.y + kalmanPosition.z * kalmanPosition.z));
+            if (csvBA.Count > 0 && csvBA[csvBA.Count - 1].Contains(prePosition.x.ToString(new CultureInfo("en-US")))) { }
+            else csvBA.Add(strBA);
+            iteration++;
+            if (csvBA.Count == 100)
+            {
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\avg_time.csv", csvTime);
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance.csv", csvBA);
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance0.csv", csv0);
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance1.csv", csv1);
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance2.csv", csv2);
+                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance3.csv", csv3);
+            }
         }
 
         void DoFindFundamentalMatrices()
@@ -390,7 +591,8 @@ namespace UniMoveStation.Business.Service
                 CancelBundleTask();
                 return;
             }
-
+            Reinit();
+            
             _ctsBundle = new CancellationTokenSource();
             CancellationToken token = _ctsBundle.Token;
             try
@@ -399,9 +601,7 @@ namespace UniMoveStation.Business.Service
                 {
                     while (!token.IsCancellationRequested)
                     {
-                        _stopwatch.Restart();
                         DoBundleAdjust();
-                        _stopwatch.Stop();
                         //ConsoleService.WriteLine("bundle adjust: " + sw.Elapsed.ToString());
                     }
                 });

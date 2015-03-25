@@ -196,7 +196,7 @@ namespace UniMoveStation.Business.Service
                 {
                     DrawCubeToImage(img);
                     // draw center of image for calibration
-                    //img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
+                    img.Draw(new Rectangle(315, 235, 10, 10), new Bgr(0, 255, 0), 1);
                 }
                 
                 BitmapSource bitmapSource = BitmapHelper.ToBitmapSource(img);
@@ -387,11 +387,6 @@ namespace UniMoveStation.Business.Service
                     //vec.z = vec.z/extents.z;
                     //vec = vec*2.0f - Vector3.one;
 
-                    //for (int i = mc.m_positionHistory.Length - 1; i > 0; --i)
-                    //{
-                    //    mc.m_positionHistory[i] = mc.m_positionHistory[i - 1];
-                    //}
-                    //mc.m_positionHistory[0] = vec;
 
                     //vec = m_positionHistory[0]*0.3f + m_positionHistory[1]*0.5f + m_positionHistory[2]*0.1f + m_positionHistory[3]*0.05f + m_positionHistory[4]*0.05f;
 
@@ -491,8 +486,15 @@ namespace UniMoveStation.Business.Service
                     Rt_homo[1, 3] = x_world_homo[1, 0];
                     Rt_homo[2, 3] = x_world_homo[2, 0];
                     x_world_homo = cameraPositionInWorldSpace4x4 * x_world_homo;
-                    mc.WorldPosition[_camera] = new Vector3((float)x_world_homo[0, 0], (float)x_world_homo[1, 0], (float)x_world_homo[2, 0]);
+                    Vector3 v3world = new Vector3((float) x_world_homo[0, 0], (float) x_world_homo[1, 0],
+                        (float) x_world_homo[2, 0]);
+                    mc.WorldPosition[_camera] = v3world;
 
+                    for (int i = mc.PositionHistory[_camera].Length - 1; i > 0; --i)
+                    {
+                        mc.PositionHistory[_camera][i] = mc.PositionHistory[_camera][i - 1];
+                    }
+                    mc.PositionHistory[_camera][0] = v3world;
                 }
             }
         } // ProcessData

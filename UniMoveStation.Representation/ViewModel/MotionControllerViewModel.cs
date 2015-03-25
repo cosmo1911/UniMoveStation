@@ -77,6 +77,7 @@ namespace UniMoveStation.Representation.ViewModel
                             MotionController.WorldPosition.Add(message.Camera, Float3.Zero);
                             MotionController.CameraPosition.Add(message.Camera, Float3.Zero);
                             MotionController.FusionPosition.Add(message.Camera, Float3.Zero);
+                            MotionController.PositionHistory.Add(message.Camera, new Vector3[5]);
                         }
                     });
 
@@ -90,6 +91,7 @@ namespace UniMoveStation.Representation.ViewModel
                         MotionController.WorldPosition.Remove(message.Camera);
                         MotionController.CameraPosition.Remove(message.Camera);
                         MotionController.FusionPosition.Remove(message.Camera);
+                        MotionController.PositionHistory.Remove(message.Camera);
                     });
 
                 if (mc.Serial != null)
@@ -109,6 +111,7 @@ namespace UniMoveStation.Representation.ViewModel
                     MotionController.WorldPosition.Add(scvm.Camera, Float3.Zero);
                     MotionController.Tracking.Add(scvm.Camera, false);
                     MotionController.TrackerStatus.Add(scvm.Camera, PSMoveTrackerStatus.NotCalibrated);
+                    MotionController.PositionHistory.Add(scvm.Camera, new Vector3[5]);
                 }
             }
         }
