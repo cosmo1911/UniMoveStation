@@ -361,44 +361,16 @@ namespace UniMoveStation.Business.Service
 
                 if (trackerStatus == PSMoveTrackerStatus.Tracking)
                 {
-                    float rx = 0.0f, ry = 0.0f, rrad = 0.0f;
-                    float fx = 0.0f, fy = 0.0f, fz = 0.0f;
+                    float rx, ry, rrad;
+                    float fx, fy, fz;
                     PsMoveApi.psmove_tracker_get_position(_camera.Handle, mc.Handle, out rx, out ry, out rrad);
                     PsMoveApi.psmove_fusion_get_position(_camera.Fusion, mc.Handle, out fx, out fy, out fz);
                     rx = (int) (rx + 0.5);
                     ry = (int) (ry + 0.5);
-                    //Console.WriteLine(rx + " " + ry + " " + rrad);
 
                     rawPosition = new Vector3(rx, ry, rrad);
                     fusionPosition = new Vector3(fx, fy, fz);
-                    //#if YISUP
-                    //vec.x = -vec.x;
-                    //vec.y = -vec.y;
-                    //vec.z = -vec.z;
-                    //#endif
-                    //tc.m_positionScalePos = Vector3.Max(vec, tc.m_positionScalePos);
-                    //tc.m_positionScaleNeg = Vector3.Min(vec, tc.m_positionScaleNeg);
 
-                    //Vector3 extents = tc.m_positionScalePos - tc.m_positionScaleNeg;
-
-                    //vec = vec - tc.m_positionScaleNeg;
-                    //vec.x = vec.x/extents.x;
-                    //vec.y = vec.y/extents.y;
-                    //vec.z = vec.z/extents.z;
-                    //vec = vec*2.0f - Vector3.one;
-
-
-                    //vec = m_positionHistory[0]*0.3f + m_positionHistory[1]*0.5f + m_positionHistory[2]*0.1f + m_positionHistory[3]*0.05f + m_positionHistory[4]*0.05f;
-
-                    //mc.m_position = vec;
-
-                    //for (int row = 0; row < 4; row++)
-                    //{
-                    //    for (int col = 0; col < 4; col++)
-                    //    {
-                    //        model[row, col] = PsMoveApi.PSMoveMatrix4x4_at(PsMoveApi.psmove_fusion_get_modelview_matrix(_camera.Fusion, mc.Handle), row * 4 + col);
-                    //    }
-                    //}
                 }
                 else if (mc.Design)
                 {
@@ -500,6 +472,7 @@ namespace UniMoveStation.Business.Service
         } // ProcessData
         #endregion
 
+        #region Misc
         private void DrawCubeToImage(Image<Bgr, byte> img)
         {
             if (_camera.Calibration.ObjectPointsProjected == null
@@ -569,6 +542,7 @@ namespace UniMoveStation.Business.Service
                     img.DrawPolyline(cubeBack, true, new Bgr(0, 255, 0), 2);
                     break;
             }
-        }
+        } // DrawCube
+        #endregion
     } // TrackerService
 } // Namespace

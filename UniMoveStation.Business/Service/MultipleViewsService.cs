@@ -242,8 +242,8 @@ namespace UniMoveStation.Business.Service
 
         public void DoBundleAdjust()
         {
-            // N = cams
-            // M = points
+            // N = cameras
+            // M = point count
             //public static void BundleAdjust(MCvPoint3D64f[M] points,              // Positions of points in global coordinate system (input and output), values will be modified by bundle adjustment
             //                                MCvPoint2D64f[M][N] imagePoints,      // Projections of 3d points for every camera
             //                                int[M][N] visibility,                 // Visibility of 3d points for every camera
@@ -307,7 +307,7 @@ namespace UniMoveStation.Business.Service
                         {
                             avgMagnitude += history[i].magnitude/(history.Length - 1);
                         }
-                        // check deviation
+                        // check deviation of newest position
                         if ((Math.Abs(((history[0].magnitude*100)/avgMagnitude)) - 100) > 5)
                         {
                             for (int i = 0; i < pointCount; i++)
@@ -334,12 +334,13 @@ namespace UniMoveStation.Business.Service
                             //double d = CvHelper.GetDistanceToPoint(cameraPositionInWorld,objectPoints[i]);
                             //distance += d / pointCount;
                         }
+
                         // initialize object's world coordinates
-                        // calculate world coordinate as the average of each camera's transformed world coordinate
-                        // TODO: replace with  kalman filter...?
+                        // calculate as the average of each camera's transformed world coordinate
                         float wx = controller.WorldPosition[camera].x;
                         float wy = controller.WorldPosition[camera].y;
                         float wz = controller.WorldPosition[camera].z;
+
 
                         objectPoints[startIndex]     += new MCvPoint3D32f(wx - radius, wy - radius, wz - radius);
                         objectPoints[startIndex + 1] += new MCvPoint3D32f(wx + radius, wy - radius, wz - radius);
@@ -374,7 +375,6 @@ namespace UniMoveStation.Business.Service
                 prey += (float)objectPoints[i].y / objectPoints.Length;
                 prez += (float)objectPoints[i].z / objectPoints.Length;
             }
-            _stopwatchGet.Stop();
             _stopwatchBA.Restart();
             //LevMarqSparse.BundleAdjust(objectPoints, imagePoints, visibility, cameraMatrix, R, T, distCoefficients, termCrit);
             _stopwatchBA.Stop();
@@ -393,15 +393,15 @@ namespace UniMoveStation.Business.Service
             {
                 if (visibility[camera.Calibration.Index][0] == 1)
                 {
-                    RotationVector3D rot1 = new RotationVector3D();
-                    rot1.RotationMatrix = camera.Calibration.RotationToWorld;
+                    //RotationVector3D rot1 = new RotationVector3D();
+                    //rot1.RotationMatrix = camera.Calibration.RotationToWorld;
 
-                    RotationVector3D rot2 = new RotationVector3D();
-                    rot2.RotationMatrix = R[camera.Calibration.Index];
+                    //RotationVector3D rot2 = new RotationVector3D();
+                    //rot2.RotationMatrix = R[camera.Calibration.Index];
 
-                    Console.WriteLine((int)(rot1[0, 0] * (180 / Math.PI)) + " " + (int)(rot2[0, 0] * (180 / Math.PI)));
-                    Console.WriteLine((int)(rot1[1, 0] * (180 / Math.PI)) + " " + (int)(rot2[1, 0] * (180 / Math.PI)));
-                    Console.WriteLine((int)(rot1[2, 0] * (180 / Math.PI)) + " " + (int)(rot2[2, 0] * (180 / Math.PI)) + Environment.NewLine);
+                    //Console.WriteLine((int)(rot1[0, 0] * (180 / Math.PI)) + " " + (int)(rot2[0, 0] * (180 / Math.PI)));
+                    //Console.WriteLine((int)(rot1[1, 0] * (180 / Math.PI)) + " " + (int)(rot2[1, 0] * (180 / Math.PI)));
+                    //Console.WriteLine((int)(rot1[2, 0] * (180 / Math.PI)) + " " + (int)(rot2[2, 0] * (180 / Math.PI)) + Environment.NewLine);
 
                     //camera.Calibration.IntrinsicParameters.IntrinsicMatrix = cameraMatrix[camera.Calibration.Index];
                     //camera.Calibration.RotationToWorld = R[camera.Calibration.Index];
@@ -446,6 +446,7 @@ namespace UniMoveStation.Business.Service
             Vector3 kalmanPosition = new Vector3(kalmanResults[1,0], kalmanResults[1,1], kalmanResults[1,2]);
             _cameras.Position = kalmanPosition;
 
+            _stopwatchGet.Stop();
             _stopwatchSet.Stop();
             for (int i = 0; i < 4; i++)
             {
@@ -488,11 +489,11 @@ namespace UniMoveStation.Business.Service
                     else csv3.Add(str);
                 }
             }
-            //output.Add(String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3}",
-            //        iteration,
-            //        _stopwatchGet.ElapsedMilliseconds,
-            //        _stopwatchBA.ElapsedMilliseconds,
-            //        _stopwatchSet.ElapsedMilliseconds));
+            csvTime.Add(String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3}",
+                    iteration,
+                    _stopwatchGet.ElapsedMilliseconds,
+                    _stopwatchBA.ElapsedMilliseconds,
+                    _stopwatchSet.ElapsedMilliseconds));
             string strBA = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
                 iteration,
                 prePosition.x,
@@ -709,3 +710,58 @@ namespace UniMoveStation.Business.Service
         }
     }
 }
+
+
+//Matrix<double> rot = camera.Calibration.ExtrinsicParameters[controller.Id].RotationVector.RotationMatrix.Clone();
+//                        Matrix<double> homoRot = CvHelper.ConvertToHomogenous(rot);
+//                        visible++;
+//                        //double distance = 0.0;
+//                        int startIndex = controller.Id * pointCount;
+
+//                        //MCvPoint3D64f cameraPositionInWorld = new MCvPoint3D64f
+//                        //{
+//                        //    x = camera.Calibration.TranslationToWorld[0, 0],
+//                        //    y = camera.Calibration.TranslationToWorld[1, 0],
+//                        //    z = camera.Calibration.TranslationToWorld[2, 0]
+//                        //};
+
+//                        // set visibility and calculate distance of the controller relative to the camera
+//                        for (int i = startIndex; i < pointCount * controllers.Count; i++)
+//                        {
+//                            visibility[camera.Calibration.Index][i] = 1;
+//                            //double d = CvHelper.GetDistanceToPoint(cameraPositionInWorld,objectPoints[i]);
+//                            //distance += d / pointCount;
+//                        }
+
+//                        // initialize object's world coordinates
+//                        // calculate as the average of each camera's transformed world coordinate
+//                        float wx = controller.WorldPosition[camera].x;
+//                        float wy = controller.WorldPosition[camera].y;
+//                        float wz = controller.WorldPosition[camera].z;
+
+//                        Matrix<double> homo;
+
+//                        MCvPoint3D32f[] cube = new MCvPoint3D32f[8];
+
+//                        for (int i = 0; i < 8; i++)
+//                        {
+//                            MCvPoint3D32f p = camera.Calibration.ObjectPoints3D[i];
+//                            homo = new Matrix<double>(new[]
+//                            {
+//                                (double) p.x, 
+//                                (double) p.y, 
+//                                (double) p.z, 
+//                                1.0
+//                            });
+//                            Matrix<double> m = homoRot * homo;
+//                            cube[i] = new MCvPoint3D32f((float) m[0,0], (float) m[1,0], (float) m[2,0]);
+//                        }
+//                        objectPoints[startIndex]     += new MCvPoint3D32f(wx + cube[0].x, wy + cube[0].y, wz + cube[0].z);
+//                        objectPoints[startIndex + 1] += new MCvPoint3D32f(wx + cube[1].x, wy + cube[1].y, wz + cube[1].z);
+//                        objectPoints[startIndex + 2] += new MCvPoint3D32f(wx + cube[2].x, wy + cube[2].y, wz + cube[2].z);
+//                        objectPoints[startIndex + 3] += new MCvPoint3D32f(wx + cube[3].x, wy + cube[3].y, wz + cube[3].z);
+
+//                        objectPoints[startIndex + 4] += new MCvPoint3D32f(wx + cube[4].x, wy + cube[4].y, wz + cube[4].z);
+//                        objectPoints[startIndex + 5] += new MCvPoint3D32f(wx + cube[5].x, wy + cube[5].y, wz + cube[5].z);
+//                        objectPoints[startIndex + 6] += new MCvPoint3D32f(wx + cube[6].x, wy + cube[6].y, wz + cube[6].z);
+//                        objectPoints[startIndex + 7] += new MCvPoint3D32f(wx + cube[7].x, wy + cube[7].y, wz + cube[7].z);

@@ -16,6 +16,9 @@ using Size = System.Drawing.Size;
 
 namespace UniMoveStation.Business.Service
 {
+    /// <summary>
+    /// http://www.emgu.com/wiki/index.php/Stereo_Imaging
+    /// </summary>
     public class StereoCameraCalibrationService
     {
         private CancellationTokenSource _ctsCameraCalibration;

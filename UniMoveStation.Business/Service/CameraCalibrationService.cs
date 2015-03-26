@@ -133,7 +133,7 @@ namespace UniMoveStation.Business.Service
                     {
                         for (int j = 0; j < Width; j++)
                         {
-                            objectList.Add(new MCvPoint3D32f(j * 55.0F, i * 55.0F, 0.0F));
+                            objectList.Add(new MCvPoint3D32f(j * 20.0F, i * 20.0F, 0.0F));
                         }
                     }
                     _cornersObjectList[k] = objectList.ToArray();
