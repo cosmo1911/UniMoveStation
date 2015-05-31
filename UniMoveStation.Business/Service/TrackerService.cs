@@ -396,7 +396,7 @@ namespace UniMoveStation.Business.Service
 
                 if (trackerStatus == PSMoveTrackerStatus.Tracking || mc.Design)
                 {
-                    // controller position -> rectangle in surrounding the sphere in image coordinates
+                    // controller position -> rectangle surrounding the sphere in image coordinates
                     PointF[] imgPts = CvHelper.GetImagePointsF(mc.RawPosition[_camera]);
 
                     ExtrinsicCameraParameters ex = CameraCalibration.FindExtrinsicCameraParams2(

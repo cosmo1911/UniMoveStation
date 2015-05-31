@@ -448,74 +448,74 @@ namespace UniMoveStation.Business.Service
 
             _stopwatchGet.Stop();
             _stopwatchSet.Stop();
-            for (int i = 0; i < 4; i++)
-            {
-                CameraModel camera = _cameras.Cameras[i];
-                float xr = controllers[0].RawPosition[camera].x;
-                float yr = controllers[0].RawPosition[camera].y;
-                float zr = controllers[0].RawPosition[camera].z;
-                float xc = controllers[0].CameraPosition[camera].x;
-                float yc = controllers[0].CameraPosition[camera].y;
-                float zc = controllers[0].CameraPosition[camera].z;
-                string str = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
-                    iteration,
-                    xr,
-                    yr,
-                    zr,
-                    PsMoveApi.psmove_tracker_distance_from_radius(camera.Handle, controllers[0].RawPosition[camera].z),
-                    xc,
-                    yc,
-                    zc,
-                    Math.Sqrt(xc * xc + yc * yc + zc * zc)
-                    );
-                if (camera.Calibration.Index == 0)
-                {
-                    if (csv0.Count > 0 && csv0[csv0.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
-                    else csv0.Add(str);
-                }
-                else if (camera.Calibration.Index == 1)
-                {
-                    if (csv1.Count > 0 && csv1[csv1.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
-                    else csv1.Add(str);
-                }
-                else if (camera.Calibration.Index == 2)
-                {
-                    if (csv2.Count > 0 && csv2[csv2.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
-                    else csv2.Add(str);
-                }
-                else if (camera.Calibration.Index == 3)
-                {
-                    if (csv3.Count > 0 && csv3[csv3.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
-                    else csv3.Add(str);
-                }
-            }
-            csvTime.Add(String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3}",
-                    iteration,
-                    _stopwatchGet.ElapsedMilliseconds,
-                    _stopwatchBA.ElapsedMilliseconds,
-                    _stopwatchSet.ElapsedMilliseconds));
-            string strBA = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
-                iteration,
-                prePosition.x,
-                prePosition.y,
-                prePosition.z,
-                Math.Sqrt(prePosition.x * prePosition.x + prePosition.y * prePosition.y + prePosition.z * prePosition.z),
-                kalmanPosition.x,
-                kalmanPosition.y,
-                kalmanPosition.z,
-                Math.Sqrt(kalmanPosition.x * kalmanPosition.x + kalmanPosition.y * kalmanPosition.y + kalmanPosition.z * kalmanPosition.z));
-            if (csvBA.Count > 0 && csvBA[csvBA.Count - 1].Contains(prePosition.x.ToString(new CultureInfo("en-US")))) { }
-            else csvBA.Add(strBA);
-            iteration++;
-            if (csvBA.Count == 100)
-            {
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\avg_time.csv", csvTime);
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance.csv", csvBA);
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance0.csv", csv0);
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance1.csv", csv1);
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance2.csv", csv2);
-                File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance3.csv", csv3);
-            }
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    CameraModel camera = _cameras.Cameras[i];
+            //    float xr = controllers[0].RawPosition[camera].x;
+            //    float yr = controllers[0].RawPosition[camera].y;
+            //    float zr = controllers[0].RawPosition[camera].z;
+            //    float xc = controllers[0].CameraPosition[camera].x;
+            //    float yc = controllers[0].CameraPosition[camera].y;
+            //    float zc = controllers[0].CameraPosition[camera].z;
+            //    string str = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+            //        iteration,
+            //        xr,
+            //        yr,
+            //        zr,
+            //        PsMoveApi.psmove_tracker_distance_from_radius(camera.Handle, controllers[0].RawPosition[camera].z),
+            //        xc,
+            //        yc,
+            //        zc,
+            //        Math.Sqrt(xc * xc + yc * yc + zc * zc)
+            //        );
+            //    if (camera.Calibration.Index == 0)
+            //    {
+            //        if (csv0.Count > 0 && csv0[csv0.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+            //        else csv0.Add(str);
+            //    }
+            //    else if (camera.Calibration.Index == 1)
+            //    {
+            //        if (csv1.Count > 0 && csv1[csv1.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+            //        else csv1.Add(str);
+            //    }
+            //    else if (camera.Calibration.Index == 2)
+            //    {
+            //        if (csv2.Count > 0 && csv2[csv2.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+            //        else csv2.Add(str);
+            //    }
+            //    else if (camera.Calibration.Index == 3)
+            //    {
+            //        if (csv3.Count > 0 && csv3[csv3.Count - 1].Contains(zr.ToString(new CultureInfo("en-US")))) { }
+            //        else csv3.Add(str);
+            //    }
+            //}
+            //csvTime.Add(String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3}",
+            //        iteration,
+            //        _stopwatchGet.ElapsedMilliseconds,
+            //        _stopwatchBA.ElapsedMilliseconds,
+            //        _stopwatchSet.ElapsedMilliseconds));
+            //string strBA = String.Format(new CultureInfo("en-US"), "{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+            //    iteration,
+            //    prePosition.x,
+            //    prePosition.y,
+            //    prePosition.z,
+            //    Math.Sqrt(prePosition.x * prePosition.x + prePosition.y * prePosition.y + prePosition.z * prePosition.z),
+            //    kalmanPosition.x,
+            //    kalmanPosition.y,
+            //    kalmanPosition.z,
+            //    Math.Sqrt(kalmanPosition.x * kalmanPosition.x + kalmanPosition.y * kalmanPosition.y + kalmanPosition.z * kalmanPosition.z));
+            //if (csvBA.Count > 0 && csvBA[csvBA.Count - 1].Contains(prePosition.x.ToString(new CultureInfo("en-US")))) { }
+            //else csvBA.Add(strBA);
+            //iteration++;
+            //if (csvBA.Count == 100)
+            //{
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\avg_time.csv", csvTime);
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance.csv", csvBA);
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance0.csv", csv0);
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance1.csv", csv1);
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance2.csv", csv2);
+            //    File.WriteAllLines(@"C:\\Users\\Johannes\\Documents\\GitHub\\Thesis\\Source\\distance3.csv", csv3);
+            //}
         }
 
         void DoFindFundamentalMatrices()
